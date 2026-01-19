@@ -1,0 +1,35 @@
+# Пример конфигурации сетевого протокола
+name: network_protocol
+initial_state: disconnected
+
+states:
+  - id: disconnected
+    description: "Нет соединения"
+  - id: connecting
+    description: "Установка соединения"
+  - id: connected
+    description: "Соединение установлено"
+  - id: error
+    description: "Ошибка соединения"
+
+transitions:
+  - id: disconnected_to_connecting
+    from_state: disconnected
+    to_state: connecting
+    trigger_event: connect
+  - id: connecting_to_connected
+    from_state: connecting
+    to_state: connected
+    trigger_event: connection_established
+  - id: connecting_to_error
+    from_state: connecting
+    to_state: error
+    trigger_event: connection_failed
+  - id: connected_to_disconnected
+    from_state: connected
+    to_state: disconnected
+    trigger_event: disconnect
+  - id: error_to_disconnected
+    from_state: error
+    to_state: disconnected
+    trigger_event: retry

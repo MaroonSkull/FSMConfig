@@ -1,0 +1,19 @@
+# Пример конфигурации простого конечного автомата
+name: simple_fsm
+initial_state: idle
+
+states:
+  - id: idle
+    description: "Состояние покоя"
+  - id: active
+    description: "Активное состояние"
+
+transitions:
+  - id: idle_to_active
+    from_state: idle
+    to_state: active
+    trigger_event: activate
+  - id: active_to_idle
+    from_state: active
+    to_state: idle
+    trigger_event: deactivate
