@@ -1,19 +1,29 @@
-# Пример конфигурации простого конечного автомата
-name: simple_fsm
-initial_state: idle
+# Глобальные переменные
+variables:
+  max_attempts: 3
 
+# Определения состояний
 states:
-  - id: idle
-    description: "Состояние покоя"
-  - id: active
-    description: "Активное состояние"
+  idle:
+    on_enter: on_idle_enter
+    on_exit: on_idle_exit
+    actions:
+      - log_idle_state
+  
+  active:
+    on_enter: on_active_enter
+    on_exit: on_active_exit
+    actions:
+      - log_active_state
 
+# Определения переходов
 transitions:
-  - id: idle_to_active
-    from_state: idle
-    to_state: active
-    trigger_event: activate
-  - id: active_to_idle
-    from_state: active
-    to_state: idle
-    trigger_event: deactivate
+  - from: idle
+    to: active
+    event: start
+    on_transition: on_start_transition
+  
+  - from: active
+    to: idle
+    event: stop
+    on_transition: on_stop_transition
