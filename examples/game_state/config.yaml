@@ -1,35 +1,69 @@
-# Пример конфигурации состояний игры
-name: game_state_machine
-initial_state: menu
+# Глобальные переменные
+variables:
+  player_health: 100
+  player_level: 1
 
+# Определения состояний
 states:
-  - id: menu
-    description: "Главное меню игры"
-  - id: playing
-    description: "Игровой процесс"
-  - id: paused
-    description: "Пауза игры"
-  - id: game_over
-    description: "Конец игры"
+  menu:
+    on_enter: on_menu_enter
+    on_exit: on_menu_exit
+    actions:
+      - show_menu
+      - load_save_data
+  
+  playing:
+    on_enter: on_playing_enter
+    on_exit: on_playing_exit
+    variables:
+      score: 0
+      time_elapsed: 0.0
+    actions:
+      - start_game_loop
+      - spawn_player
+  
+  paused:
+    on_enter: on_paused_enter
+    on_exit: on_paused_exit
+    actions:
+      - show_pause_menu
+  
+  game_over:
+    on_enter: on_game_over_enter
+    on_exit: on_game_over_exit
+    actions:
+      - show_game_over_screen
+      - save_high_score
 
+# Определения переходов
 transitions:
-  - id: menu_to_playing
-    from_state: menu
-    to_state: playing
-    trigger_event: start_game
-  - id: playing_to_paused
-    from_state: playing
-    to_state: paused
-    trigger_event: pause
-  - id: paused_to_playing
-    from_state: paused
-    to_state: playing
-    trigger_event: resume
-  - id: playing_to_game_over
-    from_state: playing
-    to_state: game_over
-    trigger_event: lose
-  - id: game_over_to_menu
-    from_state: game_over
-    to_state: menu
-    trigger_event: restart
+  - from: menu
+    to: playing
+    event: start_game
+    on_transition: on_start_game_transition
+  
+  - from: playing
+    to: paused
+    event: pause_game
+    on_transition: on_pause_game_transition
+  
+  - from: paused
+    to: playing
+    event: resume_game
+    on_transition: on_resume_game_transition
+  
+  - from: paused
+    to: menu
+    event: quit_to_menu
+    on_transition: on_quit_to_menu_transition
+  
+  - from: playing
+    to: game_over
+    event: player_died
+    on_transition: on_player_died_transition
+    guard: check_player_health
+  
+  - from: game_over
+    to: menu
+    event: restart
+    on_transition: on_restart_transition

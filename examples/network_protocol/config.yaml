@@ -1,35 +1,105 @@
-# Пример конфигурации сетевого протокола
-name: network_protocol
-initial_state: disconnected
+# Глобальные переменные
+variables:
+  max_retries: 3
+  timeout: 5.0
 
+# Определения состояний
 states:
-  - id: disconnected
-    description: "Нет соединения"
-  - id: connecting
-    description: "Установка соединения"
-  - id: connected
-    description: "Соединение установлено"
-  - id: error
-    description: "Ошибка соединения"
+  disconnected:
+    on_enter: on_disconnected_enter
+    on_exit: on_disconnected_exit
+    actions:
+      - close_connection
+      - log_disconnected
+  
+  connecting:
+    on_enter: on_connecting_enter
+    on_exit: on_connecting_exit
+    actions:
+      - initiate_connection
+      - start_timeout_timer
+  
+  connected:
+    on_enter: on_connected_enter
+    on_exit: on_connected_exit
+    variables:
+      connection_time: 0.0
+      bytes_sent: 0
+      bytes_received: 0
+    actions:
+      - start_heartbeat
+      - log_connected
+  
+  authenticating:
+    on_enter: on_authenticating_enter
+    on_exit: on_authenticating_exit
+    actions:
+      - send_credentials
+      - wait_for_response
+  
+  authenticated:
+    on_enter: on_authenticated_enter
+    on_exit: on_authenticated_exit
+    actions:
+      - enable_data_transfer
+      - log_authenticated
+  
+  error:
+    on_enter: on_error_enter
+    on_exit: on_error_exit
+    actions:
+      - log_error
+      - cleanup_resources
 
+# Определения переходов
 transitions:
-  - id: disconnected_to_connecting
-    from_state: disconnected
-    to_state: connecting
-    trigger_event: connect
-  - id: connecting_to_connected
-    from_state: connecting
-    to_state: connected
-    trigger_event: connection_established
-  - id: connecting_to_error
-    from_state: connecting
-    to_state: error
-    trigger_event: connection_failed
-  - id: connected_to_disconnected
-    from_state: connected
-    to_state: disconnected
-    trigger_event: disconnect
-  - id: error_to_disconnected
-    from_state: error
-    to_state: disconnected
-    trigger_event: retry
+  - from: disconnected
+    to: connecting
+    event: connect
+    on_transition: on_connect_transition
+  
+  - from: connecting
+    to: connected
+    event: connection_established
+    on_transition: on_connection_established_transition
+  
+  - from: connecting
+    to: error
+    event: connection_failed
+    on_transition: on_connection_failed_transition
+  
+  - from: connected
+    to: authenticating
+    event: authenticate
+    on_transition: on_authenticate_transition
+  
+  - from: authenticating
+    to: authenticated
+    event: authentication_success
+    on_transition: on_authentication_success_transition
+  
+  - from: authenticating
+    to: error
+    event: authentication_failed
+    on_transition: on_authentication_failed_transition
+  
+  - from: authenticated
+    to: disconnected
+    event: disconnect
+    on_transition: on_disconnect_transition
+  
+  - from: connected
+    to: disconnected
+    event: connection_lost
+    on_transition: on_connection_lost_transition
+  
+  - from: error
+    to: disconnected
+    event: retry
+    guard: check_retry_count
+    on_transition: on_retry_transition
+  
+  - from: error
+    to: disconnected
+    event: give_up
+    on_transition: on_give_up_transition
