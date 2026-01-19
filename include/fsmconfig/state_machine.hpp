@@ -250,7 +250,7 @@ public:
     void setErrorHandler(ErrorHandler handler);
 
 private:
-    class Impl;
+    struct Impl;
     std::unique_ptr<Impl> impl_;
 
     // Вспомогательные методы

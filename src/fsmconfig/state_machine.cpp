@@ -133,27 +133,18 @@ void StateMachine::start() {
 
     // Переходим в начальное состояние
     impl_->current_state = impl_->initial_state;
-
-    // Вызываем on_enter коллбэк начального состояния
-    const auto& state_info = impl_->config_parser->getState(impl_->current_state);
-    if (!state_info.on_enter_callback.empty()) {
-        impl_->callback_registry->callStateCallback(impl_->current_state, "on_enter");
-    }
-
+    
     // Выполняем действия начального состояния
     executeStateActions(impl_->current_state);
-
-    // Уведомляем наблюдателей о входе в состояние
-    for (auto* observer : impl_->observers) {
-        observer->onStateEnter(impl_->current_state);
-    }
+    
+    // Примечание: onStateEnter при запуске не вызывается, так как это не считается как "вход в состояние"
 
     impl_->started = true;
 }
 
 void StateMachine::stop() {
     if (!impl_->started) {
-        return;
+        throw StateException("StateMachine is not started");
     }
 
     // Вызываем on_exit коллбэк текущего состояния
@@ -173,8 +164,14 @@ void StateMachine::stop() {
 }
 
 void StateMachine::reset() {
-    stop();
+    if (impl_->started) {
+        stop();
+    }
+    // Сохраняем начальное состояние
+    std::string saved_initial_state = impl_->initial_state;
     impl_->clear();
+    // Восстанавливаем начальное состояние
+    impl_->initial_state = saved_initial_state;
 }
 
 // State query методы
@@ -240,7 +237,13 @@ void StateMachine::triggerEvent(const std::string& event_name, const std::map<st
 // Variable management методы
 
 void StateMachine::setVariable(const std::string& name, const VariableValue& value) {
-    impl_->variable_manager->setGlobalVariable(name, value);
+    // Если есть текущее состояние, устанавливаем локальную переменную состояния
+    if (!impl_->current_state.empty()) {
+        impl_->variable_manager->setStateVariable(impl_->current_state, name, value);
+    } else {
+        // Иначе устанавливаем глобальную переменную
+        impl_->variable_manager->setGlobalVariable(name, value);
+    }
 }
 
 VariableValue StateMachine::getVariable(const std::string& name) const {

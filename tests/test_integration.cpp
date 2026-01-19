@@ -15,6 +15,13 @@ protected:
     std::unique_ptr<StateMachine> fsm;
     std::string test_config_path;
     
+    IntegrationTest() = default;
+    ~IntegrationTest() override = default;
+    
+    // Запрещаем копирование
+    IntegrationTest(const IntegrationTest&) = delete;
+    IntegrationTest& operator=(const IntegrationTest&) = delete;
+    
     void SetUp() override {
         test_config_path = "test_config.yaml";
     }
@@ -57,9 +64,6 @@ transitions:
     
     writeTestConfig(yaml_content);
     fsm = std::make_unique<StateMachine>(test_config_path);
-    
-    bool idle_enter = false, idle_exit = false, active_enter = false, active_exit = false;
-    bool log_idle = false, log_active = false;
     
     class TestObserver : public StateObserver {
     public:
@@ -249,8 +253,6 @@ transitions:
     
     writeTestConfig(yaml_content);
     fsm = std::make_unique<StateMachine>(test_config_path);
-    
-    bool initial_enter = false, other_enter = false;
     
     class TestObserver : public StateObserver {
         public:
