@@ -19,7 +19,7 @@ target_include_directories(fsmconfig
 
 target_link_libraries(fsmconfig
     PUBLIC
-        yaml-cpp
+        yaml-cpp::yaml-cpp
 )
 
 # ============================================================================
