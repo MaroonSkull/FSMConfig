@@ -1,0 +1,35 @@
+# Пример конфигурации состояний игры
+name: game_state_machine
+initial_state: menu
+
+states:
+  - id: menu
+    description: "Главное меню игры"
+  - id: playing
+    description: "Игровой процесс"
+  - id: paused
+    description: "Пауза игры"
+  - id: game_over
+    description: "Конец игры"
+
+transitions:
+  - id: menu_to_playing
+    from_state: menu
+    to_state: playing
+    trigger_event: start_game
+  - id: playing_to_paused
+    from_state: playing
+    to_state: paused
+    trigger_event: pause
+  - id: paused_to_playing
+    from_state: paused
+    to_state: playing
+    trigger_event: resume
+  - id: playing_to_game_over
+    from_state: playing
+    to_state: game_over
+    trigger_event: lose
+  - id: game_over_to_menu
+    from_state: game_over
+    to_state: menu
+    trigger_event: restart
