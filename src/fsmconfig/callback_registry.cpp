@@ -157,8 +157,8 @@ bool CallbackRegistry::callGuard(
     if (it != impl_->guards.end() && it->second) {
         return it->second();
     }
-    // Если guard не зарегистрирован, разрешаем переход
-    return true;
+    // Если guard не зарегистрирован, запрещаем переход
+    return false;
 }
 
 void CallbackRegistry::callAction(const std::string& action_name) const {

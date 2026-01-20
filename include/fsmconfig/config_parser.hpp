@@ -112,6 +112,12 @@ public:
     const TransitionInfo* findTransition(const std::string& from_state, const std::string& event_name) const;
 
     /**
+     * @brief Получить начальное состояние
+     * @return Имя начального состояния
+     */
+    std::string getInitialState() const;
+
+    /**
      * @brief Очистить загруженную конфигурацию
      */
     void clear();

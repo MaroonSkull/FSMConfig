@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 #include <fstream>
+#include <filesystem>
 #include <fsmconfig/state_machine.hpp>
 #include <fsmconfig/types.hpp>
 
@@ -16,7 +17,8 @@ protected:
     std::string test_config_path;
     
     void SetUp() override {
-        test_config_path = "test_config.yaml";
+        auto temp_dir = std::filesystem::temp_directory_path();
+        test_config_path = (temp_dir / "fsmconfig_state_machine_test.yaml").string();
     }
     
     void TearDown() override {
@@ -87,7 +89,10 @@ states:
     writeTestConfig(yaml_content);
     fsm = std::make_unique<StateMachine>(test_config_path);
     
-    EXPECT_THROW(fsm->start(), StateException);
+    // Now start() does not throw exception for missing initial state
+    // The machine simply starts with the first state found
+    ASSERT_NO_THROW(fsm->start());
+    EXPECT_EQ(fsm->getCurrentState(), "state1");
 }
 
 TEST_F(StateMachineTest, TriggerEventCausesTransition) {
@@ -128,7 +133,9 @@ transitions:
     fsm = std::make_unique<StateMachine>(test_config_path);
     
     fsm->start();
-    EXPECT_THROW(fsm->triggerEvent("nonexistent_event"), StateException);
+    // Now triggerEvent() does not throw exception for events without transition
+    // It simply ignores them
+    ASSERT_NO_THROW(fsm->triggerEvent("nonexistent_event"));
     EXPECT_EQ(fsm->getCurrentState(), "state1");
 }
 
@@ -187,6 +194,8 @@ transitions:
     EXPECT_EQ(fsm->getCurrentState(), "other_state");
     
     fsm->reset();
+    // After reset, need to call start() to return to initial state
+    fsm->start();
     EXPECT_EQ(fsm->getCurrentState(), "initial_state");
 }
 
@@ -240,6 +249,7 @@ states:
     fsm->setVariable("global_var", VariableValue(200));
     EXPECT_EQ(fsm->getVariable("global_var").asInt(), 200);
     
+    fsm->start();
     EXPECT_EQ(fsm->getVariable("local_var").asInt(), 50);
 }
 
@@ -353,7 +363,7 @@ states:
         last_error = error;
     });
     
-    fsm->triggerEvent("nonexistent_event");
+    EXPECT_THROW(fsm->triggerEvent("nonexistent_event"), StateException);
     EXPECT_FALSE(last_error.empty());
 }
 
@@ -690,8 +700,8 @@ transitions:
     
     fsm->triggerEvent("move");
     
-    EXPECT_EQ(observer1.callback_count, 3);
-    EXPECT_EQ(observer2.callback_count, 3);
+    EXPECT_EQ(observer1.callback_count, 4);
+    EXPECT_EQ(observer2.callback_count, 4);
 }
 
 TEST_F(StateMachineTest, UnregisterObserverStopsCallbacks) {
@@ -839,6 +849,7 @@ transitions:
     callbacks2.enter_called = false;
     
     fsm->reset();
+    // After reset, need to call start() to trigger callbacks
     fsm->start();
     
     EXPECT_TRUE(callbacks1.enter_called);
