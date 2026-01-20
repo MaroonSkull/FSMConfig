@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 #include <fstream>
+#include <filesystem>
 #include <fsmconfig/state_machine.hpp>
 #include <fsmconfig/types.hpp>
 
@@ -16,7 +17,8 @@ protected:
     std::string test_config_path;
     
     void SetUp() override {
-        test_config_path = "test_config.yaml";
+        auto temp_dir = std::filesystem::temp_directory_path();
+        test_config_path = (temp_dir / "fsmconfig_state_machine_test.yaml").string();
     }
     
     void TearDown() override {

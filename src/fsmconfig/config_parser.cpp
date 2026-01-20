@@ -26,6 +26,9 @@ public:
     /// Вектор переходов
     std::vector<TransitionInfo> transitions;
 
+    /// Начальное состояние (пустое если не задано явно)
+    std::string initial_state;
+
     /**
      * @brief Очистить все данные конфигурации
      */
@@ -33,6 +36,7 @@ public:
         global_variables.clear();
         states.clear();
         transitions.clear();
+        initial_state.clear();
     }
 };
 
@@ -84,6 +88,11 @@ void ConfigParser::loadFromFile(const std::string& file_path) {
             parseTransitions(root["transitions"]);
         }
 
+        // Парсить начальное состояние
+        if (root["initial_state"] && root["initial_state"].IsScalar()) {
+            impl_->initial_state = root["initial_state"].Scalar();
+        }
+
         // Валидировать конфигурацию
         validateConfig();
 
@@ -117,6 +126,11 @@ void ConfigParser::loadFromString(const std::string& yaml_content) {
         // Парсить переходы
         if (root["transitions"]) {
             parseTransitions(root["transitions"]);
+        }
+
+        // Парсить начальное состояние
+        if (root["initial_state"] && root["initial_state"].IsScalar()) {
+            impl_->initial_state = root["initial_state"].Scalar();
         }
 
         // Валидировать конфигурацию
@@ -181,6 +195,10 @@ const TransitionInfo* ConfigParser::findTransition(
     return nullptr;
 }
 
+std::string ConfigParser::getInitialState() const {
+    return impl_->initial_state;
+}
+
 void ConfigParser::clear() {
     impl_->clear();
 }
@@ -194,21 +212,29 @@ VariableValue ConfigParser::parseVariable(const YAML::Node& node) const {
         throw ConfigException("Variable node is null or undefined");
     }
 
-    // Проверка на целое число
+    // Проверка на скалярное значение
     if (node.IsScalar()) {
         std::string value = node.Scalar();
 
-        // Попытка распознать тип
+        // Попытка распознать тип по строковому представлению
         if (value == "true" || value == "false") {
             return VariableValue(node.as<bool>());
         }
 
-        // Проверка на целое число
+        // Проверка на целое число (включая отрицательные)
         try {
-            // Проверяем, что строка не содержит точку или экспоненту
-            if (value.find('.') == std::string::npos &&
-                value.find('e') == std::string::npos &&
-                value.find('E') == std::string::npos) {
+            // Проверяем, что строка состоит из цифр и опционального знака минус в начале
+            bool is_integer = true;
+            for (size_t i = 0; i < value.size(); ++i) {
+                if (i == 0 && value[i] == '-') {
+                    continue;  // Минус в начале допустим
+                }
+                if (!std::isdigit(value[i])) {
+                    is_integer = false;
+                    break;
+                }
+            }
+            if (is_integer && !value.empty()) {
                 return VariableValue(node.as<int>());
             }
         } catch (...) {
@@ -355,9 +381,16 @@ void ConfigParser::parseStates(const YAML::Node& node) {
         throw ConfigException("'states' section must be a map");
     }
 
+    bool first_state = true;
     for (const auto& state_pair : node) {
         std::string state_name = state_pair.first.Scalar();
         impl_->states[state_name] = parseState(state_name, state_pair.second);
+
+        // Если начальное состояние не задано явно, используем первое состояние
+        if (first_state && impl_->initial_state.empty()) {
+            impl_->initial_state = state_name;
+        }
+        first_state = false;
     }
 }
 

@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 #include <fstream>
+#include <filesystem>
 #include <fsmconfig/config_parser.hpp>
 #include <fsmconfig/types.hpp>
 
@@ -17,7 +18,8 @@ protected:
     
     void SetUp() override {
         parser = std::make_unique<ConfigParser>();
-        test_config_path = "test_config.yaml";
+        auto temp_dir = std::filesystem::temp_directory_path();
+        test_config_path = (temp_dir / "fsmconfig_parser_test.yaml").string();
     }
     
     void TearDown() override {

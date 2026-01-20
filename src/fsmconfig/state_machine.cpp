@@ -27,7 +27,6 @@ struct StateMachine::Impl {
     ErrorHandler error_handler;
 
     void clear() {
-        states.clear();
         current_state.clear();
         initial_state.clear();
         started = false;
@@ -65,9 +64,13 @@ StateMachine::StateMachine(const std::string& config_path)
         impl_->states[name] = std::move(state);
     }
 
-    // Находим начальное состояние (первое в списке)
-    if (!states_info.empty()) {
-        impl_->initial_state = states_info.begin()->first;
+    // Находим начальное состояние из конфигурации
+    std::string initial_state = impl_->config_parser->getInitialState();
+    if (initial_state.empty() && !states_info.empty()) {
+        initial_state = states_info.begin()->first;
+    }
+    if (!initial_state.empty()) {
+        impl_->initial_state = initial_state;
     }
 }
 
@@ -104,9 +107,13 @@ StateMachine::StateMachine(const std::string& yaml_content, bool is_content)
         impl_->states[name] = std::move(state);
     }
 
-    // Находим начальное состояние (первое в списке)
-    if (!states_info.empty()) {
-        impl_->initial_state = states_info.begin()->first;
+    // Находим начальное состояние из конфигурации
+    std::string initial_state = impl_->config_parser->getInitialState();
+    if (initial_state.empty() && !states_info.empty()) {
+        initial_state = states_info.begin()->first;
+    }
+    if (!initial_state.empty()) {
+        impl_->initial_state = initial_state;
     }
 }
 
@@ -120,15 +127,27 @@ StateMachine& StateMachine::operator=(StateMachine&& other) noexcept = default;
 
 void StateMachine::start() {
     if (impl_->started) {
-        throw StateException("StateMachine is already started");
+        std::string error = "StateMachine is already started";
+        if (impl_->error_handler) {
+            impl_->error_handler(error);
+        }
+        throw StateException(error);
     }
 
     if (impl_->initial_state.empty()) {
-        throw StateException("No initial state found in configuration");
+        std::string error = "No initial state found in configuration";
+        if (impl_->error_handler) {
+            impl_->error_handler(error);
+        }
+        throw StateException(error);
     }
 
     if (!impl_->config_parser->hasState(impl_->initial_state)) {
-        throw StateException("Initial state '" + impl_->initial_state + "' not found");
+        std::string error = "Initial state '" + impl_->initial_state + "' not found";
+        if (impl_->error_handler) {
+            impl_->error_handler(error);
+        }
+        throw StateException(error);
     }
 
     // Переходим в начальное состояние
@@ -137,14 +156,21 @@ void StateMachine::start() {
     // Выполняем действия начального состояния
     executeStateActions(impl_->current_state);
     
-    // Примечание: onStateEnter при запуске не вызывается, так как это не считается как "вход в состояние"
+    // Уведомляем observers о входе в начальное состояние
+    for (auto* observer : impl_->observers) {
+        observer->onStateEnter(impl_->current_state);
+    }
 
     impl_->started = true;
 }
 
 void StateMachine::stop() {
     if (!impl_->started) {
-        throw StateException("StateMachine is not started");
+        std::string error = "StateMachine is not started";
+        if (impl_->error_handler) {
+            impl_->error_handler(error);
+        }
+        throw StateException(error);
     }
 
     // Вызываем on_exit коллбэк текущего состояния
@@ -172,6 +198,8 @@ void StateMachine::reset() {
     impl_->clear();
     // Восстанавливаем начальное состояние
     impl_->initial_state = saved_initial_state;
+    // Восстанавливаем текущее состояние
+    impl_->current_state = impl_->initial_state;
 }
 
 // State query методы
@@ -201,17 +229,29 @@ void StateMachine::triggerEvent(const std::string& event_name) {
 
 void StateMachine::triggerEvent(const std::string& event_name, const std::map<std::string, VariableValue>& data) {
     if (!impl_->started) {
-        throw StateException("StateMachine is not started");
+        std::string error = "StateMachine is not started";
+        if (impl_->error_handler) {
+            impl_->error_handler(error);
+        }
+        throw StateException(error);
     }
 
     if (impl_->current_state.empty()) {
-        throw StateException("No current state");
+        std::string error = "No current state";
+        if (impl_->error_handler) {
+            impl_->error_handler(error);
+        }
+        throw StateException(error);
     }
 
     // Ищем переход для события из текущего состояния
     const TransitionInfo* transition = impl_->config_parser->findTransition(impl_->current_state, event_name);
     if (!transition) {
-        throw StateException("No transition found for event '" + event_name + "' from state '" + impl_->current_state + "'");
+        std::string error = "No transition found for event '" + event_name + "' from state '" + impl_->current_state + "'";
+        if (impl_->error_handler) {
+            impl_->error_handler(error);
+        }
+        throw StateException(error);
     }
 
     // Проверяем guard-условие
@@ -249,7 +289,11 @@ void StateMachine::setVariable(const std::string& name, const VariableValue& val
 VariableValue StateMachine::getVariable(const std::string& name) const {
     auto value = impl_->variable_manager->getVariable(impl_->current_state, name);
     if (!value) {
-        throw StateException("Variable '" + name + "' not found");
+        std::string error = "Variable '" + name + "' not found";
+        if (impl_->error_handler) {
+            impl_->error_handler(error);
+        }
+        throw StateException(error);
     }
     return *value;
 }
@@ -297,7 +341,11 @@ void StateMachine::performTransition(const TransitionEvent& event) {
 
     // Проверяем, существует ли целевое состояние
     if (!hasState(new_state)) {
-        throw StateException("Target state '" + new_state + "' does not exist");
+        std::string error = "Target state '" + new_state + "' does not exist";
+        if (impl_->error_handler) {
+            impl_->error_handler(error);
+        }
+        throw StateException(error);
     }
 
     // Вызываем on_exit коллбэк текущего состояния
