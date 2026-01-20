@@ -1,0 +1,56 @@
+{
+  "name": "FSMConfig Development Container",
+  "dockerFile": "Dockerfile",
+  "containerName": "fsmconfig-dev",
+  "workspaceFolder": "/workspace",
+  "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-vscode.cpptools",
+        "ms-vscode.cmake-tools",
+        "twxs.cmake",
+        "xaver.clang-format",
+        "cheshirekow.cmake-format"
+      ],
+      "settings": {
+        "C_Cpp.default.cppStandard": "c++26",
+        "C_Cpp.default.compilerPath": "/usr/bin/gcc",
+        "C_Cpp.default.intelliSenseMode": "linux-gcc-x64",
+        "C_Cpp.default.includePath": [
+          "${workspaceFolder}/include",
+          "${workspaceFolder}/build/include"
+        ],
+        "cmake.configureArgs": [
+          "-DCMAKE_BUILD_TYPE=Debug"
+        ],
+        "cmake.buildDirectory": "${workspaceFolder}/build",
+        "cmake.sourceDirectory": "${workspaceFolder}",
+        "files.associations": {
+          "*.hpp": "cpp",
+          "*.cpp": "cpp"
+        },
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "xaver.clang-format",
+        "C_Cpp.formatting": "default"
+      }
+    }
+  },
+  "postCreateCommand": "mkdir -p build && cd build && cmake .. -DCMAKE_BUILD_TYPE=Debug",
+  "remoteUser": "vscode",
+  "features": {
+    "ghcr.io/devcontainers/features/common-utils:2": {
+      "installZsh": true,
+      "installOhMyZsh": true,
+      "upgradePackages": true
+    },
+    "ghcr.io/devcontainers/features/git:1": {
+      "version": "latest"
+    }
+  },
+  "mounts": [],
+  "runArgs": [
+    "--cap-add=SYS_PTRACE",
+    "--security-opt", "seccomp=unconfined"
+  ]
+}
