@@ -1,0 +1,71 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+      - master
+      - develop
+  pull_request:
+    branches:
+      - main
+      - master
+      - develop
+
+permissions:
+  contents: read
+  packages: read
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    continue-on-error: false
+
+    strategy:
+      matrix:
+        build_type: [Debug, Release]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile
+          tags: fsmconfig:ci
+          load: true
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Display compiler version
+        run: docker run --rm fsmconfig:ci bash -c "g++ --version"
+
+      - name: Display CMake version
+        run: docker run --rm fsmconfig:ci bash -c "cmake --version"
+
+      - name: Display system information
+        run: docker run --rm fsmconfig:ci bash -c "uname -a && cat /etc/os-release"
+
+      - name: Build and run tests
+        run: |
+          docker run --rm fsmconfig:ci bash -c "
+            mkdir build && \
+            cd build && \
+            cmake -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} .. && \
+            cmake --build . -j\$(nproc) && \
+            ctest --output-on-failure
+          "
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-${{ matrix.build_type }}
+          path: build/Testing/
+          if-no-files-found: ignore
