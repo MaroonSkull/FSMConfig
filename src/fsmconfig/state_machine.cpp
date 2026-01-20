@@ -66,12 +66,7 @@ StateMachine::StateMachine(const std::string& config_path)
 
     // Находим начальное состояние из конфигурации
     std::string initial_state = impl_->config_parser->getInitialState();
-    if (initial_state.empty() && !states_info.empty()) {
-        initial_state = states_info.begin()->first;
-    }
-    if (!initial_state.empty()) {
-        impl_->initial_state = initial_state;
-    }
+    impl_->initial_state = initial_state;  // Сохраняем даже если пустой
 }
 
 StateMachine::StateMachine(const std::string& yaml_content, bool is_content)
@@ -109,12 +104,7 @@ StateMachine::StateMachine(const std::string& yaml_content, bool is_content)
 
     // Находим начальное состояние из конфигурации
     std::string initial_state = impl_->config_parser->getInitialState();
-    if (initial_state.empty() && !states_info.empty()) {
-        initial_state = states_info.begin()->first;
-    }
-    if (!initial_state.empty()) {
-        impl_->initial_state = initial_state;
-    }
+    impl_->initial_state = initial_state;  // Сохраняем даже если пустой
 }
 
 StateMachine::~StateMachine() = default;
@@ -152,6 +142,12 @@ void StateMachine::start() {
 
     // Переходим в начальное состояние
     impl_->current_state = impl_->initial_state;
+
+    // Вызываем on_enter коллбэк начального состояния
+    // Проверяем наличие коллбэка в реестре, а не только в конфигурации
+    if (impl_->callback_registry->hasStateCallback(impl_->current_state, "on_enter")) {
+        impl_->callback_registry->callStateCallback(impl_->current_state, "on_enter");
+    }
     
     // Выполняем действия начального состояния
     executeStateActions(impl_->current_state);
@@ -175,10 +171,7 @@ void StateMachine::stop() {
 
     // Вызываем on_exit коллбэк текущего состояния
     if (!impl_->current_state.empty()) {
-        const auto& state_info = impl_->config_parser->getState(impl_->current_state);
-        if (!state_info.on_exit_callback.empty()) {
-            impl_->callback_registry->callStateCallback(impl_->current_state, "on_exit");
-        }
+        impl_->callback_registry->callStateCallback(impl_->current_state, "on_exit");
 
         // Уведомляем наблюдателей о выходе из состояния
         for (auto* observer : impl_->observers) {
@@ -198,8 +191,6 @@ void StateMachine::reset() {
     impl_->clear();
     // Восстанавливаем начальное состояние
     impl_->initial_state = saved_initial_state;
-    // Восстанавливаем текущее состояние
-    impl_->current_state = impl_->initial_state;
 }
 
 // State query методы
@@ -247,11 +238,8 @@ void StateMachine::triggerEvent(const std::string& event_name, const std::map<st
     // Ищем переход для события из текущего состояния
     const TransitionInfo* transition = impl_->config_parser->findTransition(impl_->current_state, event_name);
     if (!transition) {
-        std::string error = "No transition found for event '" + event_name + "' from state '" + impl_->current_state + "'";
-        if (impl_->error_handler) {
-            impl_->error_handler(error);
-        }
-        throw StateException(error);
+        // Игнорируем событие, если переход не найден
+        return;
     }
 
     // Проверяем guard-условие
@@ -374,8 +362,8 @@ void StateMachine::performTransition(const TransitionEvent& event) {
     impl_->current_state = new_state;
 
     // Вызываем on_enter коллбэк нового состояния
-    const auto& new_state_info = impl_->config_parser->getState(new_state);
-    if (!new_state_info.on_enter_callback.empty()) {
+    // Проверяем наличие коллбэка в реестре, а не только в конфигурации
+    if (impl_->callback_registry->hasStateCallback(new_state, "on_enter")) {
         impl_->callback_registry->callStateCallback(new_state, "on_enter");
     }
 

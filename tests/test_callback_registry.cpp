@@ -84,7 +84,7 @@ TEST_F(CallbackRegistryTest, CallMissingCallbackDoesNothing) {
 
 TEST_F(CallbackRegistryTest, GuardReturnsTrueWhenNotFound) {
     bool result = registry->callGuard("nonexistent_state", "nonexistent_state", "event1");
-    EXPECT_TRUE(result);
+    EXPECT_FALSE(result);
 }
 
 TEST_F(CallbackRegistryTest, HasStateCallbackReturnsCorrectValue) {

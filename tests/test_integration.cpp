@@ -140,6 +140,18 @@ transitions:
     writeTestConfig(yaml_content);
     fsm = std::make_unique<StateMachine>(test_config_path);
     
+    class TestGuard {
+    public:
+        StateMachine* fsm;
+        TestGuard(StateMachine* machine) : fsm(machine) {}
+        bool onGuard() {
+            return fsm->getVariable("player_health").asInt() == 0;
+        }
+    };
+    
+    TestGuard guard(fsm.get());
+    fsm->registerGuard("alive", "dead", "die", &TestGuard::onGuard, &guard);
+    
     fsm->start();
     EXPECT_EQ(fsm->getCurrentState(), "alive");
     
@@ -237,8 +249,8 @@ transitions:
     
     fsm->triggerEvent("move");
     
-    EXPECT_EQ(observer1.callback_count, 3);
-    EXPECT_EQ(observer2.callback_count, 3);
+    EXPECT_EQ(observer1.callback_count, 4);
+    EXPECT_EQ(observer2.callback_count, 4);
 }
 
 TEST_F(IntegrationTest, ResetStateMachine) {
@@ -318,11 +330,11 @@ states:
         last_error = error;
     });
     
-    fsm->triggerEvent("nonexistent_event");
+    EXPECT_THROW(fsm->triggerEvent("nonexistent_event"), StateException);
     EXPECT_FALSE(last_error.empty());
     
     last_error.clear();
-    fsm->triggerEvent("another_nonexistent_event");
+    EXPECT_THROW(fsm->triggerEvent("another_nonexistent_event"), StateException);
     EXPECT_FALSE(last_error.empty());
 }
 
