@@ -232,6 +232,100 @@ ColumnLimit: 100
 1. **"use context7"** — для получения контекста о текущем состоянии проекта
 2. **"Knowledge Graph Memory"** — для сохранения и извлечения знаний о проекте
 
+### MCP Memory Server
+
+**Назначение:** MCP Memory Server предоставляет LLM возможность сохранять и извлекать знания о проекте в виде knowledge graph.
+
+**Конфигурация:** Сервер запускается через Docker с постоянным хранилищем `claude-memory:/app/dist`.
+
+**Доступные инструменты:**
+1. `create_entities` — создание сущностей (классов, файлов, библиотек)
+2. `create_relations` — создание связей между сущностями
+3. `add_observations` — добавление наблюдений к существующим сущностям
+4. `read_graph` — чтение всего knowledge graph
+5. `search_nodes` — поиск сущностей по имени, типу или содержимому
+6. `open_nodes` — получение детальной информации о конкретных сущностях
+
+**Рекомендуемый workflow:**
+
+```
+Начало задачи
+    ↓
+Проверить существование сущности (search_nodes)
+    ↓
+    ├─ Найдена → open_nodes → Анализ информации
+    └─ Не найдена → create_entities
+    ↓
+Добавить новые наблюдения (add_observations)
+    ↓
+Создать отношения (create_relations)
+```
+
+**Когда использовать Memory Server:**
+
+| Действие | Инструмент | Пример |
+|----------|------------|-------|
+| Первое знакомство с компонентом | `create_entities` | Создать сущность для нового класса |
+| Обнаружение зависимости | `create_relations` | Связать класс с используемой библиотекой |
+| Изучение деталей реализации | `add_observations` | Добавить информацию о методах |
+| Получение контекста | `read_graph` или `search_nodes` | Извлечь знания перед задачей |
+| Проверка существования | `search_nodes` | Проверить, создана ли сущность |
+
+**Типы сущностей:**
+- `project` — проект (FSMConfig)
+- `class` — класс или структура (StateMachine, ConfigParser)
+- `file` — файл исходного кода (state_machine.cpp)
+- `library` — внешняя зависимость (yaml-cpp, gtest)
+- `tool` — инструмент разработки (clang-tidy, cppcheck)
+- `concept` — концепция или паттерн (RAII, Observer Pattern)
+
+**Типы отношений:**
+- `depends_on` — зависимость (A зависит от B)
+- `uses` — использование (A использует B)
+- `part_of` — часть (A является частью B)
+- `implements` — реализация (A реализует B)
+- `tests` — тестирование (A тестирует B)
+- `extends` — наследование/расширение
+
+**Пример использования:**
+
+```python
+# 1. Проверить существование
+result = mcp__memory__search_nodes(query="StateMachine")
+
+# 2. Создать если не существует
+if not result["nodes"]:
+    mcp__memory__create_entities(
+        entities=[{
+            "name": "StateMachine",
+            "entityType": "class",
+            "observations": [
+                "Основной класс конечного автомата",
+                "Расположен в include/fsmconfig/state_machine.hpp"
+            ]
+        }]
+    )
+
+# 3. Добавить наблюдения
+mcp__memory__add_observations(
+    observations=[{
+        "entityName": "StateMachine",
+        "contents": [
+            "Метод processEvent() обрабатывает события асинхронно"
+        ]
+    }]
+)
+
+# 4. Создать отношения
+mcp__memory__create_relations(
+    relations=[
+        {"from": "StateMachine", "to": "State", "relationType": "manages"}
+    ]
+)
+```
+
+**Важно:** Memory Server — это дополнительный инструмент для сохранения контекста между сессиями. Он НЕ заменяет анализ кода и чтение файлов, а дополняет их.
+
 ### Пайплайн выполнения высокоуровневых задач
 
 ```

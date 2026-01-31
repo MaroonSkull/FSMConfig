@@ -2,6 +2,7 @@
 
 ![CI](https://github.com/MaroonSkull/FSMConfig/workflows/CI/badge.svg)
 ![Docker](https://img.shields.io/badge/docker-supported-blue.svg)
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/MaroonSkull/FSMConfig)
 
 A C++ library for YAML-configured finite state machines. Because your spaghetti code deserves better.
 
