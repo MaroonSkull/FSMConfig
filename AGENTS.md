@@ -252,6 +252,28 @@ ColumnLimit: 100
 
 **Важно:** Если пользователь явно не попросил создать .md файл в другой директории, ВСЕГДА создавайте .md файлы внутри `docs/`. Это обеспечивает централизованное хранение всей технической документации проекта.
 
+### Обязательная проверка существующих файлов
+
+**КРИТИЧЕСКИ ВАЖНО ДЛЯ РЕЖИМА ARCHITECT:**
+
+Перед созданием НОВОГО .md файла ВСЕГДА выполняй следующие шаги:
+
+1. **Поиск существующих файлов** — используй `list_files` для просмотра директории `docs/`
+2. **Анализ релевантности** — проверь, существует ли файл, покрывающий ту же тему
+3. **Принятие решения:**
+   - Если релевантный файл найден → РЕДАКТИРУЙ его
+   - Если файл не найден → ТОЛЬКО тогда создавай новый
+
+**Примеры ПРАВИЛЬНОГО поведения:**
+- ✅ Добавить раздел "Event Loop" в существующий [`docs/architecture.md`](docs/architecture.md)
+- ✅ Обновить устаревшую информацию в [`docs/api_reference.md`](docs/api_reference.md)
+
+**Примеры НЕПРАВИЛЬНОГО поведения:**
+- ❌ Создать `docs/architecture-v2.md` вместо редактирования [`docs/architecture.md`](docs/architecture.md)
+- ❌ Создать `docs/api-reference-new.md` для нового метода
+
+**Подробнее:** См. [`docs/development/architect-workflow.md`](docs/development/architect-workflow.md) с детальным workflow и примерами.
+
 ### MCP Memory Server
 
 **Назначение:** MCP Memory Server предоставляет LLM возможность сохранять и извлекать знания о проекте в виде knowledge graph.
@@ -770,6 +792,18 @@ git review main..feature/branch-name
 
 ## Дополнительные ресурсы
 
+<<<<<<< Updated upstream
+=======
+### Руководства и стандарты разработки
+
+- **Технологический стек:** Подробнее: [`docs/technologies/tech-stack.md`](docs/technologies/tech-stack.md)
+- **Стратегия разбиения задач:** Подробнее: [`docs/development/task-strategy.md`](docs/development/task-strategy.md)
+- **Стандарты кодирования:** Подробнее: [`docs/development/coding-standards.md`](docs/development/coding-standards.md)
+- **Git workflow:** Подробнее: [`docs/development/workflow.md`](docs/development/workflow.md)
+- **Критический подход к разработке:** Подробнее: [`docs/development/critical-approach.md`](docs/development/critical-approach.md)
+- **Architect workflow:** Подробнее: [`docs/development/architect-workflow.md`](docs/development/architect-workflow.md) — правила работы с документацией для режима architect
+
+>>>>>>> Stashed changes
 ### Внутренняя документация
 
 - [`README.md`](README.md) — общее описание проекта
