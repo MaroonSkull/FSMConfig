@@ -1,10 +1,11 @@
 #pragma once
 
+#include <map>
+#include <memory>
+#include <set>
 #include <string>
 #include <vector>
-#include <map>
-#include <set>
-#include <memory>
+
 #include "types.hpp"
 
 // Предварительное объявление для yaml-cpp
@@ -30,7 +31,7 @@ namespace fsmconfig {
  * - Доступ к загруженным данным через удобный интерфейс
  */
 class ConfigParser {
-public:
+   public:
     /**
      * @brief Конструктор по умолчанию
      */
@@ -109,7 +110,8 @@ public:
      * @param event_name Имя события
      * @return Указатель на переход или nullptr если переход не найден
      */
-    const TransitionInfo* findTransition(const std::string& from_state, const std::string& event_name) const;
+    const TransitionInfo* findTransition(const std::string& from_state,
+                                         const std::string& event_name) const;
 
     /**
      * @brief Получить начальное состояние
@@ -122,7 +124,7 @@ public:
      */
     void clear();
 
-private:
+   private:
     class Impl;
     std::unique_ptr<Impl> impl_;
 
@@ -138,4 +140,4 @@ private:
     void parseTransitions(const YAML::Node& node);
 };
 
-} // namespace fsmconfig
+}  // namespace fsmconfig

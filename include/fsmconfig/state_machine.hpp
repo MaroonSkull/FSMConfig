@@ -1,10 +1,11 @@
 #pragma once
 
-#include <string>
-#include <vector>
+#include <functional>
 #include <map>
 #include <memory>
-#include <functional>
+#include <string>
+#include <vector>
+
 #include "types.hpp"
 
 namespace fsmconfig {
@@ -34,7 +35,7 @@ class State;
  * - Наблюдение за изменениями состояния через StateObserver
  */
 class StateMachine {
-public:
+   public:
     /**
      * @brief Конструктор из пути к файлу конфигурации
      * @param config_path Путь к YAML файлу конфигурации
@@ -135,7 +136,8 @@ public:
      * @param data Данные события
      * @throws StateException если автомат не запущен или переход не найден
      */
-    void triggerEvent(const std::string& event_name, const std::map<std::string, VariableValue>& data);
+    void triggerEvent(const std::string& event_name,
+                      const std::map<std::string, VariableValue>& data);
 
     // Callback registration (шаблонные методы)
 
@@ -147,13 +149,9 @@ public:
      * @param callback Метод-коллбэк
      * @param instance Указатель на экземпляр класса
      */
-    template<typename T>
-    void registerStateCallback(
-        const std::string& state_name,
-        const std::string& callback_type,
-        void (T::*callback)(),
-        T* instance
-    );
+    template <typename T>
+    void registerStateCallback(const std::string& state_name, const std::string& callback_type,
+                               void (T::*callback)(), T* instance);
 
     /**
      * @brief Зарегистрировать коллбэк перехода
@@ -163,13 +161,9 @@ public:
      * @param callback Метод-коллбэк
      * @param instance Указатель на экземпляр класса
      */
-    template<typename T>
-    void registerTransitionCallback(
-        const std::string& from_state,
-        const std::string& to_state,
-        void (T::*callback)(const TransitionEvent&),
-        T* instance
-    );
+    template <typename T>
+    void registerTransitionCallback(const std::string& from_state, const std::string& to_state,
+                                    void (T::*callback)(const TransitionEvent&), T* instance);
 
     /**
      * @brief Зарегистрировать guard-коллбэк
@@ -180,14 +174,9 @@ public:
      * @param callback Метод-коллбэк
      * @param instance Указатель на экземпляр класса
      */
-    template<typename T>
-    void registerGuard(
-        const std::string& from_state,
-        const std::string& to_state,
-        const std::string& event_name,
-        bool (T::*callback)(),
-        T* instance
-    );
+    template <typename T>
+    void registerGuard(const std::string& from_state, const std::string& to_state,
+                       const std::string& event_name, bool (T::*callback)(), T* instance);
 
     /**
      * @brief Зарегистрировать коллбэк действия
@@ -196,12 +185,8 @@ public:
      * @param callback Метод-коллбэк
      * @param instance Указатель на экземпляр класса
      */
-    template<typename T>
-    void registerAction(
-        const std::string& action_name,
-        void (T::*callback)(),
-        T* instance
-    );
+    template <typename T>
+    void registerAction(const std::string& action_name, void (T::*callback)(), T* instance);
 
     // Variable management
 
@@ -249,94 +234,62 @@ public:
      */
     void setErrorHandler(ErrorHandler handler);
 
-private:
+   private:
     struct Impl;
     std::unique_ptr<Impl> impl_;
 
     // Вспомогательные методы
     void performTransition(const TransitionEvent& event);
-    bool evaluateGuard(const std::string& from_state, const std::string& to_state, const std::string& event_name);
+    bool evaluateGuard(const std::string& from_state, const std::string& to_state,
+                       const std::string& event_name);
     void executeStateActions(const std::string& state_name);
     void executeTransitionActions(const std::vector<std::string>& actions);
 
     // Вспомогательные методы для регистрации коллбэков (для шаблонных методов)
-    void registerStateCallbackImpl(
-        const std::string& state_name,
-        const std::string& callback_type,
-        std::function<void()> callback
-    );
+    void registerStateCallbackImpl(const std::string& state_name, const std::string& callback_type,
+                                   std::function<void()> callback);
 
-    void registerTransitionCallbackImpl(
-        const std::string& from_state,
-        const std::string& to_state,
-        std::function<void(const TransitionEvent&)> callback
-    );
+    void registerTransitionCallbackImpl(const std::string& from_state, const std::string& to_state,
+                                        std::function<void(const TransitionEvent&)> callback);
 
-    void registerGuardImpl(
-        const std::string& from_state,
-        const std::string& to_state,
-        const std::string& event_name,
-        std::function<bool()> callback
-    );
+    void registerGuardImpl(const std::string& from_state, const std::string& to_state,
+                           const std::string& event_name, std::function<bool()> callback);
 
-    void registerActionImpl(
-        const std::string& action_name,
-        std::function<void()> callback
-    );
+    void registerActionImpl(const std::string& action_name, std::function<void()> callback);
 };
 
 // Реализация шаблонных методов в заголовке
 
-template<typename T>
-void StateMachine::registerStateCallback(
-    const std::string& state_name,
-    const std::string& callback_type,
-    void (T::*callback)(),
-    T* instance
-) {
-    auto cb = [instance, callback]() {
-        (instance->*callback)();
-    };
+template <typename T>
+void StateMachine::registerStateCallback(const std::string& state_name,
+                                         const std::string& callback_type, void (T::*callback)(),
+                                         T* instance) {
+    auto cb = [instance, callback]() { (instance->*callback)(); };
     registerStateCallbackImpl(state_name, callback_type, cb);
 }
 
-template<typename T>
-void StateMachine::registerTransitionCallback(
-    const std::string& from_state,
-    const std::string& to_state,
-    void (T::*callback)(const TransitionEvent&),
-    T* instance
-) {
-    auto cb = [instance, callback](const TransitionEvent& event) {
-        (instance->*callback)(event);
-    };
+template <typename T>
+void StateMachine::registerTransitionCallback(const std::string& from_state,
+                                              const std::string& to_state,
+                                              void (T::*callback)(const TransitionEvent&),
+                                              T* instance) {
+    auto cb = [instance, callback](const TransitionEvent& event) { (instance->*callback)(event); };
     registerTransitionCallbackImpl(from_state, to_state, cb);
 }
 
-template<typename T>
-void StateMachine::registerGuard(
-    const std::string& from_state,
-    const std::string& to_state,
-    const std::string& event_name,
-    bool (T::*callback)(),
-    T* instance
-) {
-    auto cb = [instance, callback]() -> bool {
-        return (instance->*callback)();
-    };
+template <typename T>
+void StateMachine::registerGuard(const std::string& from_state, const std::string& to_state,
+                                 const std::string& event_name, bool (T::*callback)(),
+                                 T* instance) {
+    auto cb = [instance, callback]() -> bool { return (instance->*callback)(); };
     registerGuardImpl(from_state, to_state, event_name, cb);
 }
 
-template<typename T>
-void StateMachine::registerAction(
-    const std::string& action_name,
-    void (T::*callback)(),
-    T* instance
-) {
-    auto cb = [instance, callback]() {
-        (instance->*callback)();
-    };
+template <typename T>
+void StateMachine::registerAction(const std::string& action_name, void (T::*callback)(),
+                                  T* instance) {
+    auto cb = [instance, callback]() { (instance->*callback)(); };
     registerActionImpl(action_name, cb);
 }
 
-} // namespace fsmconfig
+}  // namespace fsmconfig

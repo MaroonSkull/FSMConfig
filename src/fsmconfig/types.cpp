@@ -1,4 +1,5 @@
 #include "fsmconfig/types.hpp"
+
 #include <sstream>
 #include <stdexcept>
 
@@ -8,30 +9,17 @@ namespace fsmconfig {
 // VariableValue implementation
 // ============================================================================
 
-VariableValue::VariableValue()
-    : type(VariableType::INT)
-    , int_value(0) {
-}
+VariableValue::VariableValue() : type(VariableType::INT), int_value(0) {}
 
-VariableValue::VariableValue(int v)
-    : type(VariableType::INT)
-    , int_value(v) {
-}
+VariableValue::VariableValue(int v) : type(VariableType::INT), int_value(v) {}
 
-VariableValue::VariableValue(float v)
-    : type(VariableType::FLOAT)
-    , float_value(v) {
-}
+VariableValue::VariableValue(float v) : type(VariableType::FLOAT), float_value(v) {}
 
-VariableValue::VariableValue(const std::string& v)
-    : type(VariableType::STRING) {
+VariableValue::VariableValue(const std::string& v) : type(VariableType::STRING) {
     new (&string_value) std::string(v);
 }
 
-VariableValue::VariableValue(bool v)
-    : type(VariableType::BOOL)
-    , bool_value(v) {
-}
+VariableValue::VariableValue(bool v) : type(VariableType::BOOL), bool_value(v) {}
 
 VariableValue::~VariableValue() {
     if (type == VariableType::STRING) {
@@ -39,8 +27,7 @@ VariableValue::~VariableValue() {
     }
 }
 
-VariableValue::VariableValue(const VariableValue& other)
-    : type(other.type) {
+VariableValue::VariableValue(const VariableValue& other) : type(other.type) {
     switch (type) {
         case VariableType::INT:
             int_value = other.int_value;
@@ -63,10 +50,10 @@ VariableValue& VariableValue::operator=(const VariableValue& other) {
         if (type == VariableType::STRING) {
             string_value.~basic_string();
         }
-        
+
         // Копируем тип
         type = other.type;
-        
+
         // Копируем значение
         switch (type) {
             case VariableType::INT:
@@ -133,9 +120,7 @@ std::string VariableValue::toString() const {
 // TransitionEvent implementation
 // ============================================================================
 
-TransitionEvent::TransitionEvent()
-    : timestamp(std::chrono::system_clock::now()) {
-}
+TransitionEvent::TransitionEvent() : timestamp(std::chrono::system_clock::now()) {}
 
 // ============================================================================
 // StateInfo implementation
@@ -143,9 +128,7 @@ TransitionEvent::TransitionEvent()
 
 StateInfo::StateInfo() = default;
 
-StateInfo::StateInfo(const std::string& name)
-    : name(name) {
-}
+StateInfo::StateInfo(const std::string& name) : name(name) {}
 
 // ============================================================================
 // TransitionInfo implementation
@@ -157,16 +140,12 @@ TransitionInfo::TransitionInfo() = default;
 // ConfigException implementation
 // ============================================================================
 
-ConfigException::ConfigException(const std::string& message)
-    : std::runtime_error(message) {
-}
+ConfigException::ConfigException(const std::string& message) : std::runtime_error(message) {}
 
 // ============================================================================
 // StateException implementation
 // ============================================================================
 
-StateException::StateException(const std::string& message)
-    : std::runtime_error(message) {
-}
+StateException::StateException(const std::string& message) : std::runtime_error(message) {}
 
-} // namespace fsmconfig
+}  // namespace fsmconfig

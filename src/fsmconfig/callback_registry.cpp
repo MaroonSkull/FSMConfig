@@ -1,4 +1,5 @@
 #include "fsmconfig/callback_registry.hpp"
+
 #include <mutex>
 
 namespace fsmconfig {
@@ -7,7 +8,7 @@ namespace fsmconfig {
  * @brief Реализация CallbackRegistry (Pimpl идиома)
  */
 class CallbackRegistry::Impl {
-public:
+   public:
     /// Коллбэки состояния: key = "state_name:callback_type"
     std::map<std::string, StateCallback> state_callbacks;
 
@@ -38,15 +39,12 @@ public:
 // Конструкторы и деструктор
 // ============================================================================
 
-CallbackRegistry::CallbackRegistry()
-    : impl_(std::make_unique<Impl>()) {
-}
+CallbackRegistry::CallbackRegistry() : impl_(std::make_unique<Impl>()) {}
 
 CallbackRegistry::~CallbackRegistry() = default;
 
 CallbackRegistry::CallbackRegistry(CallbackRegistry&& other) noexcept
-    : impl_(std::move(other.impl_)) {
-}
+    : impl_(std::move(other.impl_)) {}
 
 CallbackRegistry& CallbackRegistry::operator=(CallbackRegistry&& other) noexcept {
     if (this != &other) {
@@ -59,11 +57,9 @@ CallbackRegistry& CallbackRegistry::operator=(CallbackRegistry&& other) noexcept
 // Методы регистрации
 // ============================================================================
 
-void CallbackRegistry::registerStateCallback(
-    const std::string& state_name,
-    const std::string& callback_type,
-    StateCallback callback
-) {
+void CallbackRegistry::registerStateCallback(const std::string& state_name,
+                                             const std::string& callback_type,
+                                             StateCallback callback) {
     if (!callback) {
         return;
     }
@@ -73,11 +69,9 @@ void CallbackRegistry::registerStateCallback(
     impl_->state_callbacks[key] = std::move(callback);
 }
 
-void CallbackRegistry::registerTransitionCallback(
-    const std::string& from_state,
-    const std::string& to_state,
-    TransitionCallback callback
-) {
+void CallbackRegistry::registerTransitionCallback(const std::string& from_state,
+                                                  const std::string& to_state,
+                                                  TransitionCallback callback) {
     if (!callback) {
         return;
     }
@@ -87,12 +81,8 @@ void CallbackRegistry::registerTransitionCallback(
     impl_->transition_callbacks[key] = std::move(callback);
 }
 
-void CallbackRegistry::registerGuard(
-    const std::string& from_state,
-    const std::string& to_state,
-    const std::string& event_name,
-    GuardCallback callback
-) {
+void CallbackRegistry::registerGuard(const std::string& from_state, const std::string& to_state,
+                                     const std::string& event_name, GuardCallback callback) {
     if (!callback) {
         return;
     }
@@ -102,10 +92,7 @@ void CallbackRegistry::registerGuard(
     impl_->guards[key] = std::move(callback);
 }
 
-void CallbackRegistry::registerAction(
-    const std::string& action_name,
-    ActionCallback callback
-) {
+void CallbackRegistry::registerAction(const std::string& action_name, ActionCallback callback) {
     if (!callback) {
         return;
     }
@@ -118,10 +105,8 @@ void CallbackRegistry::registerAction(
 // Методы вызова
 // ============================================================================
 
-void CallbackRegistry::callStateCallback(
-    const std::string& state_name,
-    const std::string& callback_type
-) const {
+void CallbackRegistry::callStateCallback(const std::string& state_name,
+                                         const std::string& callback_type) const {
     std::lock_guard<std::mutex> lock(impl_->mutex);
     std::string key = makeStateCallbackKey(state_name, callback_type);
 
@@ -131,11 +116,9 @@ void CallbackRegistry::callStateCallback(
     }
 }
 
-void CallbackRegistry::callTransitionCallback(
-    const std::string& from_state,
-    const std::string& to_state,
-    const TransitionEvent& event
-) const {
+void CallbackRegistry::callTransitionCallback(const std::string& from_state,
+                                              const std::string& to_state,
+                                              const TransitionEvent& event) const {
     std::lock_guard<std::mutex> lock(impl_->mutex);
     std::string key = makeTransitionCallbackKey(from_state, to_state);
 
@@ -145,11 +128,8 @@ void CallbackRegistry::callTransitionCallback(
     }
 }
 
-bool CallbackRegistry::callGuard(
-    const std::string& from_state,
-    const std::string& to_state,
-    const std::string& event_name
-) const {
+bool CallbackRegistry::callGuard(const std::string& from_state, const std::string& to_state,
+                                 const std::string& event_name) const {
     std::lock_guard<std::mutex> lock(impl_->mutex);
     std::string key = makeGuardKey(from_state, to_state, event_name);
 
@@ -174,10 +154,8 @@ void CallbackRegistry::callAction(const std::string& action_name) const {
 // Методы проверки
 // ============================================================================
 
-bool CallbackRegistry::hasStateCallback(
-    const std::string& state_name,
-    const std::string& callback_type
-) const {
+bool CallbackRegistry::hasStateCallback(const std::string& state_name,
+                                        const std::string& callback_type) const {
     std::lock_guard<std::mutex> lock(impl_->mutex);
     std::string key = makeStateCallbackKey(state_name, callback_type);
 
@@ -185,10 +163,8 @@ bool CallbackRegistry::hasStateCallback(
     return it != impl_->state_callbacks.end() && static_cast<bool>(it->second);
 }
 
-bool CallbackRegistry::hasTransitionCallback(
-    const std::string& from_state,
-    const std::string& to_state
-) const {
+bool CallbackRegistry::hasTransitionCallback(const std::string& from_state,
+                                             const std::string& to_state) const {
     std::lock_guard<std::mutex> lock(impl_->mutex);
     std::string key = makeTransitionCallbackKey(from_state, to_state);
 
@@ -196,11 +172,8 @@ bool CallbackRegistry::hasTransitionCallback(
     return it != impl_->transition_callbacks.end() && static_cast<bool>(it->second);
 }
 
-bool CallbackRegistry::hasGuard(
-    const std::string& from_state,
-    const std::string& to_state,
-    const std::string& event_name
-) const {
+bool CallbackRegistry::hasGuard(const std::string& from_state, const std::string& to_state,
+                                const std::string& event_name) const {
     std::lock_guard<std::mutex> lock(impl_->mutex);
     std::string key = makeGuardKey(from_state, to_state, event_name);
 
@@ -248,26 +221,20 @@ size_t CallbackRegistry::getActionCount() const {
 // Вспомогательные методы
 // ============================================================================
 
-std::string CallbackRegistry::makeStateCallbackKey(
-    const std::string& state_name,
-    const std::string& callback_type
-) const {
+std::string CallbackRegistry::makeStateCallbackKey(const std::string& state_name,
+                                                   const std::string& callback_type) const {
     return state_name + ":" + callback_type;
 }
 
-std::string CallbackRegistry::makeTransitionCallbackKey(
-    const std::string& from_state,
-    const std::string& to_state
-) const {
+std::string CallbackRegistry::makeTransitionCallbackKey(const std::string& from_state,
+                                                        const std::string& to_state) const {
     return from_state + ":" + to_state;
 }
 
-std::string CallbackRegistry::makeGuardKey(
-    const std::string& from_state,
-    const std::string& to_state,
-    const std::string& event_name
-) const {
+std::string CallbackRegistry::makeGuardKey(const std::string& from_state,
+                                           const std::string& to_state,
+                                           const std::string& event_name) const {
     return from_state + ":" + to_state + ":" + event_name;
 }
 
-} // namespace fsmconfig
+}  // namespace fsmconfig

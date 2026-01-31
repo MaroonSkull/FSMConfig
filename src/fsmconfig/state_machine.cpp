@@ -1,11 +1,13 @@
 #include "fsmconfig/state_machine.hpp"
-#include "fsmconfig/config_parser.hpp"
+
+#include <algorithm>
+#include <stdexcept>
+
 #include "fsmconfig/callback_registry.hpp"
+#include "fsmconfig/config_parser.hpp"
 #include "fsmconfig/event_dispatcher.hpp"
 #include "fsmconfig/state.hpp"
 #include "fsmconfig/variable_manager.hpp"
-#include <algorithm>
-#include <stdexcept>
 
 namespace fsmconfig {
 
@@ -35,8 +37,7 @@ struct StateMachine::Impl {
 
 // Конструкторы и деструктор
 
-StateMachine::StateMachine(const std::string& config_path)
-    : impl_(std::make_unique<Impl>()) {
+StateMachine::StateMachine(const std::string& config_path) : impl_(std::make_unique<Impl>()) {
     impl_->config_parser = std::make_unique<ConfigParser>();
     impl_->callback_registry = std::make_unique<CallbackRegistry>();
     impl_->variable_manager = std::make_unique<VariableManager>();
@@ -148,10 +149,10 @@ void StateMachine::start() {
     if (impl_->callback_registry->hasStateCallback(impl_->current_state, "on_enter")) {
         impl_->callback_registry->callStateCallback(impl_->current_state, "on_enter");
     }
-    
+
     // Выполняем действия начального состояния
     executeStateActions(impl_->current_state);
-    
+
     // Уведомляем observers о входе в начальное состояние
     for (auto* observer : impl_->observers) {
         observer->onStateEnter(impl_->current_state);
@@ -195,9 +196,7 @@ void StateMachine::reset() {
 
 // State query методы
 
-std::string StateMachine::getCurrentState() const {
-    return impl_->current_state;
-}
+std::string StateMachine::getCurrentState() const { return impl_->current_state; }
 
 bool StateMachine::hasState(const std::string& state_name) const {
     return impl_->states.find(state_name) != impl_->states.end();
@@ -214,11 +213,10 @@ std::vector<std::string> StateMachine::getAllStates() const {
 
 // Event handling методы
 
-void StateMachine::triggerEvent(const std::string& event_name) {
-    triggerEvent(event_name, {});
-}
+void StateMachine::triggerEvent(const std::string& event_name) { triggerEvent(event_name, {}); }
 
-void StateMachine::triggerEvent(const std::string& event_name, const std::map<std::string, VariableValue>& data) {
+void StateMachine::triggerEvent(const std::string& event_name,
+                                const std::map<std::string, VariableValue>& data) {
     if (!impl_->started) {
         std::string error = "StateMachine is not started";
         if (impl_->error_handler) {
@@ -236,7 +234,8 @@ void StateMachine::triggerEvent(const std::string& event_name, const std::map<st
     }
 
     // Ищем переход для события из текущего состояния
-    const TransitionInfo* transition = impl_->config_parser->findTransition(impl_->current_state, event_name);
+    const TransitionInfo* transition =
+        impl_->config_parser->findTransition(impl_->current_state, event_name);
     if (!transition) {
         // Игнорируем событие, если переход не найден
         return;
@@ -317,9 +316,7 @@ void StateMachine::unregisterStateObserver(StateObserver* observer) {
 
 // Error handling методы
 
-void StateMachine::setErrorHandler(ErrorHandler handler) {
-    impl_->error_handler = handler;
-}
+void StateMachine::setErrorHandler(ErrorHandler handler) { impl_->error_handler = handler; }
 
 // Вспомогательные методы
 
@@ -348,7 +345,8 @@ void StateMachine::performTransition(const TransitionEvent& event) {
     }
 
     // Выполняем действия перехода
-    const TransitionInfo* transition = impl_->config_parser->findTransition(old_state, event.event_name);
+    const TransitionInfo* transition =
+        impl_->config_parser->findTransition(old_state, event.event_name);
     if (transition && !transition->actions.empty()) {
         executeTransitionActions(transition->actions);
     }
@@ -381,7 +379,8 @@ void StateMachine::performTransition(const TransitionEvent& event) {
     }
 }
 
-bool StateMachine::evaluateGuard(const std::string& from_state, const std::string& to_state, const std::string& event_name) {
+bool StateMachine::evaluateGuard(const std::string& from_state, const std::string& to_state,
+                                 const std::string& event_name) {
     return impl_->callback_registry->callGuard(from_state, to_state, event_name);
 }
 
@@ -400,36 +399,27 @@ void StateMachine::executeTransitionActions(const std::vector<std::string>& acti
 
 // Вспомогательные методы для регистрации коллбэков (для шаблонных методов)
 
-void StateMachine::registerStateCallbackImpl(
-    const std::string& state_name,
-    const std::string& callback_type,
-    std::function<void()> callback
-) {
+void StateMachine::registerStateCallbackImpl(const std::string& state_name,
+                                             const std::string& callback_type,
+                                             std::function<void()> callback) {
     impl_->callback_registry->registerStateCallback(state_name, callback_type, callback);
 }
 
 void StateMachine::registerTransitionCallbackImpl(
-    const std::string& from_state,
-    const std::string& to_state,
-    std::function<void(const TransitionEvent&)> callback
-) {
+    const std::string& from_state, const std::string& to_state,
+    std::function<void(const TransitionEvent&)> callback) {
     impl_->callback_registry->registerTransitionCallback(from_state, to_state, callback);
 }
 
-void StateMachine::registerGuardImpl(
-    const std::string& from_state,
-    const std::string& to_state,
-    const std::string& event_name,
-    std::function<bool()> callback
-) {
+void StateMachine::registerGuardImpl(const std::string& from_state, const std::string& to_state,
+                                     const std::string& event_name,
+                                     std::function<bool()> callback) {
     impl_->callback_registry->registerGuard(from_state, to_state, event_name, callback);
 }
 
-void StateMachine::registerActionImpl(
-    const std::string& action_name,
-    std::function<void()> callback
-) {
+void StateMachine::registerActionImpl(const std::string& action_name,
+                                      std::function<void()> callback) {
     impl_->callback_registry->registerAction(action_name, callback);
 }
 
-} // namespace fsmconfig
+}  // namespace fsmconfig

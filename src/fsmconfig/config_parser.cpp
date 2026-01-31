@@ -1,10 +1,12 @@
 #include "fsmconfig/config_parser.hpp"
-#include "fsmconfig/types.hpp"
 
 #include <yaml-cpp/yaml.h>
+
+#include <algorithm>
 #include <fstream>
 #include <sstream>
-#include <algorithm>
+
+#include "fsmconfig/types.hpp"
 
 namespace fsmconfig {
 
@@ -16,7 +18,7 @@ namespace fsmconfig {
  * @brief Внутренняя реализация ConfigParser
  */
 class ConfigParser::Impl {
-public:
+   public:
     /// Глобальные переменные конфигурации
     std::map<std::string, VariableValue> global_variables;
 
@@ -44,15 +46,11 @@ public:
 // Конструкторы и деструктор
 // ============================================================================
 
-ConfigParser::ConfigParser()
-    : impl_(std::make_unique<Impl>()) {
-}
+ConfigParser::ConfigParser() : impl_(std::make_unique<Impl>()) {}
 
 ConfigParser::~ConfigParser() = default;
 
-ConfigParser::ConfigParser(ConfigParser&& other) noexcept
-    : impl_(std::move(other.impl_)) {
-}
+ConfigParser::ConfigParser(ConfigParser&& other) noexcept : impl_(std::move(other.impl_)) {}
 
 ConfigParser& ConfigParser::operator=(ConfigParser&& other) noexcept {
     if (this != &other) {
@@ -153,9 +151,7 @@ const std::map<std::string, VariableValue>& ConfigParser::getGlobalVariables() c
     return impl_->global_variables;
 }
 
-const std::map<std::string, StateInfo>& ConfigParser::getStates() const {
-    return impl_->states;
-}
+const std::map<std::string, StateInfo>& ConfigParser::getStates() const { return impl_->states; }
 
 const std::vector<TransitionInfo>& ConfigParser::getTransitions() const {
     return impl_->transitions;
@@ -183,10 +179,8 @@ std::vector<TransitionInfo> ConfigParser::getTransitionsFrom(const std::string& 
     return result;
 }
 
-const TransitionInfo* ConfigParser::findTransition(
-    const std::string& from_state,
-    const std::string& event_name) const {
-
+const TransitionInfo* ConfigParser::findTransition(const std::string& from_state,
+                                                   const std::string& event_name) const {
     for (const auto& transition : impl_->transitions) {
         if (transition.from_state == from_state && transition.event_name == event_name) {
             return &transition;
@@ -195,13 +189,9 @@ const TransitionInfo* ConfigParser::findTransition(
     return nullptr;
 }
 
-std::string ConfigParser::getInitialState() const {
-    return impl_->initial_state;
-}
+std::string ConfigParser::getInitialState() const { return impl_->initial_state; }
 
-void ConfigParser::clear() {
-    impl_->clear();
-}
+void ConfigParser::clear() { impl_->clear(); }
 
 // ============================================================================
 // Вспомогательные методы парсинга
@@ -336,15 +326,13 @@ void ConfigParser::validateConfig() const {
     // Проверить, что все состояния, указанные в переходах, существуют
     for (const auto& transition : impl_->transitions) {
         if (!hasState(transition.from_state)) {
-            throw ConfigException(
-                "Transition references non-existent source state: '" +
-                transition.from_state + "'");
+            throw ConfigException("Transition references non-existent source state: '" +
+                                  transition.from_state + "'");
         }
 
         if (!hasState(transition.to_state)) {
-            throw ConfigException(
-                "Transition references non-existent target state: '" +
-                transition.to_state + "'");
+            throw ConfigException("Transition references non-existent target state: '" +
+                                  transition.to_state + "'");
         }
     }
 
@@ -353,9 +341,8 @@ void ConfigParser::validateConfig() const {
     for (const auto& transition : impl_->transitions) {
         auto& events = state_events[transition.from_state];
         if (events.find(transition.event_name) != events.end()) {
-            throw ConfigException(
-                "Duplicate transition from state '" + transition.from_state +
-                "' with event '" + transition.event_name + "'");
+            throw ConfigException("Duplicate transition from state '" + transition.from_state +
+                                  "' with event '" + transition.event_name + "'");
         }
         events.insert(transition.event_name);
     }
@@ -404,4 +391,4 @@ void ConfigParser::parseTransitions(const YAML::Node& node) {
     }
 }
 
-} // namespace fsmconfig
+}  // namespace fsmconfig
