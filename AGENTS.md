@@ -86,15 +86,48 @@ For effective work with the project, ALWAYS use:
 - [`LICENSE`](LICENSE) at project root — license file
 - [`DOCKER.md`](DOCKER.md) at project root — Docker instructions
 
-**Structure of `docs/` directory:**
-- You can create any subfolders with any structure
-- Examples of existing paths:
-  - [`docs/architecture.md`](docs/architecture.md)
-  - [`docs/api_reference.md`](docs/api_reference.md)
-  - [`docs/examples.md`](docs/examples.md)
-  - `docs/architecture/decisions/` — for ADR (Architecture Decision Records)
+#### Permanent Documentation (Versioned)
 
-**Important:** If the user has not explicitly asked to create an .md file in another directory, ALWAYS create .md files inside `docs/`. This ensures centralized storage of all technical project documentation.
+These files are tracked in git and represent the project's permanent documentation:
+
+- **API Documentation:** [`docs/api_reference.md`](docs/api_reference.md), [`docs/architecture.md`](docs/architecture.md)
+- **Examples:** [`docs/examples.md`](docs/examples.md)
+- **Development Guides:** [`docs/development/`](docs/development/)
+- **Technology Stack:** [`docs/technologies/`](docs/technologies/)
+- **Architecture Decision Records:** `docs/architecture/decisions/` — ONLY finalized ADRs that should be permanently stored
+
+#### Temporary Documentation (Work in Progress)
+
+These files are NOT tracked in git and are used only during task development:
+
+- **Location:** `docs/.wip/<branch-name>/`
+- **Purpose:** Temporary drafts, ADRs, design documents created by AI agents
+- **Rule:** Create a subdirectory matching the current git branch name
+- **Cleanup:** After task completion, either:
+  - Delete the directory if files are no longer needed
+  - Move important files to permanent documentation locations
+
+**Example Workflow:**
+```bash
+# 1. Create branch
+git checkout -b feature/add-state-persistence
+
+# 2. AI creates temporary files in
+docs/.wip/feature/add-state-persistence/adr-001.md
+docs/.wip/feature/add-state-persistence/design.md
+
+# 3. After task completion - either delete or move to permanent docs
+# If ADR is important, move to docs/architecture/decisions/
+mv docs/.wip/feature/add-state-persistence/adr-001.md docs/architecture/decisions/
+
+# 4. Clean up
+rm -rf docs/.wip/feature/add-state-persistence/
+```
+
+**IMPORTANT:**
+- NEVER create .md files directly in `docs/` root (except the permanent files listed above)
+- ALWAYS use `docs/.wip/<branch-name>/` for task-specific temporary documentation
+- The `docs/.wip/` directory is ignored by git (see [`.gitignore`](.gitignore))
 
 ### MCP Memory Server
 

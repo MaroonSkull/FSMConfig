@@ -44,3 +44,6 @@
 .kilocode
 build
 Testing
+
+# Temporary AI-generated documentation (work in progress)
+docs/.wip/
