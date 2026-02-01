@@ -1,85 +1,85 @@
 # Task Strategy
 
-## Принцип
+## Principle
 
-Критические и сложные задачи должны разбиваться на множество мелких, независимых подзадач.
+Critical and complex tasks should be broken down into many small, independent subtasks.
 
-## Зачем это нужно
+## Why This Is Needed
 
-### 1. Уменьшение контекстной нагрузки
+### 1. Reducing Context Load
 
-- Нейросети имеют ограниченный размер контекста
-- Меньшие задачи требуют меньше контекста
-- Это повышает качество выполнения каждой подзадачи
+- Neural networks have limited context size
+- Smaller tasks require less context
+- This improves the quality of each subtask completion
 
-### 2. Подготовка к параллельному выполнению
+### 2. Preparation for Parallel Execution
 
-- Мелкие независимые задачи можно выполнять параллельно
-- Это ускоряет общее время выполнения
-- В будущем будет реализована поддержка параллельного вызова агентов
+- Small independent tasks can be executed in parallel
+- This speeds up overall completion time
+- In the future, support for parallel agent calls will be implemented
 
-## Как разбивать задачи
+## How to Break Down Tasks
 
-### Правило 1: Одна задача — одна конкретная цель
+### Rule 1: One Task — One Specific Goal
 
-- ❌ Плохо: "Проанализировать весь проект и исправить все проблемы"
-- ✅ Хорошо: "Проверить соответствие C++ стандарта в CMakeLists.txt"
+- ❌ Bad: "Analyze the entire project and fix all problems"
+- ✅ Good: "Check C++ standard compliance in CMakeLists.txt"
 
-### Правило 2: Задача должна быть завершённой
+### Rule 2: Task Should Be Complete
 
-- Каждая подзадача должна иметь чёткий критерий завершения
-- Результат подзадачи должен быть самостоятельно полезен
+- Each subtask should have a clear completion criterion
+- The result of a subtask should be independently useful
 
-### Правило 3: Минимизировать зависимости между подзадачами
+### Rule 3: Minimize Dependencies Between Subtasks
 
-- Подзадачи должны быть как можно более независимыми
-- Если подзадача B зависит от подзадачи A, они должны выполняться последовательно
+- Subtasks should be as independent as possible
+- If subtask B depends on subtask A, they should be executed sequentially
 
-## Примеры разбиения
+## Breakdown Examples
 
-### Пример 1: Критический анализ документации
+### Example 1: Critical Documentation Analysis
 
-Вместо одной большой задачи "Проанализировать AGENTS.md":
+Instead of one large task "Analyze AGENTS.md":
 
-- ✅ Подзадача 1: "Проверить соответствие C++ стандарта"
-- ✅ Подзадача 2: "Проверить формат YAML конфигурации"
-- ✅ Подзадача 3: "Проверить наличие конфигурационных файлов линтеров"
-- ✅ Подзадача 4: "Проверить соответствие структуры файлов"
+- ✅ Subtask 1: "Check C++ standard compliance"
+- ✅ Subtask 2: "Check YAML configuration format"
+- ✅ Subtask 3: "Check for linter configuration files"
+- ✅ Subtask 4: "Check file structure compliance"
 
-### Пример 2: Рефакторинг кода
+### Example 2: Code Refactoring
 
-Вместо "Рефакторить все классы проекта":
+Instead of "Refactor all project classes":
 
-- ✅ Подзадача 1: "Рефакторить класс StateMachine"
-- ✅ Подзадача 2: "Рефакторить класс ConfigParser"
-- ✅ Подзадача 3: "Рефакторить класс EventDispatcher"
+- ✅ Subtask 1: "Refactor StateMachine class"
+- ✅ Subtask 2: "Refactor ConfigParser class"
+- ✅ Subtask 3: "Refactor EventDispatcher class"
 
-### Пример 3: Добавление документации
+### Example 3: Adding Documentation
 
-Вместо "Задокументировать весь проект":
+Instead of "Document the entire project":
 
-- ✅ Подзадача 1: "Задокументировать методы StateMachine"
-- ✅ Подзадача 2: "Задокументировать методы ConfigParser"
-- ✅ Подзадача 3: "Задокументировать методы EventDispatcher"
+- ✅ Subtask 1: "Document StateMachine methods"
+- ✅ Subtask 2: "Document ConfigParser methods"
+- ✅ Subtask 3: "Document EventDispatcher methods"
 
-## Когда НЕ стоит разбивать
+## When NOT to Break Down
 
-- Если задача тривиальная и занимает менее 2-3 минут
-- Если разбиение создаст больше сложностей, чем решит
-- Если подзадачи будут сильно зависеть друг от друга
+- If the task is trivial and takes less than 2-3 minutes
+- If breaking down would create more complexity than it solves
+- If subtasks would be heavily dependent on each other
 
-## Практические рекомендации
+## Practical Recommendations
 
-1. **Ориентир на время:** Идеальная подзадача занимает 5-15 минут
-2. **Ориентир на контекст:** Подзадача должна использовать не более 20-30% доступного контекста
-3. **Ориентир на результат:** Каждая подзадача должна давать конкретный измеримый результат
+1. **Time target:** Ideal subtask takes 5-15 minutes
+2. **Context target:** Subtask should use no more than 20-30% of available context
+3. **Result target:** Each subtask should produce a concrete measurable result
 
-## Для orchestrator режима
+## For Orchestrator Mode
 
-При делегировании задач:
+When delegating tasks:
 
-1. Анализировать сложность задачи
-2. Если задача сложная — разбивать на подзадачи
-3. Создавать отдельные подзадачи для разных аспектов
-4. Координировать выполнение подзадач
-5. Собирать результаты в единое целое
+1. Analyze task complexity
+2. If the task is complex — break it down into subtasks
+3. Create separate subtasks for different aspects
+4. Coordinate subtask execution
+5. Gather results into a coherent whole

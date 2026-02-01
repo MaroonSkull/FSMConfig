@@ -1,9 +1,9 @@
-# Глобальные переменные
+# Global variables
 variables:
   player_health: 100
   player_level: 1
 
-# Определения состояний
+# State definitions
 states:
   menu:
     on_enter: on_menu_enter
@@ -35,7 +35,7 @@ states:
       - show_game_over_screen
       - save_high_score
 
-# Определения переходов
+# Transition definitions
 transitions:
   - from: menu
     to: playing

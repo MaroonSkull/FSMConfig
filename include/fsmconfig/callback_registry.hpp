@@ -13,194 +13,194 @@ namespace fsmconfig {
 
 /**
  * @file callback_registry.hpp
- * @brief Реестр коллбэков для конечного автомата
+ * @brief Callback registry for finite state machine
  */
 
 /**
- * @brief Тип коллбэка для состояния (on_enter, on_exit)
+ * @brief State callback type (on_enter, on_exit)
  */
 using StateCallback = std::function<void()>;
 
 /**
- * @brief Тип коллбэка для перехода
+ * @brief Transition callback type
  */
 using TransitionCallback = std::function<void(const TransitionEvent&)>;
 
 /**
- * @brief Тип guard-коллбэка (возвращает bool)
+ * @brief Guard callback type (returns bool)
  */
 using GuardCallback = std::function<bool()>;
 
 /**
- * @brief Тип коллбэка для действия
+ * @brief Action callback type
  */
 using ActionCallback = std::function<void()>;
 
 /**
  * @class CallbackRegistry
- * @brief Реестр коллбэков для конечного автомата
+ * @brief Callback registry for finite state machine
  *
- * CallbackRegistry обеспечивает:
- * - Регистрацию коллбэков состояний (on_enter, on_exit)
- * - Регистрацию коллбэков переходов
- * - Регистрацию guard-коллбэков для проверки условий
- * - Регистрацию коллбэков действий
- * - Выполнение зарегистрированных коллбэков
- * - Потокобезопасность при работе с коллбэками
+ * CallbackRegistry provides:
+ * - Registration of state callbacks (on_enter, on_exit)
+ * - Registration of transition callbacks
+ * - Registration of guard callbacks for condition checking
+ * - Registration of action callbacks
+ * - Execution of registered callbacks
+ * - Thread safety when working with callbacks
  */
 class CallbackRegistry {
    public:
     /**
-     * @brief Конструктор по умолчанию
+     * @brief Default constructor
      */
     CallbackRegistry();
 
     /**
-     * @brief Деструктор
+     * @brief Destructor
      */
     ~CallbackRegistry();
 
-    // Запрет копирования
+    // Copy prohibition
     CallbackRegistry(const CallbackRegistry&) = delete;
     CallbackRegistry& operator=(const CallbackRegistry&) = delete;
 
-    // Разрешение перемещения
+    // Move permission
     /**
-     * @brief Конструктор перемещения
+     * @brief Move constructor
      */
     CallbackRegistry(CallbackRegistry&& other) noexcept;
 
     /**
-     * @brief Оператор присваивания перемещением
+     * @brief Move assignment operator
      */
     CallbackRegistry& operator=(CallbackRegistry&& other) noexcept;
 
     /**
-     * @brief Регистрация коллбэка состояния
-     * @param state_name Имя состояния
-     * @param callback_type Тип коллбэка (например, "on_enter", "on_exit")
-     * @param callback Функция коллбэка
+     * @brief Register state callback
+     * @param state_name State name
+     * @param callback_type Callback type (e.g., "on_enter", "on_exit")
+     * @param callback Callback function
      */
     void registerStateCallback(const std::string& state_name, const std::string& callback_type,
                                StateCallback callback);
 
     /**
-     * @brief Регистрация коллбэка перехода
-     * @param from_state Исходное состояние
-     * @param to_state Целевое состояние
-     * @param callback Функция коллбэка
+     * @brief Register transition callback
+     * @param from_state Source state
+     * @param to_state Target state
+     * @param callback Callback function
      */
     void registerTransitionCallback(const std::string& from_state, const std::string& to_state,
                                     TransitionCallback callback);
 
     /**
-     * @brief Регистрация guard-коллбэка
-     * @param from_state Исходное состояние
-     * @param to_state Целевое состояние
-     * @param event_name Имя события
-     * @param callback Функция guard-коллбэка
+     * @brief Register guard callback
+     * @param from_state Source state
+     * @param to_state Target state
+     * @param event_name Event name
+     * @param callback Guard callback function
      */
     void registerGuard(const std::string& from_state, const std::string& to_state,
                        const std::string& event_name, GuardCallback callback);
 
     /**
-     * @brief Регистрация коллбэка действия
-     * @param action_name Имя действия
-     * @param callback Функция коллбэка
+     * @brief Register action callback
+     * @param action_name Action name
+     * @param callback Callback function
      */
     void registerAction(const std::string& action_name, ActionCallback callback);
 
     /**
-     * @brief Вызов коллбэка состояния
-     * @param state_name Имя состояния
-     * @param callback_type Тип коллбэка
+     * @brief Call state callback
+     * @param state_name State name
+     * @param callback_type Callback type
      */
     void callStateCallback(const std::string& state_name, const std::string& callback_type) const;
 
     /**
-     * @brief Вызов коллбэка перехода
-     * @param from_state Исходное состояние
-     * @param to_state Целевое состояние
-     * @param event Событие перехода
+     * @brief Call transition callback
+     * @param from_state Source state
+     * @param to_state Target state
+     * @param event Transition event
      */
     void callTransitionCallback(const std::string& from_state, const std::string& to_state,
                                 const TransitionEvent& event) const;
 
     /**
-     * @brief Вызов guard-коллбэка
-     * @param from_state Исходное состояние
-     * @param to_state Целевое состояние
-     * @param event_name Имя события
-     * @return true если guard существует и вернул true, иначе false
+     * @brief Call guard callback
+     * @param from_state Source state
+     * @param to_state Target state
+     * @param event_name Event name
+     * @return true if guard exists and returned true, otherwise false
      */
     bool callGuard(const std::string& from_state, const std::string& to_state,
                    const std::string& event_name) const;
 
     /**
-     * @brief Вызов коллбэка действия
-     * @param action_name Имя действия
+     * @brief Call action callback
+     * @param action_name Action name
      */
     void callAction(const std::string& action_name) const;
 
     /**
-     * @brief Проверка наличия коллбэка состояния
-     * @param state_name Имя состояния
-     * @param callback_type Тип коллбэка
-     * @return true если коллбэк зарегистрирован
+     * @brief Check if state callback exists
+     * @param state_name State name
+     * @param callback_type Callback type
+     * @return true if callback is registered
      */
     bool hasStateCallback(const std::string& state_name, const std::string& callback_type) const;
 
     /**
-     * @brief Проверка наличия коллбэка перехода
-     * @param from_state Исходное состояние
-     * @param to_state Целевое состояние
-     * @return true если коллбэк зарегистрирован
+     * @brief Check if transition callback exists
+     * @param from_state Source state
+     * @param to_state Target state
+     * @return true if callback is registered
      */
     bool hasTransitionCallback(const std::string& from_state, const std::string& to_state) const;
 
     /**
-     * @brief Проверка наличия guard-коллбэка
-     * @param from_state Исходное состояние
-     * @param to_state Целевое состояние
-     * @param event_name Имя события
-     * @return true если guard зарегистрирован
+     * @brief Check if guard callback exists
+     * @param from_state Source state
+     * @param to_state Target state
+     * @param event_name Event name
+     * @return true if guard is registered
      */
     bool hasGuard(const std::string& from_state, const std::string& to_state,
                   const std::string& event_name) const;
 
     /**
-     * @brief Проверка наличия коллбэка действия
-     * @param action_name Имя действия
-     * @return true если коллбэк зарегистрирован
+     * @brief Check if action callback exists
+     * @param action_name Action name
+     * @return true if callback is registered
      */
     bool hasAction(const std::string& action_name) const;
 
     /**
-     * @brief Очистка всех коллбэков
+     * @brief Clear all callbacks
      */
     void clear();
 
     /**
-     * @brief Получение количества зарегистрированных коллбэков состояния
-     * @return Количество коллбэков состояния
+     * @brief Get number of registered state callbacks
+     * @return Number of state callbacks
      */
     size_t getStateCallbackCount() const;
 
     /**
-     * @brief Получение количества зарегистрированных коллбэков перехода
-     * @return Количество коллбэков перехода
+     * @brief Get number of registered transition callbacks
+     * @return Number of transition callbacks
      */
     size_t getTransitionCallbackCount() const;
 
     /**
-     * @brief Получение количества зарегистрированных guard-коллбэков
-     * @return Количество guard-коллбэков
+     * @brief Get number of registered guard callbacks
+     * @return Number of guard callbacks
      */
     size_t getGuardCount() const;
 
     /**
-     * @brief Получение количества зарегистрированных коллбэков действий
-     * @return Количество коллбэков действий
+     * @brief Get number of registered action callbacks
+     * @return Number of action callbacks
      */
     size_t getActionCount() const;
 
@@ -209,29 +209,29 @@ class CallbackRegistry {
     std::unique_ptr<Impl> impl_;
 
     /**
-     * @brief Вспомогательный метод для создания ключа коллбэка состояния
-     * @param state_name Имя состояния
-     * @param callback_type Тип коллбэка
-     * @return Ключ в формате "state_name:callback_type"
+     * @brief Helper method to create state callback key
+     * @param state_name State name
+     * @param callback_type Callback type
+     * @return Key in format "state_name:callback_type"
      */
     std::string makeStateCallbackKey(const std::string& state_name,
                                      const std::string& callback_type) const;
 
     /**
-     * @brief Вспомогательный метод для создания ключа коллбэка перехода
-     * @param from_state Исходное состояние
-     * @param to_state Целевое состояние
-     * @return Ключ в формате "from_state:to_state"
+     * @brief Helper method to create transition callback key
+     * @param from_state Source state
+     * @param to_state Target state
+     * @return Key in format "from_state:to_state"
      */
     std::string makeTransitionCallbackKey(const std::string& from_state,
                                           const std::string& to_state) const;
 
     /**
-     * @brief Вспомогательный метод для создания ключа guard-коллбэка
-     * @param from_state Исходное состояние
-     * @param to_state Целевое состояние
-     * @param event_name Имя события
-     * @return Ключ в формате "from_state:to_state:event_name"
+     * @brief Helper method to create guard callback key
+     * @param from_state Source state
+     * @param to_state Target state
+     * @param event_name Event name
+     * @return Key in format "from_state:to_state:event_name"
      */
     std::string makeGuardKey(const std::string& from_state, const std::string& to_state,
                              const std::string& event_name) const;

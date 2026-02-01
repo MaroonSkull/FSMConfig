@@ -8,7 +8,7 @@ using namespace fsmconfig;
 
 /**
  * @file test_config_parser.cpp
- * @brief Тесты для ConfigParser
+ * @brief Tests for ConfigParser
  */
 
 class ConfigParserTest : public ::testing::Test {

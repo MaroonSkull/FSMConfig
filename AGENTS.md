@@ -1,186 +1,186 @@
 # AGENTS.md
 
-## Оглавление
+## Table of Contents
 
-1. [Общая информация о проекте](#общая-информация-о-проекте)
-2. [Общие указания по работе](#общие-указания-по-работе)
-3. [Дополнительные ресурсы](#дополнительные-ресурсы)
-
----
-
-## Общая информация о проекте
-
-### Назначение
-
-**FSMConfig** — это C++ библиотека для работы с конечными автоматами (Finite State Machine) через YAML-конфигурацию. Библиотека позволяет декларативно описывать состояния, переходы, события и коллбэки в YAML-файлах, что упрощает создание и модификацию сложных автоматов состояний без необходимости перекомпиляции кода.
-
-### Основные компоненты
-
-#### Заголовочные файлы (`include/fsmconfig/`)
-
-| Файл | Назначение |
-|------|------------|
-| [`state_machine.hpp`](include/fsmconfig/state_machine.hpp) | Основной класс конечного автомата |
-| [`state.hpp`](include/fsmconfig/state.hpp) | Класс представления состояния |
-| [`config_parser.hpp`](include/fsmconfig/config_parser.hpp) | Парсер YAML-конфигураций |
-| [`event_dispatcher.hpp`](include/fsmconfig/event_dispatcher.hpp) | Диспетчер событий |
-| [`callback_registry.hpp`](include/fsmconfig/callback_registry.hpp) | Реестр коллбэков |
-| [`variable_manager.hpp`](include/fsmconfig/variable_manager.hpp) | Менеджер переменных |
-| [`types.hpp`](include/fsmconfig/types.hpp) | Основные типы и определения |
-
-#### Исходные файлы (`src/fsmconfig/`)
-
-| Файл | Реализация |
-|------|------------|
-| [`state_machine.cpp`](src/fsmconfig/state_machine.cpp) | Логика работы конечного автомата |
-| [`state.cpp`](src/fsmconfig/state.cpp) | Управление состояниями |
-| [`config_parser.cpp`](src/fsmconfig/config_parser.cpp) | Парсинг YAML |
-| [`event_dispatcher.cpp`](src/fsmconfig/event_dispatcher.cpp) | Обработка событий |
-| [`callback_registry.cpp`](src/fsmconfig/callback_registry.cpp) | Регистрация и вызов коллбэков |
-| [`variable_manager.cpp`](src/fsmconfig/variable_manager.cpp) | Управление переменными |
-| [`types.cpp`](src/fsmconfig/types.cpp) | Вспомогательные типы |
-
-#### Тесты (`tests/`)
-
-- [`test_state_machine.cpp`](tests/test_state_machine.cpp) — тесты конечного автомата
-- [`test_config_parser.cpp`](tests/test_config_parser.cpp) — тесты парсера конфигурации
-- [`test_callback_registry.cpp`](tests/test_callback_registry.cpp) — тесты реестра коллбэков
-- [`test_integration.cpp`](tests/test_integration.cpp) — интеграционные тесты
-
-#### Примеры (`examples/`)
-
-- [`simple_fsm/`](examples/simple_fsm/) — простой пример конечного автомата
-- [`game_state/`](examples/game_state/) — пример управления состояниями игры
-- [`network_protocol/`](examples/network_protocol/) — пример протокола сетевого взаимодействия
-
-#### Дополнительные файлы конфигурации
-
-| Файл/Директория | Назначение |
-|-----------------|------------|
-| [`cmake/Findyaml-cpp.cmake`](cmake/Findyaml-cpp.cmake) | Кастомный модуль поиска yaml-cpp |
-| [`cmake/fsmconfig-config.cmake.in`](cmake/fsmconfig-config.cmake.in) | Шаблон конфигурации CMake |
-| [`Dockerfile`](Dockerfile) | Docker-образ для разработки |
-| [`.devcontainer/`](.devcontainer/) | Конфигурация VS Code Dev Container |
-| [`.github/`](.github/) | Конфигурация GitHub Actions |
-| [`.gitignore`](.gitignore) | Правила исключения Git |
-| [`LICENSE`](LICENSE) | Лицензия проекта |
+1. [Project Overview](#project-overview)
+2. [General Work Guidelines](#general-work-guidelines)
+3. [Additional Resources](#additional-resources)
 
 ---
 
-## Общие указания по работе
+## Project Overview
 
-### ВАЖНО: Использование контекста
+### Purpose
 
-Для эффективной работы с проектом ВСЕГДА использовать:
+**FSMConfig** is a C++ library for working with finite state machines through YAML configuration. The library allows declarative description of states, transitions, events, and callbacks in YAML files, simplifying the creation and modification of complex state machines without the need for code recompilation.
 
-1. **"use context7"** — для получения контекста о текущем состоянии проекта
-2. **"Knowledge Graph Memory"** — для сохранения и извлечения знаний о проекте
+### Main Components
 
-### Правила создания .md файлов
+#### Header Files (`include/fsmconfig/`)
 
-**ОБЯЗАТЕЛЬНОЕ ПРАВИЛО:** Все `.md` файлы должны создаваться исключительно внутри директории `docs/`.
+| File | Purpose |
+|------|---------|
+| [`state_machine.hpp`](include/fsmconfig/state_machine.hpp) | Main finite state machine class |
+| [`state.hpp`](include/fsmconfig/state.hpp) | State representation class |
+| [`config_parser.hpp`](include/fsmconfig/config_parser.hpp) | YAML configuration parser |
+| [`event_dispatcher.hpp`](include/fsmconfig/event_dispatcher.hpp) | Event dispatcher |
+| [`callback_registry.hpp`](include/fsmconfig/callback_registry.hpp) | Callback registry |
+| [`variable_manager.hpp`](include/fsmconfig/variable_manager.hpp) | Variable manager |
+| [`types.hpp`](include/fsmconfig/types.hpp) | Main types and definitions |
 
-**Исключения:**
-- [`README.md`](README.md) в корне проекта — основное описание проекта
-- [`AGENTS.md`](AGENTS.md) в корне проекта — правила работы для агентов
-- [`LICENSE`](LICENSE) в корне проекта — файл лицензии
-- [`DOCKER.md`](DOCKER.md) в корне проекта — инструкции по Docker
+#### Source Files (`src/fsmconfig/`)
 
-**Структура директории `docs/`:**
-- Можно создавать любые подпапки с любой структурой
-- Примеры существующих путей:
+| File | Implementation |
+|------|----------------|
+| [`state_machine.cpp`](src/fsmconfig/state_machine.cpp) | Finite state machine logic |
+| [`state.cpp`](src/fsmconfig/state.cpp) | State management |
+| [`config_parser.cpp`](src/fsmconfig/config_parser.cpp) | YAML parsing |
+| [`event_dispatcher.cpp`](src/fsmconfig/event_dispatcher.cpp) | Event handling |
+| [`callback_registry.cpp`](src/fsmconfig/callback_registry.cpp) | Callback registration and invocation |
+| [`variable_manager.cpp`](src/fsmconfig/variable_manager.cpp) | Variable management |
+| [`types.cpp`](src/fsmconfig/types.cpp) | Auxiliary types |
+
+#### Tests (`tests/`)
+
+- [`test_state_machine.cpp`](tests/test_state_machine.cpp) — finite state machine tests
+- [`test_config_parser.cpp`](tests/test_config_parser.cpp) — configuration parser tests
+- [`test_callback_registry.cpp`](tests/test_callback_registry.cpp) — callback registry tests
+- [`test_integration.cpp`](tests/test_integration.cpp) — integration tests
+
+#### Examples (`examples/`)
+
+- [`simple_fsm/`](examples/simple_fsm/) — simple finite state machine example
+- [`game_state/`](examples/game_state/) — game state management example
+- [`network_protocol/`](examples/network_protocol/) — network protocol example
+
+#### Additional Configuration Files
+
+| File/Directory | Purpose |
+|----------------|---------|
+| [`cmake/Findyaml-cpp.cmake`](cmake/Findyaml-cpp.cmake) | Custom yaml-cpp find module |
+| [`cmake/fsmconfig-config.cmake.in`](cmake/fsmconfig-config.cmake.in) | CMake configuration template |
+| [`Dockerfile`](Dockerfile) | Docker image for development |
+| [`.devcontainer/`](.devcontainer/) | VS Code Dev Container configuration |
+| [`.github/`](.github/) | GitHub Actions configuration |
+| [`.gitignore`](.gitignore) | Git exclusion rules |
+| [`LICENSE`](LICENSE) | Project license |
+
+---
+
+## General Work Guidelines
+
+### IMPORTANT: Using Context
+
+For effective work with the project, ALWAYS use:
+
+1. **"use context7"** — to get context about the current state of the project
+2. **"Knowledge Graph Memory"** — for saving and retrieving knowledge about the project
+
+### Rules for Creating .md Files
+
+**MANDATORY RULE:** All `.md` files must be created exclusively inside the `docs/` directory.
+
+**Exceptions:**
+- [`README.md`](README.md) at project root — main project description
+- [`AGENTS.md`](AGENTS.md) at project root — agent work rules
+- [`LICENSE`](LICENSE) at project root — license file
+- [`DOCKER.md`](DOCKER.md) at project root — Docker instructions
+
+**Structure of `docs/` directory:**
+- You can create any subfolders with any structure
+- Examples of existing paths:
   - [`docs/architecture.md`](docs/architecture.md)
   - [`docs/api_reference.md`](docs/api_reference.md)
   - [`docs/examples.md`](docs/examples.md)
-  - `docs/architecture/decisions/` — для ADR (Architecture Decision Records)
+  - `docs/architecture/decisions/` — for ADR (Architecture Decision Records)
 
-**Важно:** Если пользователь явно не попросил создать .md файл в другой директории, ВСЕГДА создавайте .md файлы внутри `docs/`. Это обеспечивает централизованное хранение всей технической документации проекта.
+**Important:** If the user has not explicitly asked to create an .md file in another directory, ALWAYS create .md files inside `docs/`. This ensures centralized storage of all technical project documentation.
 
 ### MCP Memory Server
 
-**Назначение:** MCP Memory Server предоставляет LLM возможность сохранять и извлекать знания о проекте в виде knowledge graph.
+**Purpose:** MCP Memory Server provides LLM with the ability to save and retrieve knowledge about the project in the form of a knowledge graph.
 
-**Конфигурация:** Сервер запускается через Docker с постоянным хранилищем `claude-memory:/app/dist`.
+**Configuration:** The server is launched via Docker with persistent storage `claude-memory:/app/dist`.
 
-**Доступные инструменты:**
-1. `create_entities` — создание сущностей (классов, файлов, библиотек)
-2. `create_relations` — создание связей между сущностями
-3. `add_observations` — добавление наблюдений к существующим сущностям
-4. `read_graph` — чтение всего knowledge graph
-5. `search_nodes` — поиск сущностей по имени, типу или содержимому
-6. `open_nodes` — получение детальной информации о конкретных сущностях
+**Available tools:**
+1. `create_entities` — creation of entities (classes, files, libraries)
+2. `create_relations` — creation of relations between entities
+3. `add_observations` — adding observations to existing entities
+4. `read_graph` — reading the entire knowledge graph
+5. `search_nodes` — searching entities by name, type, or content
+6. `open_nodes` — getting detailed information about specific entities
 
-**Рекомендуемый workflow:**
+**Recommended workflow:**
 
 ```
-Начало задачи
+Start of task
     ↓
-Проверить существование сущности (search_nodes)
+Check entity existence (search_nodes)
     ↓
-    ├─ Найдена → open_nodes → Анализ информации
-    └─ Не найдена → create_entities
+    ├─ Found → open_nodes → Analyze information
+    └─ Not found → create_entities
     ↓
-Добавить новые наблюдения (add_observations)
+Add new observations (add_observations)
     ↓
-Создать отношения (create_relations)
+Create relations (create_relations)
 ```
 
-**Когда использовать Memory Server:**
+**When to use Memory Server:**
 
-| Действие | Инструмент | Пример |
-|----------|------------|-------|
-| Первое знакомство с компонентом | `create_entities` | Создать сущность для нового класса |
-| Обнаружение зависимости | `create_relations` | Связать класс с используемой библиотекой |
-| Изучение деталей реализации | `add_observations` | Добавить информацию о методах |
-| Получение контекста | `read_graph` или `search_nodes` | Извлечь знания перед задачей |
-| Проверка существования | `search_nodes` | Проверить, создана ли сущность |
+| Action | Tool | Example |
+|--------|------|--------|
+| First acquaintance with a component | `create_entities` | Create an entity for a new class |
+| Discovering a dependency | `create_relations` | Link a class with a used library |
+| Studying implementation details | `add_observations` | Add information about methods |
+| Getting context | `read_graph` or `search_nodes` | Retrieve knowledge before a task |
+| Checking existence | `search_nodes` | Check if an entity has been created |
 
-**Типы сущностей:**
-- `project` — проект (FSMConfig)
-- `class` — класс или структура (StateMachine, ConfigParser)
-- `file` — файл исходного кода (state_machine.cpp)
-- `library` — внешняя зависимость (yaml-cpp, gtest)
-- `tool` — инструмент разработки (clang-tidy, cppcheck)
-- `concept` — концепция или паттерн (RAII, Observer Pattern)
+**Entity types:**
+- `project` — project (FSMConfig)
+- `class` — class or structure (StateMachine, ConfigParser)
+- `file` — source code file (state_machine.cpp)
+- `library` — external dependency (yaml-cpp, gtest)
+- `tool` — development tool (clang-tidy, cppcheck)
+- `concept` — concept or pattern (RAII, Observer Pattern)
 
-**Типы отношений:**
-- `depends_on` — зависимость (A зависит от B)
-- `uses` — использование (A использует B)
-- `part_of` — часть (A является частью B)
-- `implements` — реализация (A реализует B)
-- `tests` — тестирование (A тестирует B)
-- `extends` — наследование/расширение
+**Relation types:**
+- `depends_on` — dependency (A depends on B)
+- `uses` — usage (A uses B)
+- `part_of` — part (A is part of B)
+- `implements` — implementation (A implements B)
+- `tests` — testing (A tests B)
+- `extends` — inheritance/extension
 
-**Пример использования:**
+**Usage example:**
 
 ```python
-# 1. Проверить существование
+# 1. Check existence
 result = mcp__memory__search_nodes(query="StateMachine")
 
-# 2. Создать если не существует
+# 2. Create if doesn't exist
 if not result["nodes"]:
     mcp__memory__create_entities(
         entities=[{
             "name": "StateMachine",
             "entityType": "class",
             "observations": [
-                "Основной класс конечного автомата",
-                "Расположен в include/fsmconfig/state_machine.hpp"
+                "Main finite state machine class",
+                "Located at include/fsmconfig/state_machine.hpp"
             ]
         }]
     )
 
-# 3. Добавить наблюдения
+# 3. Add observations
 mcp__memory__add_observations(
     observations=[{
         "entityName": "StateMachine",
         "contents": [
-            "Метод processEvent() обрабатывает события асинхронно"
+            "Method processEvent() handles events asynchronously"
         ]
     }]
 )
 
-# 4. Создать отношения
+# 4. Create relations
 mcp__memory__create_relations(
     relations=[
         {"from": "StateMachine", "to": "State", "relationType": "manages"}
@@ -188,123 +188,123 @@ mcp__memory__create_relations(
 )
 ```
 
-**Важно:** Memory Server — это дополнительный инструмент для сохранения контекста между сессиями. Он НЕ заменяет анализ кода и чтение файлов, а дополняет их.
+**Important:** Memory Server is an additional tool for preserving context between sessions. It does NOT replace code analysis and file reading, but complements them.
 
-### Пайплайн выполнения высокоуровневых задач
-
-```
-1. Сделать маленькое действие
-   ↓
-2. Критически проанализировать результаты
-   (используя режимы code-skeptic, code-reviewer)
-   ↓
-3. Если есть ошибки или недоработки:
-   ├─ Подготовить вопрос пользователю для уточнения
-   └─ Вернуться к пункту 1 и переработать решение
-   ↓
-4. Если ошибок нет — двигаться по задаче дальше
-```
-
-### Процесс решения высокоуровневой задачи
+### High-Level Task Execution Pipeline
 
 ```
-1. Создать архитектурные ADR
-   └─ Расположение: docs/architecture/decisions/
-   └─ **Важно:** Директория должна быть создана перед использованием
+1. Make a small action
    ↓
-2. Добавить диаграммы
-   ├─ Диаграммы компонентов
-   └─ Data flow диаграммы
+2. Critically analyze the results
+   (using code-skeptic, code-reviewer modes)
    ↓
-3. Документировать каждый критический path
+3. If there are errors or shortcomings:
+   ├─ Prepare a question for the user for clarification
+   └─ Return to step 1 and rework the solution
    ↓
-4. Провести аудит кода на основе документов
-   ├─ Найти дублирование (DRY)
-   ├─ Найти неправильную логику
-   └─ Найти расхождения с архитектурным планом
+4. If no errors — continue with the task
 ```
 
-**Пример структуры ADR:**
+### High-Level Task Solving Process
+
+```
+1. Create architectural ADRs
+   └─ Location: docs/architecture/decisions/
+   └─ **Important:** Directory must be created before use
+   ↓
+2. Add diagrams
+   ├─ Component diagrams
+   └─ Data flow diagrams
+   ↓
+3. Document each critical path
+   ↓
+4. Conduct code audit based on documents
+   ├─ Find duplication (DRY)
+   ├─ Find incorrect logic
+   └─ Find discrepancies with architectural plan
+```
+
+**Example ADR structure:**
 
 ```markdown
-# ADR-001: Выбор подхода для управления состоянием
+# ADR-001: Choosing an approach for state management
 
-## Статус
-Предложено
+## Status
+Proposed
 
-## Контекст
-Необходимо определить способ управления переходами между состояниями...
+## Context
+Need to determine the method for managing transitions between states...
 
-## Решение
-Использовать паттерн State с делегированием управления...
+## Decision
+Use the State pattern with delegated management...
 
-## Последствия
-Плюсы: ...
-Минусы: ...
+## Consequences
+Pros: ...
+Cons: ...
 ```
 
-### Использование линтеров
+### Using Linters
 
-**Принцип:** Использовать максимально широкий набор линтеров для обеспечения высокого качества кода.
+**Principle:** Use the widest possible set of linters to ensure high code quality.
 
-**Обязательные проверки:**
+**Mandatory checks:**
 
 ```bash
-# clang-tidy с современными проверками
+# clang-tidy with modern checks
 clang-tidy src/**/*.cpp \
   --checks='*' \
   -warnings-as-errors='*' \
   -- -Iinclude/ -std=c++20
 
-# cppcheck для дополнительного анализа
+# cppcheck for additional analysis
 cppcheck --enable=all --inconclusive --std=c++20 src/
 
-# clang-format для форматирования
+# clang-format for formatting
 clang-format -i src/**/*.cpp include/**/*.hpp
 ```
 
-### Поиск библиотек
+### Finding Libraries
 
-**Философия:** Не изобретать велосипед — искать готовые решения.
+**Philosophy:** Don't reinvent the wheel — look for ready-made solutions.
 
-**Процесс:**
+**Process:**
 
-1. При необходимости новой функциональности — сначала поиск в интернете (tavily)
-2. Цель: создать простой код, используя существующие библиотеки
-3. Не бояться обилия зависимостей
-4. При разработке НЕ реализовывать новые методы самостоятельно
-5. Если найдена подходящая библиотека:
-   - Предложить пользователю её интеграцию
-   - Дождаться ответа
-   - Только после одобрения — интегрировать
+1. When new functionality is needed — first search the internet (tavily)
+2. Goal: create simple code using existing libraries
+3. Don't fear an abundance of dependencies
+4. During development, DO NOT implement new methods yourself
+5. If a suitable library is found:
+   - Propose its integration to the user
+   - Wait for a response
+   - Only after approval — integrate
 
-**Примеры поиска:**
-- Для работы с JSON → `nlohmann/json`
-- Для логирования → `spdlog`
-- Для тестирования → `Catch2` или `gtest`
-- Для работы с временем → `date` (Howard Hinnant)
+**Search examples:**
+- For working with JSON → `nlohmann/json`
+- For logging → `spdlog`
+- For testing → `Catch2` or `gtest`
+- For working with time → `date` (Howard Hinnant)
 
 ---
 
-## Дополнительные ресурсы
+## Additional Resources
 
-### Руководства и стандарты разработки
+### Development Guides and Standards
 
-- **Технологический стек:** Подробнее: [`docs/technologies/tech-stack.md`](docs/technologies/tech-stack.md)
-- **Стратегия разбиения задач:** Подробнее: [`docs/development/task-strategy.md`](docs/development/task-strategy.md)
-- **Стандарты кодирования:** Подробнее: [`docs/development/coding-standards.md`](docs/development/coding-standards.md)
-- **Git workflow:** Подробнее: [`docs/development/workflow.md`](docs/development/workflow.md)
-- **Критический подход к разработке:** Подробнее: [`docs/development/critical-approach.md`](docs/development/critical-approach.md)
+- **Technology Stack:** More info: [`docs/technologies/tech-stack.md`](docs/technologies/tech-stack.md)
+- **Task Breakdown Strategy:** More info: [`docs/development/task-strategy.md`](docs/development/task-strategy.md)
+- **Coding Standards:** More info: [`docs/development/coding-standards.md`](docs/development/coding-standards.md)
+- **Git Workflow:** More info: [`docs/development/workflow.md`](docs/development/workflow.md)
+- **Critical Development Approach:** More info: [`docs/development/critical-approach.md`](docs/development/critical-approach.md)
 
-### Внутренняя документация
+### Internal Documentation
 
-- [`README.md`](README.md) — общее описание проекта
-- [`DOCKER.md`](DOCKER.md) — инструкции по работе с Docker
-- [`docs/architecture.md`](docs/architecture.md) — архитектура проекта
-- [`docs/api_reference.md`](docs/api_reference.md) — справочник по API
-- [`docs/examples.md`](docs/examples.md) — примеры использования
+- [`README.md`](README.md) — general project description
+- [`DOCKER.md`](DOCKER.md) — Docker instructions
+- [`docs/architecture.md`](docs/architecture.md) — project architecture
+- [`docs/api_reference.md`](docs/api_reference.md) — API reference
+- [`docs/examples.md`](docs/examples.md) — usage examples
 
-### Внешние ресурсы
+### External Resources
 
 - [CMake Documentation](https://cmake.org/documentation/)
 - [yaml-cpp Documentation](https://github.com/jbeder/yaml-cpp/)
@@ -313,50 +313,50 @@ clang-format -i src/**/*.cpp include/**/*.hpp
 
 ---
 
-## Краткая шпаргалка
+## Quick Reference
 
-### Быстрый старт
+### Quick Start
 
 ```bash
-# Сборка проекта
+# Build project
 mkdir build && cd build
 cmake .. -DCMAKE_BUILD_TYPE=Release
 cmake --build .
 
-# Запуск тестов
+# Run tests
 ctest --output-on-failure
 
-# Запуск линтеров
+# Run linters
 clang-tidy src/**/*.cpp -- -Iinclude/ -std=c++20
 clang-format -i src/**/*.cpp include/**/*.hpp
 ```
 
-### Типичный workflow
+### Typical Workflow
 
 ```bash
-# 1. Создать ветку
+# 1. Create branch
 git checkout -b feature/my-feature
 
-# 2. Внести изменения
-# ... код ...
+# 2. Make changes
+# ... code ...
 
-# 3. Проверить линтерами
+# 3. Check with linters
 clang-tidy src/**/*.cpp -- -Iinclude/ -std=c++20
 
-# 4. Запустить тесты
+# 4. Run tests
 cd build && ctest --output-on-failure
 
-# 5. Закоммитить
+# 5. Commit
 git add .
 git commit -m "feat: add my feature"
 
-# 6. Повторить для подзадач
+# 6. Repeat for subtasks
 # ...
 
 # 7. Review
 git diff main..feature/my-feature
 
-# 8. Смерджить подветки
+# 8. Merge sub-branches
 git merge feature/sub-task-1
 ```
 

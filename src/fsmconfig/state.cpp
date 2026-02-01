@@ -9,13 +9,13 @@ namespace fsmconfig {
 // ============================================================================
 
 /**
- * @brief Внутренняя реализация класса State (Pimpl идиома)
+ * @brief Internal implementation of State class (Pimpl idiom)
  */
 class State::Impl {
    public:
     /**
-     * @brief Конструктор
-     * @param info Информация о состоянии
+     * @brief Constructor
+     * @param info State information
      */
     explicit Impl(const StateInfo& info)
         : name(info.name),
@@ -24,11 +24,11 @@ class State::Impl {
           on_exit_callback(info.on_exit_callback),
           actions(info.actions) {}
 
-    std::string name;                                ///< Имя состояния
-    std::map<std::string, VariableValue> variables;  ///< Переменные состояния
-    std::string on_enter_callback;                   ///< Коллбэк при входе
-    std::string on_exit_callback;                    ///< Коллбэк при выходе
-    std::vector<std::string> actions;                ///< Список действий
+    std::string name;                                ///< State name
+    std::map<std::string, VariableValue> variables;  ///< State variables
+    std::string on_enter_callback;                   ///< On-enter callback
+    std::string on_exit_callback;                    ///< On-exit callback
+    std::vector<std::string> actions;                ///< List of actions
 };
 
 // ============================================================================

@@ -5,27 +5,27 @@
 namespace fsmconfig {
 
 /**
- * @brief Реализация CallbackRegistry (Pimpl идиома)
+ * @brief CallbackRegistry implementation (Pimpl idiom)
  */
 class CallbackRegistry::Impl {
    public:
-    /// Коллбэки состояния: key = "state_name:callback_type"
+    /// State callbacks: key = "state_name:callback_type"
     std::map<std::string, StateCallback> state_callbacks;
 
-    /// Коллбэки перехода: key = "from_state:to_state"
+    /// Transition callbacks: key = "from_state:to_state"
     std::map<std::string, TransitionCallback> transition_callbacks;
 
-    /// Guard-коллбэки: key = "from_state:to_state:event_name"
+    /// Guard callbacks: key = "from_state:to_state:event_name"
     std::map<std::string, GuardCallback> guards;
 
-    /// Коллбэки действий: key = "action_name"
+    /// Action callbacks: key = "action_name"
     std::map<std::string, ActionCallback> actions;
 
-    /// Мьютекс для потокобезопасности
+    /// Mutex for thread safety
     mutable std::mutex mutex;
 
     /**
-     * @brief Очистка всех коллбэков
+     * @brief Clear all callbacks
      */
     void clear() {
         state_callbacks.clear();
@@ -36,7 +36,7 @@ class CallbackRegistry::Impl {
 };
 
 // ============================================================================
-// Конструкторы и деструктор
+// Constructors and destructor
 // ============================================================================
 
 CallbackRegistry::CallbackRegistry() : impl_(std::make_unique<Impl>()) {}
@@ -54,7 +54,7 @@ CallbackRegistry& CallbackRegistry::operator=(CallbackRegistry&& other) noexcept
 }
 
 // ============================================================================
-// Методы регистрации
+// Registration methods
 // ============================================================================
 
 void CallbackRegistry::registerStateCallback(const std::string& state_name,
@@ -102,7 +102,7 @@ void CallbackRegistry::registerAction(const std::string& action_name, ActionCall
 }
 
 // ============================================================================
-// Методы вызова
+// Invocation methods
 // ============================================================================
 
 void CallbackRegistry::callStateCallback(const std::string& state_name,
@@ -137,7 +137,7 @@ bool CallbackRegistry::callGuard(const std::string& from_state, const std::strin
     if (it != impl_->guards.end() && it->second) {
         return it->second();
     }
-    // Если guard не зарегистрирован, запрещаем переход
+    // If guard is not registered, deny transition
     return false;
 }
 
@@ -151,7 +151,7 @@ void CallbackRegistry::callAction(const std::string& action_name) const {
 }
 
 // ============================================================================
-// Методы проверки
+// Check methods
 // ============================================================================
 
 bool CallbackRegistry::hasStateCallback(const std::string& state_name,
@@ -189,7 +189,7 @@ bool CallbackRegistry::hasAction(const std::string& action_name) const {
 }
 
 // ============================================================================
-// Методы управления
+// Management methods
 // ============================================================================
 
 void CallbackRegistry::clear() {
@@ -218,7 +218,7 @@ size_t CallbackRegistry::getActionCount() const {
 }
 
 // ============================================================================
-// Вспомогательные методы
+// Helper methods
 // ============================================================================
 
 std::string CallbackRegistry::makeStateCallbackKey(const std::string& state_name,

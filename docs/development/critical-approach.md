@@ -1,68 +1,68 @@
 # Critical Approach
 
-## Философия
+## Philosophy
 
-**Сомневаться в каждом решении**
+**Question every decision**
 
-- Каждое решение должно быть обоснованным
-- Соотносить решения с существующими частями системы
-- Соотносить с чужими решениями за пределами кодовой базы
-- Находить ошибки в планах и итеративно их устранять
+- Every decision must be justified
+- Relate decisions to existing parts of the system
+- Relate to external decisions outside the codebase
+- Find errors in plans and iteratively eliminate them
 
-## Цикл разработки
+## Development Cycle
 
 ```
-Немного подумала
+Think a little
    ↓
-Покритиковала
+Criticize
    ↓
-Переделала
+Rework
    ↓
-Снова покритиковала
+Criticize again
    ↓
-Снова переделала
+Rework again
    ↓
-(Повторять пока не перестанет находить ошибки)
+(Repeat until no more errors are found)
    ↓
-Плавная интеграция в код
+Smooth integration into code
 ```
 
-## При интеграции
+## During Integration
 
-**Перепроверять кодовую базу:**
+**Re-verify the codebase:**
 
 1. **DRY (Don't Repeat Yourself)**
-   - Поиск дублирующего кода
-   - Вынесение общих частей в отдельные функции/классы
+   - Search for duplicate code
+   - Extract common parts into separate functions/classes
 
-2. **Поиск готовых элементов**
-   - Проверить, не существует ли уже нужная функциональность
-   - Использовать существующие утилиты и хелперы
+2. **Search for Existing Elements**
+   - Check if the required functionality already exists
+   - Use existing utilities and helpers
 
-3. **Поиск готовых библиотек в интернете**
-   - Использовать tavily для поиска
-   - Найти 2-3 альтернативы
-   - Предложить пользователю интеграцию
-   - Дождаться ответа
+3. **Search for Ready-Made Libraries on the Internet**
+   - Use tavily to search
+   - Find 2-3 alternatives
+   - Propose library integration to the user
+   - Wait for response
 
-## Пример критического анализа
+## Example of Critical Analysis
 
-**Вопросы к себе:**
+**Questions to ask yourself:**
 
-1. Почему именно это решение?
-2. Есть ли более простой способ?
-3. Не нарушает ли это существующие паттерны?
-4. Не создаст ли это проблемы в будущем?
-5. Существуют ли готовые библиотеки для этой задачи?
-6. Не дублирую ли я существующий код?
-7. Покроют ли тесты это изменение?
-8. Достаточно ли документировано это изменение?
+1. Why exactly this solution?
+2. Is there a simpler way?
+3. Does this violate existing patterns?
+4. Will this create problems in the future?
+5. Do ready-made libraries exist for this task?
+6. Am I duplicating existing code?
+7. Will tests cover this change?
+8. Is this change sufficiently documented?
 
-## Инструменты для критического анализа
+## Tools for Critical Analysis
 
-| Режим | Назначение |
-|-------|------------|
-| **code-skeptic** | Критический анализ кода на наличие проблем |
-| **code-reviewer** | Тщательный review изменений |
-| **code-simplifier** | Поиск возможностей для упрощения |
-| **debug** | Анализ потенциальных проблем |
+| Mode | Purpose |
+|------|---------|
+| **code-skeptic** | Critical code analysis for problems |
+| **code-reviewer** | Thorough review of changes |
+| **code-simplifier** | Finding opportunities for simplification |
+| **debug** | Analyzing potential issues |

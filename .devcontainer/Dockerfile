@@ -1,67 +1,67 @@
-# Базовый образ Ubuntu 24.04 с поддержкой GCC 14
+# Base image Ubuntu 24.04 with GCC 14 support
 FROM ubuntu:24.04
 
-# Метаданные образа
-LABEL description="Devcontainer для FSMConfig C++ проекта (C++26)"
+# Image metadata
+LABEL description="Devcontainer for FSMConfig C++ project (C++26)"
 LABEL version="1.0.0"
 LABEL maintainer="FSMConfig Team"
 
-# Отключаем интерактивные запросы при установке пакетов
+# Disable interactive prompts during package installation
 ARG DEBIAN_FRONTEND=noninteractive
 
-# Обновляем список пакетов и устанавливаем базовые зависимости в один слой для оптимизации кэширования
+# Update package list and install base dependencies in one layer for cache optimization
 RUN apt-get update && apt-get install -y \
-    # Компиляторы и инструменты сборки
+    # Compilers and build tools
     build-essential \
     gcc-14 \
     g++-14 \
-    # Система сборки
+    # Build system
     cmake \
-    # Зависимости проекта
+    # Project dependencies
     libyaml-cpp-dev \
     libgtest-dev \
-    # Утилиты для разработки
+    # Development utilities
     pkg-config \
     git \
     vim \
     curl \
     wget \
-    # Инструменты отладки и анализа
+    # Debugging and analysis tools
     gdb \
     valgrind \
-    # Инструменты форматирования и статического анализа
+    # Formatting and static analysis tools
     clang-format \
     clang-tidy \
-    # Очистка кэша apt для уменьшения размера образа
+    # Clear apt cache to reduce image size
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# Настраиваем GCC 14 как компилятор по умолчанию
+# Set GCC 14 as default compiler
 RUN update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-14 100 \
     && update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-14 100 \
     && update-alternatives --set gcc /usr/bin/gcc-14 \
     && update-alternatives --set g++ /usr/bin/g++-14
 
-# Создаём пользователя vscode с UID 1000
+# Create vscode user with UID 1000
 RUN groupadd -g 1000 vscode \
     && useradd -u 1000 -g vscode -m -s /bin/bash vscode
 
-# Добавляем пользователя в sudoers без пароля
+# Add user to sudoers without password
 RUN echo "vscode ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/vscode \
     && chmod 0440 /etc/sudoers.d/vscode
 
-# Создаём рабочую директорию и настраиваем права
+# Create working directory and set permissions
 RUN mkdir -p /workspace \
     && chown -R vscode:vscode /workspace
 
-# Переключаемся на пользователя vscode
+# Switch to vscode user
 USER vscode
 
-# Устанавливаем рабочую директорию
+# Set working directory
 WORKDIR /workspace
 
-# Устанавливаем переменную окружения для C++26
+# Set environment variable for C++26
 ENV CXXFLAGS="-std=c++26"
 
-# Команда по умолчанию при запуске контейнера
+# Default command when container starts
 CMD ["/bin/bash"]

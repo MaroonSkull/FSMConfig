@@ -1,9 +1,9 @@
-# Глобальные переменные
+# Global variables
 variables:
   max_retries: 3
   timeout: 5.0
 
-# Определения состояний
+# State definitions
 states:
   disconnected:
     on_enter: on_disconnected_enter
@@ -51,7 +51,7 @@ states:
       - log_error
       - cleanup_resources
 
-# Определения переходов
+# Transition definitions
 transitions:
   - from: disconnected
     to: connecting

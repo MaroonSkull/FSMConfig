@@ -12,7 +12,7 @@
 namespace fsmconfig {
 
 /**
- * @brief Реализация StateMachine (Pimpl идиома)
+ * @brief StateMachine implementation (Pimpl idiom)
  */
 struct StateMachine::Impl {
     std::unique_ptr<ConfigParser> config_parser;
@@ -35,7 +35,7 @@ struct StateMachine::Impl {
     }
 };
 
-// Конструкторы и деструктор
+// Constructors and destructor
 
 StateMachine::StateMachine(const std::string& config_path) : impl_(std::make_unique<Impl>()) {
     impl_->config_parser = std::make_unique<ConfigParser>();
@@ -43,21 +43,21 @@ StateMachine::StateMachine(const std::string& config_path) : impl_(std::make_uni
     impl_->variable_manager = std::make_unique<VariableManager>();
     impl_->event_dispatcher = std::make_unique<EventDispatcher>();
 
-    // Загружаем конфигурацию из файла
+    // Load configuration from file
     impl_->config_parser->loadFromFile(config_path);
 
-    // Копируем глобальные переменные в VariableManager
+    // Copy global variables to VariableManager
     const auto& global_vars = impl_->config_parser->getGlobalVariables();
     for (const auto& [name, value] : global_vars) {
         impl_->variable_manager->setGlobalVariable(name, value);
     }
 
-    // Создаем состояния из конфигурации
+    // Create states from configuration
     const auto& states_info = impl_->config_parser->getStates();
     for (const auto& [name, info] : states_info) {
         auto state = std::make_unique<State>(info);
 
-        // Копируем переменные состояния в VariableManager
+        // Copy state variables to VariableManager
         for (const auto& [var_name, var_value] : info.variables) {
             impl_->variable_manager->setStateVariable(name, var_name, var_value);
         }
@@ -65,9 +65,9 @@ StateMachine::StateMachine(const std::string& config_path) : impl_(std::make_uni
         impl_->states[name] = std::move(state);
     }
 
-    // Находим начальное состояние из конфигурации
+    // Find initial state from configuration
     std::string initial_state = impl_->config_parser->getInitialState();
-    impl_->initial_state = initial_state;  // Сохраняем даже если пустой
+    impl_->initial_state = initial_state;  // Save even if empty
 }
 
 StateMachine::StateMachine(const std::string& yaml_content, bool is_content)
@@ -81,21 +81,21 @@ StateMachine::StateMachine(const std::string& yaml_content, bool is_content)
     impl_->variable_manager = std::make_unique<VariableManager>();
     impl_->event_dispatcher = std::make_unique<EventDispatcher>();
 
-    // Загружаем конфигурацию из строки
+    // Load configuration from string
     impl_->config_parser->loadFromString(yaml_content);
 
-    // Копируем глобальные переменные в VariableManager
+    // Copy global variables to VariableManager
     const auto& global_vars = impl_->config_parser->getGlobalVariables();
     for (const auto& [name, value] : global_vars) {
         impl_->variable_manager->setGlobalVariable(name, value);
     }
 
-    // Создаем состояния из конфигурации
+    // Create states from configuration
     const auto& states_info = impl_->config_parser->getStates();
     for (const auto& [name, info] : states_info) {
         auto state = std::make_unique<State>(info);
 
-        // Копируем переменные состояния в VariableManager
+        // Copy state variables to VariableManager
         for (const auto& [var_name, var_value] : info.variables) {
             impl_->variable_manager->setStateVariable(name, var_name, var_value);
         }
@@ -103,9 +103,9 @@ StateMachine::StateMachine(const std::string& yaml_content, bool is_content)
         impl_->states[name] = std::move(state);
     }
 
-    // Находим начальное состояние из конфигурации
+    // Find initial state from configuration
     std::string initial_state = impl_->config_parser->getInitialState();
-    impl_->initial_state = initial_state;  // Сохраняем даже если пустой
+    impl_->initial_state = initial_state;  // Save even if empty
 }
 
 StateMachine::~StateMachine() = default;
@@ -114,7 +114,7 @@ StateMachine::StateMachine(StateMachine&& other) noexcept = default;
 
 StateMachine& StateMachine::operator=(StateMachine&& other) noexcept = default;
 
-// Lifecycle методы
+// Lifecycle methods
 
 void StateMachine::start() {
     if (impl_->started) {
@@ -141,19 +141,19 @@ void StateMachine::start() {
         throw StateException(error);
     }
 
-    // Переходим в начальное состояние
+    // Transition to initial state
     impl_->current_state = impl_->initial_state;
 
-    // Вызываем on_enter коллбэк начального состояния
-    // Проверяем наличие коллбэка в реестре, а не только в конфигурации
+    // Call on_enter callback of initial state
+    // Check for callback in registry, not just in configuration
     if (impl_->callback_registry->hasStateCallback(impl_->current_state, "on_enter")) {
         impl_->callback_registry->callStateCallback(impl_->current_state, "on_enter");
     }
 
-    // Выполняем действия начального состояния
+    // Execute initial state actions
     executeStateActions(impl_->current_state);
 
-    // Уведомляем observers о входе в начальное состояние
+    // Notify observers about entering initial state
     for (auto* observer : impl_->observers) {
         observer->onStateEnter(impl_->current_state);
     }
@@ -170,11 +170,11 @@ void StateMachine::stop() {
         throw StateException(error);
     }
 
-    // Вызываем on_exit коллбэк текущего состояния
+    // Call on_exit callback of current state
     if (!impl_->current_state.empty()) {
         impl_->callback_registry->callStateCallback(impl_->current_state, "on_exit");
 
-        // Уведомляем наблюдателей о выходе из состояния
+        // Notify observers about exiting state
         for (auto* observer : impl_->observers) {
             observer->onStateExit(impl_->current_state);
         }
@@ -187,14 +187,14 @@ void StateMachine::reset() {
     if (impl_->started) {
         stop();
     }
-    // Сохраняем начальное состояние
+    // Save initial state
     std::string saved_initial_state = impl_->initial_state;
     impl_->clear();
-    // Восстанавливаем начальное состояние
+    // Restore initial state
     impl_->initial_state = saved_initial_state;
 }
 
-// State query методы
+// State query methods
 
 std::string StateMachine::getCurrentState() const { return impl_->current_state; }
 
@@ -211,7 +211,7 @@ std::vector<std::string> StateMachine::getAllStates() const {
     return result;
 }
 
-// Event handling методы
+// Event handling methods
 
 void StateMachine::triggerEvent(const std::string& event_name) { triggerEvent(event_name, {}); }
 
@@ -233,23 +233,23 @@ void StateMachine::triggerEvent(const std::string& event_name,
         throw StateException(error);
     }
 
-    // Ищем переход для события из текущего состояния
+    // Look for transition for event from current state
     const TransitionInfo* transition =
         impl_->config_parser->findTransition(impl_->current_state, event_name);
     if (!transition) {
-        // Игнорируем событие, если переход не найден
+        // Ignore event if transition not found
         return;
     }
 
-    // Проверяем guard-условие
+    // Check guard condition
     if (!transition->guard_callback.empty()) {
         if (!evaluateGuard(transition->from_state, transition->to_state, event_name)) {
-            // Guard вернул false - не выполняем переход
+            // Guard returned false - don't perform transition
             return;
         }
     }
 
-    // Создаем событие перехода
+    // Create transition event
     TransitionEvent event;
     event.event_name = event_name;
     event.from_state = impl_->current_state;
@@ -257,18 +257,18 @@ void StateMachine::triggerEvent(const std::string& event_name,
     event.data = data;
     event.timestamp = std::chrono::system_clock::now();
 
-    // Выполняем переход
+    // Perform transition
     performTransition(event);
 }
 
-// Variable management методы
+// Variable management methods
 
 void StateMachine::setVariable(const std::string& name, const VariableValue& value) {
-    // Если есть текущее состояние, устанавливаем локальную переменную состояния
+    // If there is a current state, set state local variable
     if (!impl_->current_state.empty()) {
         impl_->variable_manager->setStateVariable(impl_->current_state, name, value);
     } else {
-        // Иначе устанавливаем глобальную переменную
+        // Otherwise set global variable
         impl_->variable_manager->setGlobalVariable(name, value);
     }
 }
@@ -289,14 +289,14 @@ bool StateMachine::hasVariable(const std::string& name) const {
     return impl_->variable_manager->hasVariable(impl_->current_state, name);
 }
 
-// Observer методы
+// Observer methods
 
 void StateMachine::registerStateObserver(StateObserver* observer) {
     if (observer == nullptr) {
         return;
     }
 
-    // Проверяем, не зарегистрирован ли уже наблюдатель
+    // Check if observer is already registered
     auto it = std::find(impl_->observers.begin(), impl_->observers.end(), observer);
     if (it == impl_->observers.end()) {
         impl_->observers.push_back(observer);
@@ -314,17 +314,17 @@ void StateMachine::unregisterStateObserver(StateObserver* observer) {
     }
 }
 
-// Error handling методы
+// Error handling methods
 
 void StateMachine::setErrorHandler(ErrorHandler handler) { impl_->error_handler = handler; }
 
-// Вспомогательные методы
+// Helper methods
 
 void StateMachine::performTransition(const TransitionEvent& event) {
     std::string old_state = impl_->current_state;
     std::string new_state = event.to_state;
 
-    // Проверяем, существует ли целевое состояние
+    // Check if target state exists
     if (!hasState(new_state)) {
         std::string error = "Target state '" + new_state + "' does not exist";
         if (impl_->error_handler) {
@@ -333,47 +333,47 @@ void StateMachine::performTransition(const TransitionEvent& event) {
         throw StateException(error);
     }
 
-    // Вызываем on_exit коллбэк текущего состояния
+    // Call on_exit callback of current state
     const auto& old_state_info = impl_->config_parser->getState(old_state);
     if (!old_state_info.on_exit_callback.empty()) {
         impl_->callback_registry->callStateCallback(old_state, "on_exit");
     }
 
-    // Уведомляем наблюдателей о выходе из состояния
+    // Notify observers about exiting state
     for (auto* observer : impl_->observers) {
         observer->onStateExit(old_state);
     }
 
-    // Выполняем действия перехода
+    // Execute transition actions
     const TransitionInfo* transition =
         impl_->config_parser->findTransition(old_state, event.event_name);
     if (transition && !transition->actions.empty()) {
         executeTransitionActions(transition->actions);
     }
 
-    // Вызываем коллбэк перехода
+    // Call transition callback
     if (transition && !transition->transition_callback.empty()) {
         impl_->callback_registry->callTransitionCallback(old_state, new_state, event);
     }
 
-    // Переключаемся на новое состояние
+    // Switch to new state
     impl_->current_state = new_state;
 
-    // Вызываем on_enter коллбэк нового состояния
-    // Проверяем наличие коллбэка в реестре, а не только в конфигурации
+    // Call on_enter callback of new state
+    // Check for callback in registry, not just in configuration
     if (impl_->callback_registry->hasStateCallback(new_state, "on_enter")) {
         impl_->callback_registry->callStateCallback(new_state, "on_enter");
     }
 
-    // Выполняем действия нового состояния
+    // Execute new state actions
     executeStateActions(new_state);
 
-    // Уведомляем наблюдателей о входе в новое состояние
+    // Notify observers about entering new state
     for (auto* observer : impl_->observers) {
         observer->onStateEnter(new_state);
     }
 
-    // Уведомляем наблюдателей о переходе
+    // Notify observers about transition
     for (auto* observer : impl_->observers) {
         observer->onTransition(event);
     }
@@ -397,7 +397,7 @@ void StateMachine::executeTransitionActions(const std::vector<std::string>& acti
     }
 }
 
-// Вспомогательные методы для регистрации коллбэков (для шаблонных методов)
+// Helper methods for callback registration (for template methods)
 
 void StateMachine::registerStateCallbackImpl(const std::string& state_name,
                                              const std::string& callback_type,

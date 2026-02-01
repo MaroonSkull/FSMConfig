@@ -13,24 +13,24 @@ namespace fsmconfig {
 
 /**
  * @file types.hpp
- * @brief Основные типы данных для FSMConfig
+ * @brief Main data types for FSMConfig
  */
 
 /**
- * @brief Перечисление типов переменных
+ * @brief Enumeration of variable types
  */
 enum class VariableType {
-    INT,     ///< Целочисленное значение
-    FLOAT,   ///< Вещественное значение
-    STRING,  ///< Строковое значение
-    BOOL     ///< Логическое значение
+    INT,     ///< Integer value
+    FLOAT,   ///< Floating point value
+    STRING,  ///< String value
+    BOOL     ///< Boolean value
 };
 
 /**
- * @brief Структура для хранения значения переменной с поддержкой разных типов
+ * @brief Structure for storing variable value with support for different types
  *
- * Использует union для эффективного хранения значений разных типов.
- * Для std::string используется placement new и явный вызов деструктора.
+ * Uses union for efficient storage of values of different types.
+ * For std::string uses placement new and explicit destructor call.
  */
 struct VariableValue {
     VariableType type;
@@ -42,224 +42,224 @@ struct VariableValue {
     };
 
     /**
-     * @brief Конструктор по умолчанию (инициализирует как INT со значением 0)
+     * @brief Default constructor (initializes as INT with value 0)
      */
     VariableValue();
 
     /**
-     * @brief Конструктор для целочисленного значения
-     * @param v Целочисленное значение
+     * @brief Constructor for integer value
+     * @param v Integer value
      */
     VariableValue(int v);
 
     /**
-     * @brief Конструктор для вещественного значения
-     * @param v Вещественное значение
+     * @brief Constructor for floating point value
+     * @param v Floating point value
      */
     VariableValue(float v);
 
     /**
-     * @brief Конструктор для строкового значения
-     * @param v Строковое значение
+     * @brief Constructor for string value
+     * @param v String value
      */
     VariableValue(const std::string& v);
 
     /**
-     * @brief Конструктор для логического значения
-     * @param v Логическое значение
+     * @brief Constructor for boolean value
+     * @param v Boolean value
      */
     VariableValue(bool v);
 
     /**
-     * @brief Деструктор
+     * @brief Destructor
      *
-     * Явно вызывает деструктор для std::string если тип STRING
+     * Explicitly calls destructor for std::string if type is STRING
      */
     ~VariableValue();
 
     /**
-     * @brief Конструктор копирования
-     * @param other Копируемое значение
+     * @brief Copy constructor
+     * @param other Value to copy
      */
     VariableValue(const VariableValue& other);
 
     /**
-     * @brief Оператор присваивания копированием
-     * @param other Присваиваемое значение
-     * @return Ссылка на текущий объект
+     * @brief Copy assignment operator
+     * @param other Value to assign
+     * @return Reference to current object
      */
     VariableValue& operator=(const VariableValue& other);
 
     /**
-     * @brief Получить значение как целое число
-     * @return Целочисленное значение
-     * @throw std::bad_cast Если тип не INT
+     * @brief Get value as integer
+     * @return Integer value
+     * @throw std::bad_cast If type is not INT
      */
     int asInt() const;
 
     /**
-     * @brief Получить значение как вещественное число
-     * @return Вещественное значение
-     * @throw std::bad_cast Если тип не FLOAT
+     * @brief Get value as floating point number
+     * @return Floating point value
+     * @throw std::bad_cast If type is not FLOAT
      */
     float asFloat() const;
 
     /**
-     * @brief Получить значение как строку
-     * @return Строковое значение
-     * @throw std::bad_cast Если тип не STRING
+     * @brief Get value as string
+     * @return String value
+     * @throw std::bad_cast If type is not STRING
      */
     std::string asString() const;
 
     /**
-     * @brief Получить значение как логическое
-     * @return Логическое значение
-     * @throw std::bad_cast Если тип не BOOL
+     * @brief Get value as boolean
+     * @return Boolean value
+     * @throw std::bad_cast If type is not BOOL
      */
     bool asBool() const;
 
     /**
-     * @brief Преобразовать значение в строковое представление
-     * @return Строковое представление значения
+     * @brief Convert value to string representation
+     * @return String representation of value
      */
     std::string toString() const;
 };
 
 /**
- * @brief Событие перехода между состояниями
+ * @brief Transition event between states
  *
- * Хранит информацию о переходе, включая имя события,
- * исходное и целевое состояние, данные события и временную метку.
+ * Stores information about transition, including event name,
+ * source and target state, event data, and timestamp.
  */
 struct TransitionEvent {
-    std::string event_name;                           ///< Имя события
-    std::string from_state;                           ///< Исходное состояние
-    std::string to_state;                             ///< Целевое состояние
-    std::map<std::string, VariableValue> data;        ///< Данные события
-    std::chrono::system_clock::time_point timestamp;  ///< Временная метка
+    std::string event_name;                           ///< Event name
+    std::string from_state;                           ///< Source state
+    std::string to_state;                             ///< Target state
+    std::map<std::string, VariableValue> data;        ///< Event data
+    std::chrono::system_clock::time_point timestamp;  ///< Timestamp
 
     /**
-     * @brief Конструктор по умолчанию
+     * @brief Default constructor
      *
-     * Инициализирует временную метку текущим временем
+     * Initializes timestamp with current time
      */
     TransitionEvent();
 };
 
 /**
- * @brief Информация о состоянии
+ * @brief State information
  *
- * Содержит имя состояния, переменные состояния,
- * коллбэки и действия, связанные с состоянием.
+ * Contains state name, state variables,
+ * callbacks and actions associated with the state.
  */
 struct StateInfo {
-    std::string name;                                ///< Имя состояния
-    std::map<std::string, VariableValue> variables;  ///< Переменные состояния
-    std::string on_enter_callback;                   ///< Коллбэк при входе
-    std::string on_exit_callback;                    ///< Коллбэк при выходе
-    std::vector<std::string> actions;                ///< Список действий
+    std::string name;                                ///< State name
+    std::map<std::string, VariableValue> variables;  ///< State variables
+    std::string on_enter_callback;                   ///< On-enter callback
+    std::string on_exit_callback;                    ///< On-exit callback
+    std::vector<std::string> actions;                ///< List of actions
 
     /**
-     * @brief Конструктор по умолчанию
+     * @brief Default constructor
      */
     StateInfo();
 
     /**
-     * @brief Конструктор с именем состояния
-     * @param name Имя состояния
+     * @brief Constructor with state name
+     * @param name State name
      */
     explicit StateInfo(const std::string& name);
 };
 
 /**
- * @brief Информация о переходе
+ * @brief Transition information
  *
- * Содержит информацию о переходе между состояниями,
- * включая условия, коллбэки и действия.
+ * Contains information about transition between states,
+ * including conditions, callbacks and actions.
  */
 struct TransitionInfo {
-    std::string from_state;            ///< Исходное состояние
-    std::string to_state;              ///< Целевое состояние
-    std::string event_name;            ///< Имя события
-    std::string guard_callback;        ///< Коллбэк-защита
-    std::string transition_callback;   ///< Коллбэк перехода
-    std::vector<std::string> actions;  ///< Список действий
+    std::string from_state;            ///< Source state
+    std::string to_state;              ///< Target state
+    std::string event_name;            ///< Event name
+    std::string guard_callback;        ///< Guard callback
+    std::string transition_callback;   ///< Transition callback
+    std::vector<std::string> actions;  ///< List of actions
 
     /**
-     * @brief Конструктор по умолчанию
+     * @brief Default constructor
      */
     TransitionInfo();
 };
 
 /**
- * @brief Интерфейс наблюдателя за изменениями состояния
+ * @brief Interface for observing state changes
  *
- * Позволяет подписываться на события изменения состояния
- * и получать уведомления о переходах.
+ * Allows subscribing to state change events
+ * and receiving notifications about transitions.
  */
 class StateObserver {
    public:
     /**
-     * @brief Виртуальный деструктор
+     * @brief Virtual destructor
      */
     virtual ~StateObserver() = default;
 
     /**
-     * @brief Вызывается при входе в состояние
-     * @param state_name Имя состояния
+     * @brief Called when entering a state
+     * @param state_name State name
      */
     virtual void onStateEnter(const std::string& state_name) = 0;
 
     /**
-     * @brief Вызывается при выходе из состояния
-     * @param state_name Имя состояния
+     * @brief Called when exiting a state
+     * @param state_name State name
      */
     virtual void onStateExit(const std::string& state_name) = 0;
 
     /**
-     * @brief Вызывается при переходе между состояниями
-     * @param event Событие перехода
+     * @brief Called during transition between states
+     * @param event Transition event
      */
     virtual void onTransition(const TransitionEvent& event) = 0;
 
     /**
-     * @brief Вызывается при возникновении ошибки
-     * @param error_message Сообщение об ошибке
+     * @brief Called when an error occurs
+     * @param error_message Error message
      */
     virtual void onError(const std::string& error_message) = 0;
 };
 
 /**
- * @brief Тип функции для обработки ошибок
+ * @brief Error handler function type
  */
 using ErrorHandler = std::function<void(const std::string&)>;
 
 /**
- * @brief Исключение для ошибок конфигурации
+ * @brief Exception for configuration errors
  *
- * Выбрасывается при ошибках парсинга конфигурации
- * или при некорректной структуре конфигурации.
+ * Thrown on configuration parsing errors
+ * or when configuration structure is invalid.
  */
 class ConfigException : public std::runtime_error {
    public:
     /**
-     * @brief Конструктор с сообщением об ошибке
-     * @param message Сообщение об ошибке
+     * @brief Constructor with error message
+     * @param message Error message
      */
     explicit ConfigException(const std::string& message);
 };
 
 /**
- * @brief Исключение для ошибок состояния
+ * @brief Exception for state errors
  *
- * Выбрасывается при ошибках, связанных с состояниями
- * или переходами между ними.
+ * Thrown on errors related to states
+ * or transitions between them.
  */
 class StateException : public std::runtime_error {
    public:
     /**
-     * @brief Конструктор с сообщением об ошибке
-     * @param message Сообщение об ошибке
+     * @brief Constructor with error message
+     * @param message Error message
      */
     explicit StateException(const std::string& message);
 };

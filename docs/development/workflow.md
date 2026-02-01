@@ -1,31 +1,31 @@
 # Git Workflow (Trunk-Based Development)
 
-## Общий процесс
+## General Process
 
 ```
-1. Кратко проанализировать задачу (режим orchestrator)
+1. Briefly analyze the task (orchestrator mode)
    ↓
-2. Придумать название задачи
+2. Come up with a task name
    ↓
-3. Создать новую ветку для задачи
+3. Create a new branch for the task
    ↓
-4. Для отдельных подзадач создавать дополнительные ветки
+4. Create additional branches for individual subtasks
    ↓
-5. После завершения подзадачи — смерджить в рабочую ветку
+5. After completing a subtask — merge into the working branch
 ```
 
-## Создание веток
+## Creating Branches
 
-**Формат названия веток:**
+**Branch naming format:**
 
 ```
-feature/краткое-описание-задачи
-bugfix/описание-бага
-refactor/описание-рефакторинга
-docs/описание-документации
+feature/short-task-description
+bugfix/bug-description
+refactor/refactoring-description
+docs/documentation-description
 ```
 
-**Примеры:**
+**Examples:**
 
 ```bash
 git checkout -b feature/add-state-persistence
@@ -33,81 +33,81 @@ git checkout -b bugfix/fix-memory-leak-in-parser
 git checkout -b refactor/optimize-event-dispatcher
 ```
 
-## Коммиты
+## Commits
 
-**Правила коммитов:**
+**Commit rules:**
 
-1. **Частота:** Делать коммиты так часто, как только возможно
-2. **История:** История коммитов должна быть богатой и информативной
-3. **ПРАВИЛО:** Перед созданием коммита убедиться:
-   - Код работает корректно ИЛИ
-   - Код как минимум компилируется без ошибок
+1. **Frequency:** Commit as often as possible
+2. **History:** Commit history should be rich and informative
+3. **RULE:** Before creating a commit, ensure:
+   - Code works correctly OR
+   - Code at least compiles without errors
 
-**Формат сообщения коммита:**
-
-```
-<тип>: <краткое описание>
-
-<подробное описание (опционально)>
-
-<ссылки на задачи (опционально)>
-```
-
-**Типы коммитов:**
-
-- `feat` — новая функциональность
-- `fix` — исправление бага
-- `refactor` — рефакторинг
-- `docs` — документация
-- `test` — тесты
-- `chore` — рутинные задачи
-
-**Примеры:**
+**Commit message format:**
 
 ```
-feat: добавить поддержку вложенных состояний
+<type>: <short description>
 
-Реализована иерархическая структура состояний с наследованием.
-Добавлены тесты в test_state_machine.cpp.
+<detailed description (optional)>
+
+<task references (optional)>
+```
+
+**Commit types:**
+
+- `feat` — new functionality
+- `fix` — bug fix
+- `refactor` — refactoring
+- `docs` — documentation
+- `test` — tests
+- `chore` — routine tasks
+
+**Examples:**
+
+```
+feat: add support for nested states
+
+Implemented hierarchical state structure with inheritance.
+Added tests in test_state_machine.cpp.
 
 Closes #42
 ```
 
 ```
-fix: исправить утечку памяти в ConfigParser
+fix: fix memory leak in ConfigParser
 
-Проблема была в отсутствии освобождения YAML::Node.
-Теперь используется умный указатель.
+The problem was missing YAML::Node cleanup.
+Now using smart pointer.
 ```
 
-## Завершение задачи
+## Completing a Task
 
 ```
-1. Критический анализ git diff
-   └─ Использовать режим review
+1. Critical analysis of git diff
+   └─ Use review mode
    ↓
-2. Проверка и актуализация документации
-   ├─ Все затронутые места задокументированы?
-   └─ AGENTS.md актуализирован для отражения текущего состояния проекта?
+2. Check and update documentation
+   ├─ Are all affected places documented?
+   └─ Is AGENTS.md updated to reflect the current project state?
        │
-       └─ **ВАЖНО:** Перед созданием коммита необходимо создать отдельную задачу
-                   для актуализации соответствующих разделов AGENTS.md, если
-                   выполненная работа затрагивает структуру проекта, технологии,
-                   процессы разработки или другие аспекты, описанные в этом файле.
+       └─ **IMPORTANT:** Before creating a commit, a separate task must be created
+                   to update the relevant sections of AGENTS.md if the
+                   completed work affects the project structure, technologies,
+                   development processes, or other aspects described in this file.
    ↓
-3. Слияние веток
-   └─ Смерджить все дополнительные ветки в основную рабочую
+3. Merge branches
+   └─ Merge all additional branches into the main working branch
    ↓
-4. Рабочую ветку никуда сливать не нужно
-   └─ Её анализ выполнит программист
+4. The working branch does not need to be merged anywhere
+   └─ The programmer will analyze it
 ```
 
-**Процесс review:**
+**Review process:**
 
 ```bash
-# Показать все изменения
+# Show all changes
 git diff main..feature/branch-name
 
-# Интерактивный review
+# Interactive review
 git review main..feature/branch-name
 ```

@@ -10,7 +10,7 @@
 
 namespace fsmconfig {
 
-// Предварительное объявление классов
+// Forward declarations
 class ConfigParser;
 class CallbackRegistry;
 class VariableManager;
@@ -19,171 +19,171 @@ class State;
 
 /**
  * @file state_machine.hpp
- * @brief Основной класс конечного автомата StateMachine
+ * @brief Main StateMachine finite state machine class
  */
 
 /**
  * @class StateMachine
- * @brief Класс конечного автомата для управления состояниями и переходами
+ * @brief Finite state machine class for managing states and transitions
  *
- * StateMachine является основным классом библиотеки, обеспечивающим:
- * - Загрузку конфигурации из YAML файлов или строк
- * - Регистрацию и выполнение коллбэков
- * - Диспетчеризацию событий
- * - Управление переменными состояния
- * - Переходы между состояниями с поддержкой guard-условий
- * - Наблюдение за изменениями состояния через StateObserver
+ * StateMachine is the main class of the library, providing:
+ * - Loading configuration from YAML files or strings
+ * - Registration and execution of callbacks
+ * - Event dispatching
+ * - State variable management
+ * - State transitions with guard condition support
+ * - State change observation through StateObserver
  */
 class StateMachine {
    public:
     /**
-     * @brief Конструктор из пути к файлу конфигурации
-     * @param config_path Путь к YAML файлу конфигурации
-     * @throws ConfigException при ошибках загрузки или парсинга
+     * @brief Constructor from configuration file path
+     * @param config_path Path to YAML configuration file
+     * @throws ConfigException on load or parse errors
      */
     explicit StateMachine(const std::string& config_path);
 
     /**
-     * @brief Конструктор из строки YAML содержимого
-     * @param yaml_content Строка с YAML конфигурацией
-     * @param is_content Флаг, указывающий, что первый параметр - это содержимое, а не путь
-     * @throws ConfigException при ошибках парсинга
+     * @brief Constructor from YAML content string
+     * @param yaml_content String with YAML configuration
+     * @param is_content Flag indicating that the first parameter is content, not a path
+     * @throws ConfigException on parse errors
      */
     explicit StateMachine(const std::string& yaml_content, bool is_content);
 
     /**
-     * @brief Деструктор
+     * @brief Destructor
      */
     ~StateMachine();
 
-    // Запрет копирования
+    // Copy prohibition
     StateMachine(const StateMachine&) = delete;
     StateMachine& operator=(const StateMachine&) = delete;
 
-    // Разрешение перемещения
+    // Move permission
     /**
-     * @brief Конструктор перемещения
-     * @param other Перемещаемый объект StateMachine
+     * @brief Move constructor
+     * @param other StateMachine object to move
      */
     StateMachine(StateMachine&& other) noexcept;
 
     /**
-     * @brief Оператор присваивания перемещением
-     * @param other Перемещаемый объект StateMachine
-     * @return Ссылка на текущий объект
+     * @brief Move assignment operator
+     * @param other StateMachine object to move
+     * @return Reference to current object
      */
     StateMachine& operator=(StateMachine&& other) noexcept;
 
     // Lifecycle
 
     /**
-     * @brief Запуск конечного автомата
+     * @brief Start the finite state machine
      *
-     * Переходит в начальное состояние, вызывает on_enter коллбэк,
-     * выполняет действия состояния и уведомляет наблюдателей.
+     * Transitions to initial state, calls on_enter callback,
+     * executes state actions and notifies observers.
      *
-     * @throws StateException если автомат уже запущен или начальное состояние не найдено
+     * @throws StateException if machine is already running or initial state not found
      */
     void start();
 
     /**
-     * @brief Остановка конечного автомата
+     * @brief Stop the finite state machine
      *
-     * Вызывает on_exit коллбэк текущего состояния и уведомляет наблюдателей.
+     * Calls on_exit callback of current state and notifies observers.
      */
     void stop();
 
     /**
-     * @brief Сброс конечного автомата в начальное состояние
+     * @brief Reset finite state machine to initial state
      *
-     * Останавливает автомат, если он запущен, и сбрасывает все состояния.
+     * Stops the machine if running and resets all states.
      */
     void reset();
 
     // State queries
 
     /**
-     * @brief Получить имя текущего состояния
-     * @return Имя текущего состояния
+     * @brief Get current state name
+     * @return Current state name
      */
     std::string getCurrentState() const;
 
     /**
-     * @brief Проверить существование состояния
-     * @param state_name Имя состояния
-     * @return true если состояние существует
+     * @brief Check if state exists
+     * @param state_name State name
+     * @return true if state exists
      */
     bool hasState(const std::string& state_name) const;
 
     /**
-     * @brief Получить список всех состояний
-     * @return Вектор имен всех состояний
+     * @brief Get list of all states
+     * @return Vector of all state names
      */
     std::vector<std::string> getAllStates() const;
 
     // Event handling
 
     /**
-     * @brief Отправить событие без данных
-     * @param event_name Имя события
-     * @throws StateException если автомат не запущен или переход не найден
+     * @brief Trigger event without data
+     * @param event_name Event name
+     * @throws StateException if machine is not running or transition not found
      */
     void triggerEvent(const std::string& event_name);
 
     /**
-     * @brief Отправить событие с данными
-     * @param event_name Имя события
-     * @param data Данные события
-     * @throws StateException если автомат не запущен или переход не найден
+     * @brief Trigger event with data
+     * @param event_name Event name
+     * @param data Event data
+     * @throws StateException if machine is not running or transition not found
      */
     void triggerEvent(const std::string& event_name,
                       const std::map<std::string, VariableValue>& data);
 
-    // Callback registration (шаблонные методы)
+    // Callback registration (template methods)
 
     /**
-     * @brief Зарегистрировать коллбэк состояния
-     * @tparam T Тип класса-объекта
-     * @param state_name Имя состояния
-     * @param callback_type Тип коллбэка (например, "on_enter", "on_exit")
-     * @param callback Метод-коллбэк
-     * @param instance Указатель на экземпляр класса
+     * @brief Register state callback
+     * @tparam T Class object type
+     * @param state_name State name
+     * @param callback_type Callback type (e.g., "on_enter", "on_exit")
+     * @param callback Callback method
+     * @param instance Pointer to class instance
      */
     template <typename T>
     void registerStateCallback(const std::string& state_name, const std::string& callback_type,
                                void (T::*callback)(), T* instance);
 
     /**
-     * @brief Зарегистрировать коллбэк перехода
-     * @tparam T Тип класса-объекта
-     * @param from_state Исходное состояние
-     * @param to_state Целевое состояние
-     * @param callback Метод-коллбэк
-     * @param instance Указатель на экземпляр класса
+     * @brief Register transition callback
+     * @tparam T Class object type
+     * @param from_state Source state
+     * @param to_state Target state
+     * @param callback Callback method
+     * @param instance Pointer to class instance
      */
     template <typename T>
     void registerTransitionCallback(const std::string& from_state, const std::string& to_state,
                                     void (T::*callback)(const TransitionEvent&), T* instance);
 
     /**
-     * @brief Зарегистрировать guard-коллбэк
-     * @tparam T Тип класса-объекта
-     * @param from_state Исходное состояние
-     * @param to_state Целевое состояние
-     * @param event_name Имя события
-     * @param callback Метод-коллбэк
-     * @param instance Указатель на экземпляр класса
+     * @brief Register guard callback
+     * @tparam T Class object type
+     * @param from_state Source state
+     * @param to_state Target state
+     * @param event_name Event name
+     * @param callback Callback method
+     * @param instance Pointer to class instance
      */
     template <typename T>
     void registerGuard(const std::string& from_state, const std::string& to_state,
                        const std::string& event_name, bool (T::*callback)(), T* instance);
 
     /**
-     * @brief Зарегистрировать коллбэк действия
-     * @tparam T Тип класса-объекта
-     * @param action_name Имя действия
-     * @param callback Метод-коллбэк
-     * @param instance Указатель на экземпляр класса
+     * @brief Register action callback
+     * @tparam T Class object type
+     * @param action_name Action name
+     * @param callback Callback method
+     * @param instance Pointer to class instance
      */
     template <typename T>
     void registerAction(const std::string& action_name, void (T::*callback)(), T* instance);
@@ -191,46 +191,46 @@ class StateMachine {
     // Variable management
 
     /**
-     * @brief Установить значение переменной
-     * @param name Имя переменной
-     * @param value Значение переменной
+     * @brief Set variable value
+     * @param name Variable name
+     * @param value Variable value
      */
     void setVariable(const std::string& name, const VariableValue& value);
 
     /**
-     * @brief Получить значение переменной
-     * @param name Имя переменной
-     * @return Значение переменной
-     * @throws StateException если переменная не существует
+     * @brief Get variable value
+     * @param name Variable name
+     * @return Variable value
+     * @throws StateException if variable does not exist
      */
     VariableValue getVariable(const std::string& name) const;
 
     /**
-     * @brief Проверить существование переменной
-     * @param name Имя переменной
-     * @return true если переменная существует
+     * @brief Check if variable exists
+     * @param name Variable name
+     * @return true if variable exists
      */
     bool hasVariable(const std::string& name) const;
 
     // Observers
 
     /**
-     * @brief Зарегистрировать наблюдателя за изменениями состояния
-     * @param observer Указатель на наблюдателя
+     * @brief Register state change observer
+     * @param observer Pointer to observer
      */
     void registerStateObserver(StateObserver* observer);
 
     /**
-     * @brief Отменить регистрацию наблюдателя
-     * @param observer Указатель на наблюдателя
+     * @brief Unregister observer
+     * @param observer Pointer to observer
      */
     void unregisterStateObserver(StateObserver* observer);
 
     // Error handling
 
     /**
-     * @brief Установить обработчик ошибок
-     * @param handler Функция-обработчик ошибок
+     * @brief Set error handler
+     * @param handler Error handler function
      */
     void setErrorHandler(ErrorHandler handler);
 
@@ -238,14 +238,14 @@ class StateMachine {
     struct Impl;
     std::unique_ptr<Impl> impl_;
 
-    // Вспомогательные методы
+    // Helper methods
     void performTransition(const TransitionEvent& event);
     bool evaluateGuard(const std::string& from_state, const std::string& to_state,
                        const std::string& event_name);
     void executeStateActions(const std::string& state_name);
     void executeTransitionActions(const std::vector<std::string>& actions);
 
-    // Вспомогательные методы для регистрации коллбэков (для шаблонных методов)
+    // Helper methods for callback registration (for template methods)
     void registerStateCallbackImpl(const std::string& state_name, const std::string& callback_type,
                                    std::function<void()> callback);
 
@@ -258,7 +258,7 @@ class StateMachine {
     void registerActionImpl(const std::string& action_name, std::function<void()> callback);
 };
 
-// Реализация шаблонных методов в заголовке
+// Template method implementations in header
 
 template <typename T>
 void StateMachine::registerStateCallback(const std::string& state_name,

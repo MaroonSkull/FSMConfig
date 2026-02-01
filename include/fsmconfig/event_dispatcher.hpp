@@ -12,58 +12,58 @@
 
 namespace fsmconfig {
 
-/// Тип функции для обработки событий
+/// Event handler function type
 using EventHandler =
     std::function<void(const std::string& event_name, const TransitionEvent& event)>;
 
-/// Диспетчер событий для конечного автомата
+/// Event dispatcher for finite state machine
 class EventDispatcher {
    public:
     EventDispatcher();
     ~EventDispatcher();
 
-    // Запрет копирования
+    // Copy prohibition
     EventDispatcher(const EventDispatcher&) = delete;
     EventDispatcher& operator=(const EventDispatcher&) = delete;
 
-    // Разрешение перемещения
+    // Move permission
     EventDispatcher(EventDispatcher&& other) noexcept;
     EventDispatcher& operator=(EventDispatcher&& other) noexcept;
 
-    /// Отправить событие для обработки
+    /// Dispatch event for processing
     void dispatchEvent(const std::string& event_name, const TransitionEvent& event);
 
-    /// Обработать все события в очереди (синхронно)
+    /// Process all events in queue (synchronously)
     void processEvents();
 
-    /// Обработать одно событие из очереди
+    /// Process one event from queue
     bool processOneEvent();
 
-    /// Получить количество событий в очереди
+    /// Get number of events in queue
     size_t getEventQueueSize() const;
 
-    /// Очистить очередь событий
+    /// Clear event queue
     void clearEventQueue();
 
-    /// Проверить, есть ли события в очереди
+    /// Check if there are events in queue
     bool hasPendingEvents() const;
 
-    /// Установить обработчик событий
+    /// Set event handler
     void setEventHandler(EventHandler handler);
 
-    /// Проверить, установлен ли обработчик событий
+    /// Check if event handler is set
     bool hasEventHandler() const;
 
-    /// Запустить диспетчер (для будущей асинхронной обработки)
+    /// Start dispatcher (for future asynchronous processing)
     void start();
 
-    /// Остановить диспетчер (для будущей асинхронной обработки)
+    /// Stop dispatcher (for future asynchronous processing)
     void stop();
 
-    /// Проверить, запущен ли диспетчер
+    /// Check if dispatcher is running
     bool isRunning() const;
 
-    /// Ожидать обработки всех событий
+    /// Wait for all events to be processed
     void waitForEmptyQueue() const;
 
    private:
