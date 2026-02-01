@@ -6,62 +6,62 @@ using namespace fsmconfig;
 
 /**
  * @file main.cpp
- * @brief Пример использования FSMConfig для сетевого протокола
+ * @brief Example of using FSMConfig for a network protocol
  *
- * Этот пример демонстрирует использование библиотеки FSMConfig
- * для моделирования состояний сетевого протокола
+ * This example demonstrates the use of the FSMConfig library
+ * for modeling network protocol states
  * (Disconnected, Connecting, Connected, Authenticating, Authenticated, Error).
- * Показывает сложную логику с guard-условиями.
+ * Shows complex logic with guard conditions.
  */
 
 /**
  * @class NetworkProtocolExample
- * @brief Пример использования конечного автомата для сетевого протокола
+ * @brief Example of using a finite state machine for a network protocol
  *
- * Демонстрирует:
- * - Регистрацию коллбэков состояния (on_enter, on_exit)
- * - Регистрацию коллбэков переходов
- * - Регистрацию guard-условий для защиты переходов
- * - Регистрацию действий
- * - Работа с переменными (глобальными и состояния)
- * - Триггеринг событий для изменения состояний
- * - Сложную логику с множеством состояний и переходов
+ * Demonstrates:
+ * - Registration of state callbacks (on_enter, on_exit)
+ * - Registration of transition callbacks
+ * - Registration of guard conditions for transition protection
+ * - Registration of actions
+ * - Working with variables (global and state)
+ * - Triggering events to change states
+ * - Complex logic with multiple states and transitions
  */
 class NetworkProtocolExample {
 public:
     /**
-     * @brief Запуск примера
+     * @brief Run the example
      */
     void run() {
-        // Создаём конечный автомат из YAML конфигурации
+        // Create a finite state machine from YAML configuration
         fsm_ptr = std::make_unique<StateMachine>("config.yaml");
         StateMachine& fsm = *fsm_ptr;
         
-        // Регистрируем коллбэки состояния disconnected
+        // Register disconnected state callbacks
         fsm.registerStateCallback("disconnected", "on_enter", &NetworkProtocolExample::onDisconnectedEnter, this);
         fsm.registerStateCallback("disconnected", "on_exit", &NetworkProtocolExample::onDisconnectedExit, this);
         
-        // Регистрируем коллбэки состояния connecting
+        // Register connecting state callbacks
         fsm.registerStateCallback("connecting", "on_enter", &NetworkProtocolExample::onConnectingEnter, this);
         fsm.registerStateCallback("connecting", "on_exit", &NetworkProtocolExample::onConnectingExit, this);
         
-        // Регистрируем коллбэки состояния connected
+        // Register connected state callbacks
         fsm.registerStateCallback("connected", "on_enter", &NetworkProtocolExample::onConnectedEnter, this);
         fsm.registerStateCallback("connected", "on_exit", &NetworkProtocolExample::onConnectedExit, this);
         
-        // Регистрируем коллбэки состояния authenticating
+        // Register authenticating state callbacks
         fsm.registerStateCallback("authenticating", "on_enter", &NetworkProtocolExample::onAuthenticatingEnter, this);
         fsm.registerStateCallback("authenticating", "on_exit", &NetworkProtocolExample::onAuthenticatingExit, this);
         
-        // Регистрируем коллбэки состояния authenticated
+        // Register authenticated state callbacks
         fsm.registerStateCallback("authenticated", "on_enter", &NetworkProtocolExample::onAuthenticatedEnter, this);
         fsm.registerStateCallback("authenticated", "on_exit", &NetworkProtocolExample::onAuthenticatedExit, this);
         
-        // Регистрируем коллбэки состояния error
+        // Register error state callbacks
         fsm.registerStateCallback("error", "on_enter", &NetworkProtocolExample::onErrorEnter, this);
         fsm.registerStateCallback("error", "on_exit", &NetworkProtocolExample::onErrorExit, this);
         
-        // Регистрируем коллбэки переходов
+        // Register transition callbacks
         fsm.registerTransitionCallback("disconnected", "connecting", &NetworkProtocolExample::onConnectTransition, this);
         fsm.registerTransitionCallback("connecting", "connected", &NetworkProtocolExample::onConnectionEstablishedTransition, this);
         fsm.registerTransitionCallback("connecting", "error", &NetworkProtocolExample::onConnectionFailedTransition, this);
@@ -73,10 +73,10 @@ public:
         fsm.registerTransitionCallback("error", "disconnected", &NetworkProtocolExample::onRetryTransition, this);
         fsm.registerTransitionCallback("error", "disconnected", &NetworkProtocolExample::onGiveUpTransition, this);
         
-        // Регистрируем guard-условие для перехода error -> disconnected (retry)
+        // Register guard condition for error -> disconnected transition (retry)
         fsm.registerGuard("error", "disconnected", "retry", &NetworkProtocolExample::checkRetryCount, this);
         
-        // Регистрируем действия
+        // Register actions
         fsm.registerAction("close_connection", &NetworkProtocolExample::closeConnection, this);
         fsm.registerAction("log_disconnected", &NetworkProtocolExample::logDisconnected, this);
         fsm.registerAction("initiate_connection", &NetworkProtocolExample::initiateConnection, this);
@@ -90,55 +90,55 @@ public:
         fsm.registerAction("log_error", &NetworkProtocolExample::logError, this);
         fsm.registerAction("cleanup_resources", &NetworkProtocolExample::cleanupResources, this);
         
-        // Устанавливаем глобальные переменные
+        // Set global variables
         fsm.setVariable("max_retries", VariableValue(3));
         fsm.setVariable("timeout", VariableValue(5.0f));
         fsm.setVariable("retry_count", VariableValue(0));
         
-        // Запускаем конечный автомат
+        // Start the finite state machine
         std::cout << "=== Network Protocol State Machine Example ===\n";
         fsm.start();
         
-        // Симулируем сетевой протокол
+        // Simulate network protocol
         
-        // Пытаемся подключиться
+        // Try to connect
         std::cout << "\n[Event] Connecting...\n";
         fsm.triggerEvent("connect");
         
-        // Соединение установлено
+        // Connection established
         std::cout << "\n[Event] Connection established\n";
         fsm.triggerEvent("connection_established");
         
-        // Начинаем аутентификацию
+        // Start authentication
         std::cout << "\n[Event] Authenticating...\n";
         fsm.triggerEvent("authenticate");
         
-        // Аутентификация успешна
+        // Authentication successful
         std::cout << "\n[Event] Authentication successful\n";
         fsm.triggerEvent("authentication_success");
         
-        // Отключаемся
+        // Disconnect
         std::cout << "\n[Event] Disconnecting...\n";
         fsm.triggerEvent("disconnect");
         
-        // Симулируем ошибку соединения
+        // Simulate connection error
         std::cout << "\n[Event] Connecting again...\n";
         fsm.triggerEvent("connect");
         
-        // Соединение не удалось
+        // Connection failed
         std::cout << "\n[Event] Connection failed\n";
         fsm.triggerEvent("connection_failed");
         
-        // Пробуем снова (retry_count < max_retries)
+        // Try again (retry_count < max_retries)
         std::cout << "\n[Event] Retrying...\n";
         fsm.triggerEvent("retry");
         
-        // Останавливаем конечный автомат
+        // Stop the finite state machine
         fsm.stop();
     }
     
 private:
-    // Коллбэки состояния disconnected
+    // Disconnected state callbacks
     void onDisconnectedEnter() {
         std::cout << "  -> Entered disconnected state\n";
     }
@@ -147,7 +147,7 @@ private:
         std::cout << "  <- Exited disconnected state\n";
     }
     
-    // Коллбэки состояния connecting
+    // Connecting state callbacks
     void onConnectingEnter() {
         std::cout << "  -> Entered connecting state\n";
     }
@@ -156,7 +156,7 @@ private:
         std::cout << "  <- Exited connecting state\n";
     }
     
-    // Коллбэки состояния connected
+    // Connected state callbacks
     void onConnectedEnter() {
         std::cout << "  -> Entered connected state\n";
     }
@@ -165,7 +165,7 @@ private:
         std::cout << "  <- Exited connected state\n";
     }
     
-    // Коллбэки состояния authenticating
+    // Authenticating state callbacks
     void onAuthenticatingEnter() {
         std::cout << "  -> Entered authenticating state\n";
     }
@@ -174,7 +174,7 @@ private:
         std::cout << "  <- Exited authenticating state\n";
     }
     
-    // Коллбэки состояния authenticated
+    // Authenticated state callbacks
     void onAuthenticatedEnter() {
         std::cout << "  -> Entered authenticated state\n";
     }
@@ -183,7 +183,7 @@ private:
         std::cout << "  <- Exited authenticated state\n";
     }
     
-    // Коллбэки состояния error
+    // Error state callbacks
     void onErrorEnter() {
         std::cout << "  -> Entered error state\n";
     }
@@ -192,7 +192,7 @@ private:
         std::cout << "  <- Exited error state\n";
     }
     
-    // Коллбэки переходов
+    // Transition callbacks
     void onConnectTransition(const TransitionEvent& event) {
         std::cout << "  Transition: " << event.from_state 
                   << " -> " << event.to_state << "\n";
@@ -243,10 +243,10 @@ private:
                   << " -> " << event.to_state << "\n";
     }
     
-    // Guard-условие
+    // Guard condition
     /**
-     * @brief Проверка количества попыток перед повторным подключением
-     * @return true если retry_count < max_retries
+     * @brief Check retry count before reconnecting
+     * @return true if retry_count < max_retries
      */
     bool checkRetryCount() {
         VariableValue retryCount = fsm_ptr->getVariable("retry_count");
@@ -254,7 +254,7 @@ private:
         return retryCount.asInt() < maxRetries.asInt();
     }
     
-    // Действия
+    // Actions
     void closeConnection() {
         std::cout << "  [Action] Closing connection\n";
     }
@@ -307,7 +307,7 @@ private:
 };
 
 /**
- * @brief Точка входа в приложение
+ * @brief Application entry point
  */
 int main() {
     NetworkProtocolExample example;

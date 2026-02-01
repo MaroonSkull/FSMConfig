@@ -6,7 +6,7 @@ using namespace fsmconfig;
 
 /**
  * @file test_callback_registry.cpp
- * @brief Тесты для CallbackRegistry
+ * @brief Tests for CallbackRegistry
  */
 
 class CallbackRegistryTest : public ::testing::Test {

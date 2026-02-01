@@ -5,21 +5,21 @@
 namespace fsmconfig {
 
 /**
- * @brief Реализация VariableManager (Pimpl идиома)
+ * @brief VariableManager implementation (Pimpl idiom)
  */
 class VariableManager::Impl {
    public:
-    /// Глобальные переменные
+    /// Global variables
     std::map<std::string, VariableValue> global_variables;
 
-    /// Локальные переменные состояний: key = state_name
+    /// State local variables: key = state_name
     std::map<std::string, std::map<std::string, VariableValue>> state_variables;
 
-    /// Мьютекс для потокобезопасности
+    /// Mutex for thread safety
     mutable std::mutex mutex;
 
     /**
-     * @brief Очистка всех переменных
+     * @brief Clear all variables
      */
     void clear() {
         global_variables.clear();
@@ -28,7 +28,7 @@ class VariableManager::Impl {
 };
 
 // ============================================================================
-// Конструкторы и деструктор
+// Constructors and destructor
 // ============================================================================
 
 VariableManager::VariableManager() : impl_(std::make_unique<Impl>()) {}
@@ -40,7 +40,7 @@ VariableManager::VariableManager(VariableManager&& other) noexcept = default;
 VariableManager& VariableManager::operator=(VariableManager&& other) noexcept = default;
 
 // ============================================================================
-// Методы установки переменных
+// Variable setter methods
 // ============================================================================
 
 void VariableManager::setGlobalVariable(const std::string& name, const VariableValue& value) {
@@ -55,14 +55,14 @@ void VariableManager::setStateVariable(const std::string& state_name, const std:
 }
 
 // ============================================================================
-// Методы получения переменных
+// Variable getter methods
 // ============================================================================
 
 std::optional<VariableValue> VariableManager::getVariable(const std::string& state_name,
                                                           const std::string& name) const {
     std::lock_guard<std::mutex> lock(impl_->mutex);
 
-    // Сначала ищем локальную переменную
+    // First search for local variable
     auto state_it = impl_->state_variables.find(state_name);
     if (state_it != impl_->state_variables.end()) {
         auto var_it = state_it->second.find(name);
@@ -71,7 +71,7 @@ std::optional<VariableValue> VariableManager::getVariable(const std::string& sta
         }
     }
 
-    // Если локальная не найдена, ищем глобальную
+    // If local not found, search for global
     auto global_it = impl_->global_variables.find(name);
     if (global_it != impl_->global_variables.end()) {
         return global_it->second;
@@ -115,7 +115,7 @@ const std::map<std::string, VariableValue>& VariableManager::getStateVariables(
     const std::string& state_name) const {
     std::lock_guard<std::mutex> lock(impl_->mutex);
 
-    // Возвращаем пустую карту для несуществующего состояния
+    // Return empty map for non-existent state
     static const std::map<std::string, VariableValue> empty_map;
 
     auto it = impl_->state_variables.find(state_name);
@@ -127,13 +127,13 @@ const std::map<std::string, VariableValue>& VariableManager::getStateVariables(
 }
 
 // ============================================================================
-// Методы проверки существования переменных
+// Variable existence check methods
 // ============================================================================
 
 bool VariableManager::hasVariable(const std::string& state_name, const std::string& name) const {
     std::lock_guard<std::mutex> lock(impl_->mutex);
 
-    // Сначала проверяем локальную переменную
+    // First check local variable
     auto state_it = impl_->state_variables.find(state_name);
     if (state_it != impl_->state_variables.end()) {
         if (state_it->second.find(name) != state_it->second.end()) {
@@ -141,7 +141,7 @@ bool VariableManager::hasVariable(const std::string& state_name, const std::stri
         }
     }
 
-    // Если локальная не найдена, проверяем глобальную
+    // If local not found, check global
     return impl_->global_variables.find(name) != impl_->global_variables.end();
 }
 
@@ -163,13 +163,13 @@ bool VariableManager::hasStateVariable(const std::string& state_name,
 }
 
 // ============================================================================
-// Методы удаления переменных
+// Variable removal methods
 // ============================================================================
 
 bool VariableManager::removeVariable(const std::string& state_name, const std::string& name) {
     std::lock_guard<std::mutex> lock(impl_->mutex);
 
-    // Сначала пытаемся удалить локальную переменную
+    // First try to remove local variable
     auto state_it = impl_->state_variables.find(state_name);
     if (state_it != impl_->state_variables.end()) {
         if (state_it->second.erase(name) > 0) {
@@ -177,7 +177,7 @@ bool VariableManager::removeVariable(const std::string& state_name, const std::s
         }
     }
 
-    // Если локальная не найдена, пытаемся удалить глобальную
+    // If local not found, try to remove global
     return impl_->global_variables.erase(name) > 0;
 }
 
@@ -198,7 +198,7 @@ bool VariableManager::removeStateVariable(const std::string& state_name, const s
 }
 
 // ============================================================================
-// Методы управления переменными
+// Variable management methods
 // ============================================================================
 
 void VariableManager::clear() {
@@ -227,7 +227,7 @@ void VariableManager::copyStateVariables(const std::string& from_state,
 }
 
 // ============================================================================
-// Методы подсчёта переменных
+// Variable counting methods
 // ============================================================================
 
 size_t VariableManager::getGlobalVariableCount() const {

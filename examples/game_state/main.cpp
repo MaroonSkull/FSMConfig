@@ -6,52 +6,52 @@ using namespace fsmconfig;
 
 /**
  * @file main.cpp
- * @brief Пример использования FSMConfig для управления состоянием игры
+ * @brief Example of using FSMConfig for game state management
  *
- * Этот пример демонстрирует использование библиотеки FSMConfig
- * для управления состояниями игры (Menu, Playing, Paused, GameOver).
- * Показывает использование guard-условий и переменных состояния.
+ * This example demonstrates the use of the FSMConfig library
+ * for managing game states (Menu, Playing, Paused, GameOver).
+ * Shows the use of guard conditions and state variables.
  */
 
 /**
  * @class GameStateExample
- * @brief Пример использования конечного автомата для игровой логики
+ * @brief Example of using a finite state machine for game logic
  *
- * Демонстрирует:
- * - Регистрацию коллбэков состояния (on_enter, on_exit)
- * - Регистрацию коллбэков переходов
- * - Регистрацию guard-условий для защиты переходов
- * - Регистрацию действий
- * - Работа с переменными (глобальными и состояния)
- * - Триггеринг событий для изменения состояний
+ * Demonstrates:
+ * - Registration of state callbacks (on_enter, on_exit)
+ * - Registration of transition callbacks
+ * - Registration of guard conditions for transition protection
+ * - Registration of actions
+ * - Working with variables (global and state)
+ * - Triggering events to change states
  */
 class GameStateExample {
 public:
     /**
-     * @brief Запуск примера
+     * @brief Run the example
      */
     void run() {
-        // Создаём конечный автомат из YAML конфигурации
+        // Create a finite state machine from YAML configuration
         fsm_ptr = std::make_unique<StateMachine>("config.yaml");
         StateMachine& fsm = *fsm_ptr;
         
-        // Регистрируем коллбэки состояния menu
+        // Register menu state callbacks
         fsm.registerStateCallback("menu", "on_enter", &GameStateExample::onMenuEnter, this);
         fsm.registerStateCallback("menu", "on_exit", &GameStateExample::onMenuExit, this);
         
-        // Регистрируем коллбэки состояния playing
+        // Register playing state callbacks
         fsm.registerStateCallback("playing", "on_enter", &GameStateExample::onPlayingEnter, this);
         fsm.registerStateCallback("playing", "on_exit", &GameStateExample::onPlayingExit, this);
         
-        // Регистрируем коллбэки состояния paused
+        // Register paused state callbacks
         fsm.registerStateCallback("paused", "on_enter", &GameStateExample::onPausedEnter, this);
         fsm.registerStateCallback("paused", "on_exit", &GameStateExample::onPausedExit, this);
         
-        // Регистрируем коллбэки состояния game_over
+        // Register game_over state callbacks
         fsm.registerStateCallback("game_over", "on_enter", &GameStateExample::onGameOverEnter, this);
         fsm.registerStateCallback("game_over", "on_exit", &GameStateExample::onGameOverExit, this);
         
-        // Регистрируем коллбэки переходов
+        // Register transition callbacks
         fsm.registerTransitionCallback("menu", "playing", &GameStateExample::onStartGameTransition, this);
         fsm.registerTransitionCallback("playing", "paused", &GameStateExample::onPauseGameTransition, this);
         fsm.registerTransitionCallback("paused", "playing", &GameStateExample::onResumeGameTransition, this);
@@ -59,10 +59,10 @@ public:
         fsm.registerTransitionCallback("playing", "game_over", &GameStateExample::onPlayerDiedTransition, this);
         fsm.registerTransitionCallback("game_over", "menu", &GameStateExample::onRestartTransition, this);
         
-        // Регистрируем guard-условие для перехода playing -> game_over
+        // Register guard condition for playing -> game_over transition
         fsm.registerGuard("playing", "game_over", "player_died", &GameStateExample::checkPlayerHealth, this);
         
-        // Регистрируем действия
+        // Register actions
         fsm.registerAction("show_menu", &GameStateExample::showMenu, this);
         fsm.registerAction("load_save_data", &GameStateExample::loadSaveData, this);
         fsm.registerAction("start_game_loop", &GameStateExample::startGameLoop, this);
@@ -71,47 +71,47 @@ public:
         fsm.registerAction("show_game_over_screen", &GameStateExample::showGameOverScreen, this);
         fsm.registerAction("save_high_score", &GameStateExample::saveHighScore, this);
         
-        // Устанавливаем глобальные переменные
+        // Set global variables
         fsm.setVariable("player_health", VariableValue(100));
         fsm.setVariable("player_level", VariableValue(1));
         
-        // Запускаем конечный автомат
+        // Start the finite state machine
         std::cout << "=== Game State Machine Example ===\n";
         fsm.start();
         
-        // Симулируем игровой процесс
+        // Simulate game process
         
-        // Начинаем игру
+        // Start game
         std::cout << "\n[Event] Starting game...\n";
         fsm.triggerEvent("start_game");
         
-        // Ставим игру на паузу
+        // Pause game
         std::cout << "\n[Event] Pausing game...\n";
         fsm.triggerEvent("pause_game");
         
-        // Возобновляем игру
+        // Resume game
         std::cout << "\n[Event] Resuming game...\n";
         fsm.triggerEvent("resume_game");
         
-        // Игрок умирает (health <= 0)
+        // Player dies (health <= 0)
         std::cout << "\n[Event] Player died...\n";
         fsm.setVariable("player_health", VariableValue(0));
         fsm.triggerEvent("player_died");
         
-        // Перезапуск игры
+        // Restart game
         std::cout << "\n[Event] Restarting...\n";
         fsm.triggerEvent("restart");
         
-        // Выход в меню
+        // Quit to menu
         std::cout << "\n[Event] Quitting to menu...\n";
         fsm.triggerEvent("quit_to_menu");
         
-        // Останавливаем конечный автомат
+        // Stop the finite state machine
         fsm.stop();
     }
     
 private:
-    // Коллбэки состояния menu
+    // Menu state callbacks
     void onMenuEnter() {
         std::cout << "  -> Entered menu state\n";
     }
@@ -120,7 +120,7 @@ private:
         std::cout << "  <- Exited menu state\n";
     }
     
-    // Коллбэки состояния playing
+    // Playing state callbacks
     void onPlayingEnter() {
         std::cout << "  -> Entered playing state\n";
     }
@@ -129,7 +129,7 @@ private:
         std::cout << "  <- Exited playing state\n";
     }
     
-    // Коллбэки состояния paused
+    // Paused state callbacks
     void onPausedEnter() {
         std::cout << "  -> Entered paused state\n";
     }
@@ -138,7 +138,7 @@ private:
         std::cout << "  <- Exited paused state\n";
     }
     
-    // Коллбэки состояния game_over
+    // Game_over state callbacks
     void onGameOverEnter() {
         std::cout << "  -> Entered game_over state\n";
     }
@@ -147,7 +147,7 @@ private:
         std::cout << "  <- Exited game_over state\n";
     }
     
-    // Коллбэки переходов
+    // Transition callbacks
     void onStartGameTransition(const TransitionEvent& event) {
         std::cout << "  Transition: " << event.from_state 
                   << " -> " << event.to_state << "\n";
@@ -178,17 +178,17 @@ private:
                   << " -> " << event.to_state << "\n";
     }
     
-    // Guard-условие
+    // Guard condition
     /**
-     * @brief Проверка здоровья игрока перед переходом в game_over
-     * @return true если здоровье игрока <= 0
+     * @brief Check player health before transitioning to game_over
+     * @return true if player health <= 0
      */
     bool checkPlayerHealth() {
         VariableValue health = fsm_ptr->getVariable("player_health");
         return health.asInt() <= 0;
     }
     
-    // Действия
+    // Actions
     void showMenu() {
         std::cout << "  [Action] Showing main menu\n";
     }
@@ -221,7 +221,7 @@ private:
 };
 
 /**
- * @brief Точка входа в приложение
+ * @brief Application entry point
  */
 int main() {
     GameStateExample example;

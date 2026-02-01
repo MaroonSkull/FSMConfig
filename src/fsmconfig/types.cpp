@@ -46,15 +46,15 @@ VariableValue::VariableValue(const VariableValue& other) : type(other.type) {
 
 VariableValue& VariableValue::operator=(const VariableValue& other) {
     if (this != &other) {
-        // Сначала уничтожаем старое значение если это STRING
+        // First destroy old value if it's STRING
         if (type == VariableType::STRING) {
             string_value.~basic_string();
         }
 
-        // Копируем тип
+        // Copy type
         type = other.type;
 
-        // Копируем значение
+        // Copy value
         switch (type) {
             case VariableType::INT:
                 int_value = other.int_value;

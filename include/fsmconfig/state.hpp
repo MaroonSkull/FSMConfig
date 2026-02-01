@@ -11,105 +11,105 @@ namespace fsmconfig {
 
 /**
  * @file state.hpp
- * @brief Класс состояния конечного автомата
+ * @brief Finite state machine state class
  */
 
 /**
  * @class State
- * @brief Класс представляющий состояние в конечном автомате
+ * @brief Class representing a state in finite state machine
  *
- * Класс State обеспечивает:
- * - Хранение информации о состоянии
- * - Управление переменными состояния
- * - Предоставление интерфейса для доступа к данным состояния
- * - Использование идиомы Pimpl для скрытия реализации
+ * State class provides:
+ * - Storage of state information
+ * - State variable management
+ * - Interface for accessing state data
+ * - Use of Pimpl idiom for implementation hiding
  */
 class State {
    public:
     /**
-     * @brief Конструктор
-     * @param info Информация о состоянии
+     * @brief Constructor
+     * @param info State information
      */
     explicit State(const StateInfo& info);
 
     /**
-     * @brief Деструктор
+     * @brief Destructor
      */
     ~State();
 
-    // Запрет копирования
+    // Copy prohibition
     State(const State&) = delete;
     State& operator=(const State&) = delete;
 
-    // Разрешение перемещения
+    // Move permission
     /**
-     * @brief Конструктор перемещения
-     * @param other Перемещаемое состояние
+     * @brief Move constructor
+     * @param other State to move
      */
     State(State&& other) noexcept;
 
     /**
-     * @brief Оператор присваивания перемещением
-     * @param other Перемещаемое состояние
-     * @return Ссылка на текущий объект
+     * @brief Move assignment operator
+     * @param other State to move
+     * @return Reference to current object
      */
     State& operator=(State&& other) noexcept;
 
     /**
-     * @brief Получить имя состояния
-     * @return Имя состояния
+     * @brief Get state name
+     * @return State name
      */
     const std::string& getName() const;
 
     /**
-     * @brief Получить все переменные состояния
-     * @return Ссылка на карту переменных
+     * @brief Get all state variables
+     * @return Reference to variables map
      */
     const std::map<std::string, VariableValue>& getVariables() const;
 
     /**
-     * @brief Получить коллбэк при входе в состояние
-     * @return Имя коллбэка
+     * @brief Get on-enter callback
+     * @return Callback name
      */
     const std::string& getOnEnterCallback() const;
 
     /**
-     * @brief Получить коллбэк при выходе из состояния
-     * @return Имя коллбэка
+     * @brief Get on-exit callback
+     * @return Callback name
      */
     const std::string& getOnExitCallback() const;
 
     /**
-     * @brief Получить список действий состояния
-     * @return Ссылка на вектор действий
+     * @brief Get list of state actions
+     * @return Reference to actions vector
      */
     const std::vector<std::string>& getActions() const;
 
     /**
-     * @brief Проверить наличие переменной
-     * @param name Имя переменной
-     * @return true если переменная существует
+     * @brief Check if variable exists
+     * @param name Variable name
+     * @return true if variable exists
      */
     bool hasVariable(const std::string& name) const;
 
     /**
-     * @brief Получить значение переменной
-     * @param name Имя переменной
-     * @return Значение переменной
-     * @throw StateException Если переменная не существует
+     * @brief Get variable value
+     * @param name Variable name
+     * @return Variable value
+     * @throw StateException If variable does not exist
      */
     VariableValue getVariable(const std::string& name) const;
 
     /**
-     * @brief Установить значение переменной
-     * @param name Имя переменной
-     * @param value Значение переменной
+     * @brief Set variable value
+     * @param name Variable name
+     * @param value Variable value
      */
     void setVariable(const std::string& name, const VariableValue& value);
 
     /**
-     * @brief Получить все переменные состояния
-     * @return Ссылка на карту переменных
+     * @brief Get all state variables
+     * @return Reference to variables map
      */
     const std::map<std::string, VariableValue>& getAllVariables() const;
 

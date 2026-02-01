@@ -11,28 +11,28 @@
 namespace fsmconfig {
 
 // ============================================================================
-// ConfigParser::Impl - Реализация (Pimpl идиома)
+// ConfigParser::Impl - Implementation (Pimpl idiom)
 // ============================================================================
 
 /**
- * @brief Внутренняя реализация ConfigParser
+ * @brief Internal implementation of ConfigParser
  */
 class ConfigParser::Impl {
    public:
-    /// Глобальные переменные конфигурации
+    /// Global configuration variables
     std::map<std::string, VariableValue> global_variables;
 
-    /// Карта состояний
+    /// States map
     std::map<std::string, StateInfo> states;
 
-    /// Вектор переходов
+    /// Transitions vector
     std::vector<TransitionInfo> transitions;
 
-    /// Начальное состояние (пустое если не задано явно)
+    /// Initial state (empty if not explicitly set)
     std::string initial_state;
 
     /**
-     * @brief Очистить все данные конфигурации
+     * @brief Clear all configuration data
      */
     void clear() {
         global_variables.clear();
@@ -43,7 +43,7 @@ class ConfigParser::Impl {
 };
 
 // ============================================================================
-// Конструкторы и деструктор
+// Constructors and destructor
 // ============================================================================
 
 ConfigParser::ConfigParser() : impl_(std::make_unique<Impl>()) {}
@@ -60,38 +60,38 @@ ConfigParser& ConfigParser::operator=(ConfigParser&& other) noexcept {
 }
 
 // ============================================================================
-// Методы загрузки
+// Load methods
 // ============================================================================
 
 void ConfigParser::loadFromFile(const std::string& file_path) {
     try {
-        // Очистить предыдущую конфигурацию
+        // Clear previous configuration
         impl_->clear();
 
-        // Загрузить YAML из файла
+        // Load YAML from file
         YAML::Node root = YAML::LoadFile(file_path);
 
-        // Парсить глобальные переменные
+        // Parse global variables
         if (root["variables"]) {
             parseGlobalVariables(root["variables"]);
         }
 
-        // Парсить состояния
+        // Parse states
         if (root["states"]) {
             parseStates(root["states"]);
         }
 
-        // Парсить переходы
+        // Parse transitions
         if (root["transitions"]) {
             parseTransitions(root["transitions"]);
         }
 
-        // Парсить начальное состояние
+        // Parse initial state
         if (root["initial_state"] && root["initial_state"].IsScalar()) {
             impl_->initial_state = root["initial_state"].Scalar();
         }
 
-        // Валидировать конфигурацию
+        // Validate configuration
         validateConfig();
 
     } catch (const YAML::Exception& e) {
@@ -105,33 +105,33 @@ void ConfigParser::loadFromFile(const std::string& file_path) {
 
 void ConfigParser::loadFromString(const std::string& yaml_content) {
     try {
-        // Очистить предыдущую конфигурацию
+        // Clear previous configuration
         impl_->clear();
 
-        // Загрузить YAML из строки
+        // Load YAML from string
         YAML::Node root = YAML::Load(yaml_content);
 
-        // Парсить глобальные переменные
+        // Parse global variables
         if (root["variables"]) {
             parseGlobalVariables(root["variables"]);
         }
 
-        // Парсить состояния
+        // Parse states
         if (root["states"]) {
             parseStates(root["states"]);
         }
 
-        // Парсить переходы
+        // Parse transitions
         if (root["transitions"]) {
             parseTransitions(root["transitions"]);
         }
 
-        // Парсить начальное состояние
+        // Parse initial state
         if (root["initial_state"] && root["initial_state"].IsScalar()) {
             impl_->initial_state = root["initial_state"].Scalar();
         }
 
-        // Валидировать конфигурацию
+        // Validate configuration
         validateConfig();
 
     } catch (const YAML::Exception& e) {
@@ -144,7 +144,7 @@ void ConfigParser::loadFromString(const std::string& yaml_content) {
 }
 
 // ============================================================================
-// Методы доступа к данным
+// Data access methods
 // ============================================================================
 
 const std::map<std::string, VariableValue>& ConfigParser::getGlobalVariables() const {
@@ -194,7 +194,7 @@ std::string ConfigParser::getInitialState() const { return impl_->initial_state;
 void ConfigParser::clear() { impl_->clear(); }
 
 // ============================================================================
-// Вспомогательные методы парсинга
+// Helper parsing methods
 // ============================================================================
 
 VariableValue ConfigParser::parseVariable(const YAML::Node& node) const {
@@ -202,22 +202,22 @@ VariableValue ConfigParser::parseVariable(const YAML::Node& node) const {
         throw ConfigException("Variable node is null or undefined");
     }
 
-    // Проверка на скалярное значение
+    // Check for scalar value
     if (node.IsScalar()) {
         std::string value = node.Scalar();
 
-        // Попытка распознать тип по строковому представлению
+        // Try to recognize type from string representation
         if (value == "true" || value == "false") {
             return VariableValue(node.as<bool>());
         }
 
-        // Проверка на целое число (включая отрицательные)
+        // Check for integer (including negative)
         try {
-            // Проверяем, что строка состоит из цифр и опционального знака минус в начале
+            // Check that string consists of digits and optional minus sign at the beginning
             bool is_integer = true;
             for (size_t i = 0; i < value.size(); ++i) {
                 if (i == 0 && value[i] == '-') {
-                    continue;  // Минус в начале допустим
+                    continue;  // Minus at the beginning is allowed
                 }
                 if (!std::isdigit(value[i])) {
                     is_integer = false;
@@ -228,17 +228,17 @@ VariableValue ConfigParser::parseVariable(const YAML::Node& node) const {
                 return VariableValue(node.as<int>());
             }
         } catch (...) {
-            // Игнорируем ошибки при попытке парсинга как int
+            // Ignore errors when trying to parse as int
         }
 
-        // Проверка на вещественное число
+        // Check for floating point number
         try {
             return VariableValue(node.as<float>());
         } catch (...) {
-            // Игнорируем ошибки при попытке парсинга как float
+            // Ignore errors when trying to parse as float
         }
 
-        // По умолчанию - строка
+        // Default to string
         return VariableValue(value);
     }
 
@@ -248,7 +248,7 @@ VariableValue ConfigParser::parseVariable(const YAML::Node& node) const {
 StateInfo ConfigParser::parseState(const std::string& name, const YAML::Node& node) const {
     StateInfo state_info(name);
 
-    // Парсинг переменных состояния
+    // Parse state variables
     if (node["variables"] && node["variables"].IsMap()) {
         for (const auto& var_pair : node["variables"]) {
             std::string var_name = var_pair.first.Scalar();
@@ -256,17 +256,17 @@ StateInfo ConfigParser::parseState(const std::string& name, const YAML::Node& no
         }
     }
 
-    // Парсинг коллбэка on_enter
+    // Parse on_enter callback
     if (node["on_enter"] && node["on_enter"].IsScalar()) {
         state_info.on_enter_callback = node["on_enter"].Scalar();
     }
 
-    // Парсинг коллбэка on_exit
+    // Parse on_exit callback
     if (node["on_exit"] && node["on_exit"].IsScalar()) {
         state_info.on_exit_callback = node["on_exit"].Scalar();
     }
 
-    // Парсинг действий
+    // Parse actions
     if (node["actions"] && node["actions"].IsSequence()) {
         for (const auto& action_node : node["actions"]) {
             if (action_node.IsScalar()) {
@@ -281,7 +281,7 @@ StateInfo ConfigParser::parseState(const std::string& name, const YAML::Node& no
 TransitionInfo ConfigParser::parseTransition(const YAML::Node& node) const {
     TransitionInfo transition_info;
 
-    // Обязательные поля
+    // Required fields
     if (!node["from"] || !node["from"].IsScalar()) {
         throw ConfigException("Transition missing required field 'from'");
     }
@@ -297,7 +297,7 @@ TransitionInfo ConfigParser::parseTransition(const YAML::Node& node) const {
     }
     transition_info.event_name = node["event"].Scalar();
 
-    // Опциональные поля
+    // Optional fields
     if (node["guard"] && node["guard"].IsScalar()) {
         transition_info.guard_callback = node["guard"].Scalar();
     }
@@ -306,7 +306,7 @@ TransitionInfo ConfigParser::parseTransition(const YAML::Node& node) const {
         transition_info.transition_callback = node["on_transition"].Scalar();
     }
 
-    // Парсинг действий при переходе
+    // Parse transition actions
     if (node["actions"] && node["actions"].IsSequence()) {
         for (const auto& action_node : node["actions"]) {
             if (action_node.IsScalar()) {
@@ -319,11 +319,11 @@ TransitionInfo ConfigParser::parseTransition(const YAML::Node& node) const {
 }
 
 // ============================================================================
-// Валидация конфигурации
+// Configuration validation
 // ============================================================================
 
 void ConfigParser::validateConfig() const {
-    // Проверить, что все состояния, указанные в переходах, существуют
+    // Check that all states referenced in transitions exist
     for (const auto& transition : impl_->transitions) {
         if (!hasState(transition.from_state)) {
             throw ConfigException("Transition references non-existent source state: '" +
@@ -336,7 +336,7 @@ void ConfigParser::validateConfig() const {
         }
     }
 
-    // Проверить, что нет дублирующихся переходов (from_state, event)
+    // Check that there are no duplicate transitions (from_state, event)
     std::map<std::string, std::set<std::string>> state_events;
     for (const auto& transition : impl_->transitions) {
         auto& events = state_events[transition.from_state];
@@ -349,7 +349,7 @@ void ConfigParser::validateConfig() const {
 }
 
 // ============================================================================
-// Приватные вспомогательные методы
+// Private helper methods
 // ============================================================================
 
 void ConfigParser::parseGlobalVariables(const YAML::Node& node) {
@@ -373,7 +373,7 @@ void ConfigParser::parseStates(const YAML::Node& node) {
         std::string state_name = state_pair.first.Scalar();
         impl_->states[state_name] = parseState(state_name, state_pair.second);
 
-        // Если начальное состояние не задано явно, используем первое состояние
+        // If initial state is not explicitly set, use the first state
         if (first_state && impl_->initial_state.empty()) {
             impl_->initial_state = state_name;
         }

@@ -1,32 +1,32 @@
 # Coding Standards
 
-## Общие правила
+## General Rules
 
-- **Язык документации:** English
+- **Documentation language:** English
 
-**Примечание:** Технические термины, названия команд, библиотек и стандартов оставляются на английском языке (например, RAII, smart pointers, `std::unique_ptr`, C++20). Код и команды всегда на английском.
+**Note:** Technical terms, command names, libraries, and standards should remain in English (e.g., RAII, smart pointers, `std::unique_ptr`, C++20). Code and commands are always in English.
 
-- **Упоминания кода:** Обрамлять обратным апострофом (\`)
-- **Формат Doxygen:** Java стиль (`/** @... */`)
+- **Code mentions:** Wrap in backticks (\`)
+- **Doxygen format:** Java style (`/** @... */`)
 
-## Однострочные комментарии
+## Single-Line Comments
 
 ```cpp
-/// Регистрирует новый коллбэк для указанного события
+/// Registers a new callback for the specified event
 void registerCallback(const std::string& event, CallbackFunc callback);
 ```
 
-**Важно:** Комментарий `///` всегда должен находиться ПЕРЕД комментируемым элементом.
+**Important:** The `///` comment must ALWAYS be BEFORE the element being commented.
 
-## Многострочные комментарии
+## Multi-Line Comments
 
 ```cpp
 /**
- * @brief Парсит YAML-конфигурацию и создаёт конечный автомат
+ * @brief Parses YAML configuration and creates a finite state machine
  * 
- * @param config_path Путь к YAML-файлу с конфигурацией
- * @return std::unique_ptr<StateMachine> Указатель на созданный автомат
- * @throws std::runtime_error Если конфигурация некорректна
+ * @param config_path Path to the YAML configuration file
+ * @return std::unique_ptr<StateMachine> Pointer to the created state machine
+ * @throws std::runtime_error If the configuration is invalid
  * 
  * @example
  * auto fsm = parser.parseConfig("config.yaml");
@@ -35,30 +35,30 @@ void registerCallback(const std::string& event, CallbackFunc callback);
 std::unique_ptr<StateMachine> parseConfig(const std::string& config_path);
 ```
 
-## Содержание комментариев
+## Comment Content
 
-**Описывать бизнес-логику, а не алгоритм:**
+**Describe business logic, not algorithms:**
 
-❌ **Плохо:**
+❌ **Bad:**
 ```cpp
-/// Проходим по всем элементам массива и проверяем условие
+/// Iterate through all array elements and check the condition
 void processEvents();
 ```
 
-✅ **Хорошо:**
+✅ **Good:**
 ```cpp
-/// Обрабатывает все события из очереди в порядке их поступления
-/// и выполняет соответствующие переходы состояний
+/// Processes all events from the queue in the order they were received
+/// and executes the corresponding state transitions
 void processEvents();
 ```
 
-## Обязательность документирования
+## Documentation Requirements
 
-Документировать ВСЕ функции, которые затрагиваются в ходе работы:
+Document ALL functions that are touched during work:
 
-- Публичные методы классов
-- Защищённые методы (если они являются частью API)
-- Приватные методы (если они содержат нетривиальную логику)
-- Функции свободного доступа
-- Структуры и классы
-- Перечисления
+- Public class methods
+- Protected methods (if they are part of the API)
+- Private methods (if they contain non-trivial logic)
+- Free functions
+- Structures and classes
+- Enumerations

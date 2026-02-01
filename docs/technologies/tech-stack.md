@@ -1,26 +1,26 @@
 # Tech Stack
 
-## C++ стандарт и особенности
+## C++ Standard and Features
 
-- **Стандарт:** C++20
-- **Компилятор:** GCC/Clang с поддержкой C++20
-- **Особенности:**
-  - Использование RAII для управления ресурсами
+- **Standard:** C++20
+- **Compiler:** GCC/Clang with C++20 support
+- **Features:**
+  - RAII for resource management
   - Smart pointers (`std::unique_ptr`, `std::shared_ptr`)
-  - STL контейнеры и алгоритмы
-  - Lambda-выражения для коллбэков
-  - `std::function` и `std::bind` для обратных вызовов
+  - STL containers and algorithms
+  - Lambda expressions for callbacks
+  - `std::function` and `std::bind` for callbacks
 
-## CMake конфигурация
+## CMake Configuration
 
-- **Минимальная версия:** CMake 3.15+
-- **Система сборки:** Современный CMake с использованием target-based подхода
-- **Основные цели:**
-  - `fsmconfig` — основная библиотека
-  - `fsmconfig_tests` — тесты
-  - `simple_fsm`, `game_state`, `network_protocol` — примеры использования
+- **Minimum version:** CMake 3.15+
+- **Build system:** Modern CMake using target-based approach
+- **Main targets:**
+  - `fsmconfig` — main library
+  - `fsmconfig_tests` — tests
+  - `simple_fsm`, `game_state`, `network_protocol` — usage examples
 
-**Пример сборки:**
+**Build example:**
 
 ```bash
 mkdir build && cd build
@@ -30,21 +30,21 @@ cmake --build .
 
 ## yaml-cpp
 
-- **Версия:** 0.7.0 или выше
-- **Назначение:** Парсинг YAML-конфигураций
-- **Интеграция:** Через CMake с тремя fallback-методами:
-  1. `find_package(yaml-cpp CONFIG)` для системных пакетов
-  2. `pkg_check_modules(yaml-cpp)` через PkgConfig (для Arch Linux)
-  3. Кастомный модуль [`cmake/Findyaml-cpp.cmake`](../cmake/Findyaml-cpp.cmake) как последний вариант
+- **Version:** 0.7.0 or higher
+- **Purpose:** Parsing YAML configurations
+- **Integration:** Via CMake with three fallback methods:
+  1. `find_package(yaml-cpp CONFIG)` for system packages
+  2. `pkg_check_modules(yaml-cpp)` via PkgConfig (for Arch Linux)
+  3. Custom module [`cmake/Findyaml-cpp.cmake`](../cmake/Findyaml-cpp.cmake) as last resort
 
-**Пример конфигурации:**
+**Configuration example:**
 
 ```yaml
-# Глобальные переменные
+# Global variables
 variables:
   max_attempts: 3
 
-# Определения состояний
+# State definitions
 states:
   idle:
     on_enter: on_idle_enter
@@ -58,7 +58,7 @@ states:
     actions:
       - log_active_state
 
-# Определения переходов
+# Transition definitions
 transitions:
   - from: idle
     to: active
@@ -71,35 +71,35 @@ transitions:
     on_transition: on_stop_transition
 ```
 
-## Система тестирования
+## Testing Framework
 
-- **Фреймворк:** Google Test (gtest)
-- **Запуск тестов:**
+- **Framework:** Google Test (gtest)
+- **Running tests:**
   ```bash
   cd build
   ctest --output-on-failure
   ```
-- **Покрытие:** Юнит-тесты для каждого компонента + интеграционные тесты
+- **Coverage:** Unit tests for each component + integration tests
 
-## Линтеры и инструменты качества кода
+## Linters and Code Quality Tools
 
-| Инструмент | Назначение |
-|------------|------------|
-| **clangd** | Language Server Protocol для C++ |
-| **clang-tidy** | Статический анализ кода |
-| **clang-format** | Форматирование кода |
-| **cppcheck** | Дополнительный статический анализ |
-| **include-what-you-use** | Анализ включаемых заголовков |
+| Tool | Purpose |
+|------|---------|
+| **clangd** | Language Server Protocol for C++ |
+| **clang-tidy** | Static code analysis |
+| **clang-format** | Code formatting |
+| **cppcheck** | Additional static analysis |
+| **include-what-you-use** | Header inclusion analysis |
 
-**Рекомендуемые проверки clang-tidy:**
+**Recommended clang-tidy checks:**
 
 ```bash
 clang-tidy src/**/*.cpp -- -Iinclude/ -std=c++20
 ```
 
-## Конфигурационные файлы линтеров
+## Linter Configuration Files
 
-В проекте созданы конфигурационные файлы линтеров в корневой директории проекта:
+The project has linter configuration files in the root directory:
 
 ### .clang-tidy
 ```yaml
@@ -139,12 +139,12 @@ ColumnLimit: 100
 -Iinclude/
 ```
 
-## CI/CD для линтеров
+## CI/CD for Linters
 
-В проекте настроен автоматический запуск линтеров через GitHub Actions:
-- Файл: [`.github/workflows/linters.yml`](../.github/workflows/linters.yml)
-- Триггеры: push и pull request в ветки `main` и `develop`
-- Выполняемые проверки:
-  - `clang-tidy-check` — статический анализ кода
-  - `clang-format-check` — проверка форматирования
-  - `cppcheck-check` — дополнительный статический анализ
+The project has automatic linter execution via GitHub Actions:
+- File: [`.github/workflows/linters.yml`](../.github/workflows/linters.yml)
+- Triggers: push and pull request to `main` and `develop` branches
+- Checks performed:
+  - `clang-tidy-check` — static code analysis
+  - `clang-format-check` — formatting verification
+  - `cppcheck-check` — additional static analysis

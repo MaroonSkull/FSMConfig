@@ -8,7 +8,7 @@ using namespace fsmconfig;
 
 /**
  * @file test_integration.cpp
- * @brief Интеграционные тесты для FSMConfig
+ * @brief Integration tests for FSMConfig
  */
 
 class IntegrationTest : public ::testing::Test {
@@ -19,7 +19,7 @@ protected:
     IntegrationTest() = default;
     ~IntegrationTest() override = default;
     
-    // Запрещаем копирование
+    // Prohibit copying
     IntegrationTest(const IntegrationTest&) = delete;
     IntegrationTest& operator=(const IntegrationTest&) = delete;
     

@@ -3,27 +3,27 @@
 namespace fsmconfig {
 
 /**
- * @brief Реализация EventDispatcher (Pimpl идиома)
+ * @brief EventDispatcher implementation (Pimpl idiom)
  */
 class EventDispatcher::Impl {
    public:
-    /// Очередь событий: pair<event_name, event>
+    /// Event queue: pair<event_name, event>
     std::queue<std::pair<std::string, TransitionEvent>> event_queue;
 
-    /// Обработчик событий
+    /// Event handler
     EventHandler event_handler;
 
-    /// Мьютекс для защиты очереди
+    /// Mutex for queue protection
     mutable std::mutex queue_mutex;
 
-    /// Условная переменная для ожидания
+    /// Condition variable for waiting
     mutable std::condition_variable queue_cv;
 
-    /// Флаг работы диспетчера
+    /// Dispatcher running flag
     std::atomic<bool> running;
 
     /**
-     * @brief Очистить очередь событий
+     * @brief Clear event queue
      */
     void clear() {
         std::lock_guard<std::mutex> lock(queue_mutex);
@@ -55,7 +55,7 @@ void EventDispatcher::dispatchEvent(const std::string& event_name, const Transit
 
 void EventDispatcher::processEvents() {
     while (processOneEvent()) {
-        // Обрабатываем события пока очередь не станет пустой
+        // Process events until queue becomes empty
     }
 }
 
@@ -70,7 +70,7 @@ bool EventDispatcher::processOneEvent() {
     impl_->event_queue.pop();
     lock.unlock();
 
-    // Вызываем обработчик событий, если он установлен
+    // Call event handler if set
     if (impl_->event_handler) {
         impl_->event_handler(event_pair.first, event_pair.second);
     }

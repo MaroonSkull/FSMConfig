@@ -1,251 +1,251 @@
 # Architect Workflow
 
-## Обязательный pre-flight чеклист
+## Mandatory Pre-Flight Checklist
 
-Перед созданием любого нового `.md` файла architect ОБЯЗАН выполнить следующие шаги:
+Before creating any new `.md` file, the architect MUST complete the following steps:
 
-### 1. Поиск существующих файлов
+### 1. Search for Existing Files
 
 ```
 list_files(path="docs", recursive=true)
 ```
 
-Анализировать:
-- Названия файлов на предмет релевантности теме
-- Структуру директорий docs/
-- Существующие разделы в файлах
+Analyze:
+- File names for relevance to the topic
+- Structure of the docs/ directory
+- Existing sections in files
 
-### 2. Анализ соответствия
+### 2. Analyze Relevance
 
-Для каждого найденного релевантного файла:
-- Прочитать оглавление (headings)
-- Оценить пересечение тематики
-- Проверить возможность добавления нового раздела
+For each relevant file found:
+- Read the table of contents (headings)
+- Evaluate topic overlap
+- Check if a new section can be added
 
-### 3. Принятие решения
+### 3. Make a Decision
 
-На основе анализа выбрать:
-- **Редактировать существующий** — если тема пересекается
-- **Создать новый** — только если тема принципиально новая
-- **Предложить варианты пользователю** — если неочевидно
+Based on the analysis, choose:
+- **Edit existing** — if the topic overlaps
+- **Create new** — only if the topic is fundamentally different
+- **Propose options to user** — if unclear
 
 ---
 
-## Алгоритм принятия решения
+## Decision-Making Algorithm
 
 ```mermaid
 flowchart TD
-    A[Получена задача на документацию] --> B[Поиск существующих .md файлов]
-    B --> C{Найден релевантный файл?}
+    A[Documentation task received] --> B[Search for existing .md files]
+    B --> C{Relevant file found?}
     
-    C -->|Да| D{Можно ли дополнить существующий?}
-    C -->|Нет| G[Создать новый файл]
+    C -->|Yes| D{Can existing be extended?}
+    C -->|No| G[Create new file]
     
-    D -->|Да| E[Редактировать существующий]
-    D -->|Нет| F[Предложить варианты пользователю]
+    D -->|Yes| E[Edit existing]
+    D -->|No| F[Propose options to user]
     
-    F --> H{Пользователь выбрал}
-    H -->|Редактировать| E
-    H -->|Создать новый| G
+    F --> H{User selected}
+    H -->|Edit| E
+    H -->|Create new| G
 ```
 
-**Текстовая версия:**
+**Text version:**
 
 ```
-Получена задача на документацию
+Documentation task received
     ↓
-Поиск существующих .md файлов
+Search for existing .md files
     ↓
-Найден релевантный файл?
-    ├─ Да → Можно ли дополнить существующий?
-    │   ├─ Да → Редактировать существующий
-    │   └─ Нет → Предложить пользователю варианты
-    └─ Нет → Создать новый файл
+Relevant file found?
+    ├─ Yes → Can existing be extended?
+    │   ├─ Yes → Edit existing
+    │   └─ No → Propose options to user
+    └─ No → Create new file
 ```
 
 ---
 
-## Критерии создания нового файла
+## Criteria for Creating a New File
 
-Новый `.md` файл УМЕСТНО создавать только в следующих случаях:
+A new `.md` file is APPROPRIATE to create only in the following cases:
 
-### ✅ Принципиально новая тема
+### ✅ Fundamentally New Topic
 
-Тема не пересекается с существующими файлами:
-- Нет релевантных файлов по названию
-- Содержимое существующих файлов не затрагивает эту тему
-- Пример: Создать `docs/testing/performance.md` для тестирования производительности (если ещё нет)
+The topic does not overlap with existing files:
+- No relevant files by name
+- Existing file content does not cover this topic
+- Example: Create `docs/testing/performance.md` for performance testing (if not already present)
 
-### ✅ Существующий файл стал слишком большим
+### ✅ Existing File Became Too Large
 
-Файл содержит более 300-400 строк и требует разделения:
-- Логически связанные разделы группируются
-- Создаётся новая директория для связанных тем
-- Пример: Разделить `architecture.md` на `architecture/overview.md` и `architecture/components.md`
+File contains more than 300-400 lines and requires splitting:
+- Logically related sections are grouped
+- Create a new directory for related topics
+- Example: Split `architecture.md` into `architecture/overview.md` and `architecture/components.md`
 
-### ✅ Разный уровень абстракции
+### ✅ Different Abstraction Level
 
-Информация относится к разным уровням детализации:
-- Архитектурный уровень (высокий уровень) vs имплементация (детали)
-- Обзор vs deep dive
-- Пример: `architecture.md` (архитектура) и `api_reference.md` (детали API)
+Information relates to different detail levels:
+- Architectural level (high level) vs implementation (details)
+- Overview vs deep dive
+- Example: `architecture.md` (architecture) and `api_reference.md` (API details)
 
-### ✅ Явный запрос пользователя
+### ✅ Explicit User Request
 
-Пользователь прямо попросил создать новый файл:
-- "Создай новый файл для описания X"
-- "Мне нужен отдельный документ для Y"
-
----
-
-## Критерии редактирования существующего файла
-
-Существующий файл ОБЯЗАТЕЛЬНО редактировать в следующих случаях:
-
-### ✅ Тема уже покрыта существующим файлом
-
-Информация логически вписывается в существующую структуру:
-- Добавление нового раздела
-- Расширение существующего раздела
-- Пример: Добавить раздел "Event Loop" в `architecture.md`
-
-### ✅ Обновление устаревшей информации
-
-Содержимое файла требует актуализации:
-- Изменения в коде отражаются в документации
-- Новые версии API
-- Изменения в архитектуре
-
-### ✅ Добавление информации в существующую структуру
-
-Файл уже содержит структуру для этой темы:
-- Секция "TODO" или "Planned"
-- Неполный раздел, требующий дополнения
-- Пример: Добавить описание нового метода в `api_reference.md`
+User explicitly requested to create a new file:
+- "Create a new file to describe X"
+- "I need a separate document for Y"
 
 ---
 
-## Примеры правильного и неправильного поведения
+## Criteria for Editing Existing File
 
-### ❌ Плохо
+An existing file MUST be edited in the following cases:
+
+### ✅ Topic Already Covered by Existing File
+
+Information logically fits into existing structure:
+- Adding a new section
+- Extending an existing section
+- Example: Add "Event Loop" section to `architecture.md`
+
+### ✅ Updating Outdated Information
+
+File content requires actualization:
+- Code changes reflected in documentation
+- New API versions
+- Architecture changes
+
+### ✅ Adding Information to Existing Structure
+
+File already contains structure for this topic:
+- "TODO" or "Planned" section
+- Incomplete section requiring addition
+- Example: Add description of a new method to `api_reference.md`
+
+---
+
+## Examples of Correct and Incorrect Behavior
+
+### ❌ Bad
 
 ```bash
-# Создание нового файла вместо редактирования существующего
+# Creating a new file instead of editing existing
 architecture-v2.md
 architecture-new.md
 api-reference-new.md
 api-reference-updated.md
 ```
 
-**Почему плохо:**
-- Дублирование информации
-- Путаница — какая версия актуальная?
-- Разброс документации
-- Сложность навигации
+**Why it's bad:**
+- Information duplication
+- Confusion — which version is current?
+- Scattered documentation
+- Difficult navigation
 
-### ✅ Хорошо
+### ✅ Good
 
 ```bash
-# Редактирование существующего файла
-# Добавление раздела "Event Loop" в architecture.md
-# Добавление описания метода в api_reference.md
+# Editing existing file
+# Adding "Event Loop" section to architecture.md
+# Adding method description to api_reference.md
 ```
 
-**Почему хорошо:**
-- Единый источник истины
-- Логичная структура
-- Простота навигации
-- Актуальность информации
+**Why it's good:**
+- Single source of truth
+- Logical structure
+- Easy navigation
+- Current information
 
-### Конкретные кейсы
+### Specific Cases
 
-| Ситуация | ❌ Плохо | ✅ Хорошо |
-|----------|---------|-----------|
-| Добавить описание Event Loop | Создать `architecture-event-loop.md` | Добавить раздел в `architecture.md` |
-| Описать новый метод API | Создать `api-reference-new.md` | Добавить метод в `api_reference.md` |
-| Документировать новый компонент | Создать `architecture-v2.md` | Создать `architecture/new-component.md` |
-| Обновить устаревшую информацию | Создать `architecture-fixed.md` | Отредактировать `architecture.md` |
+| Situation | ❌ Bad | ✅ Good |
+|-----------|-------|---------|
+| Add Event Loop description | Create `architecture-event-loop.md` | Add section to `architecture.md` |
+| Describe new API method | Create `api-reference-new.md` | Add method to `api_reference.md` |
+| Document new component | Create `architecture-v2.md` | Create `architecture/new-component.md` |
+| Update outdated information | Create `architecture-fixed.md` | Edit `architecture.md` |
 
 ---
 
-## Инструменты для поиска существующих файлов
+## Tools for Finding Existing Files
 
-### 1. Обзор структуры docs/
+### 1. Review docs/ Structure
 
 ```bash
-# Рекурсивный список всех файлов
+# Recursive list of all files
 list_files(path="docs", recursive=true)
 ```
 
-**Что искать:**
-- Файлы с похожими названиями
-- Директории по теме
-- Файлы в тематических подпапках
+**What to look for:**
+- Files with similar names
+- Directories by topic
+- Files in thematic subfolders
 
-### 2. Поиск по ключевым словам
+### 2. Keyword Search
 
-Анализировать названия файлов на наличие:
-- Ключевых слов темы (architecture, api, testing, deployment)
-- Синонимов и связанных терминов
-- Аббревиатур и сокращений
+Analyze file names for:
+- Topic keywords (architecture, api, testing, deployment)
+- Synonyms and related terms
+- Abbreviations and shortenings
 
-**Пример:**
-- Тема: "Event Loop"
-- Ключевые слова: `architecture`, `events`, `loop`, `processing`
-- Релевантные файлы: `architecture.md`, `event_dispatcher.md`
+**Example:**
+- Topic: "Event Loop"
+- Keywords: `architecture`, `events`, `loop`, `processing`
+- Relevant files: `architecture.md`, `event_dispatcher.md`
 
-### 3. Чтение оглавления
+### 3. Read Table of Contents
 
-Для найденных файлов прочитать структуру:
+For found files, read the structure:
 
 ```bash
 read_file(files=[{"path": "docs/architecture.md"}])
 ```
 
-**Что анализировать:**
-- Наличие релевантных разделов
-- Возможность добавить новый раздел
-- Логическую связность с темой
+**What to analyze:**
+- Presence of relevant sections
+- Possibility to add a new section
+- Logical connection with the topic
 
-### 4. Проверка Memory Server
+### 4. Check Memory Server
 
 ```python
 mcp__memory__search_nodes(query="architecture documentation")
 ```
 
-**Что искать:**
-- Существующие сущности типа `file` в `docs/`
-- Связи между документами
-- Наблюдения о структуре документации
+**What to look for:**
+- Existing entities of type `file` in `docs/`
+- Links between documents
+- Observations about documentation structure
 
 ---
 
-## Шпаргалка для architect
+## Architect Cheat Sheet
 
-### Перед созданием нового файла
+### Before Creating a New File
 
-1. ✅ Выполнить `list_files(path="docs", recursive=true)`
-2. ✅ Проанализировать найденные файлы
-3. ✅ Прочитать оглавление релевантных файлов
-4. ✅ Задать вопрос пользователю, если неочевидно
+1. ✅ Execute `list_files(path="docs", recursive=true)`
+2. ✅ Analyze found files
+3. ✅ Read table of contents of relevant files
+4. ✅ Ask user if unclear
 
-### При принятии решения
+### When Making a Decision
 
-- Если есть релевантный файл → редактировать
-- Если тема новая → создавать новый
-- Если сомневаешься → спросить пользователя
+- If relevant file exists → edit
+- If topic is new → create new
+- If in doubt → ask user
 
-### После создания файла
+### After Creating File
 
-- ✅ Обновить оглавление в родительском файле (если нужно)
-- ✅ Добавить ссылки в связанные документы
-- ✅ Обновить Memory Server
+- ✅ Update table of contents in parent file (if needed)
+- ✅ Add links in related documents
+- ✅ Update Memory Server
 
 ---
 
-## Связанные документы
+## Related Documents
 
-- [`../../AGENTS.md`](../../AGENTS.md) — основные правила работы для всех агентов
-- [`task-strategy.md`](task-strategy.md) — стратегия разбиения задач
-- [`coding-standards.md`](coding-standards.md) — стандарты кодирования
+- [`../../AGENTS.md`](../../AGENTS.md) — general work rules for all agents
+- [`task-strategy.md`](task-strategy.md) — task breakdown strategy
+- [`coding-standards.md`](coding-standards.md) — coding standards
 - [`workflow.md`](workflow.md) — Git workflow

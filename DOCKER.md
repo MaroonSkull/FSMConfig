@@ -1,139 +1,139 @@
-# Docker и DevContainer для FSMConfig
+# Docker and DevContainer for FSMConfig
 
-## Введение
+## Introduction
 
-Проект FSMConfig интегрирован с Docker для обеспечения изолированной и воспроизводимой среды разработки и непрерывной интеграции. Docker позволяет:
+The FSMConfig project integrates with Docker to provide an isolated and reproducible development and continuous integration environment. Docker allows:
 
-- **Единая среда разработки**: Все разработчики используют одинаковые версии компиляторов, библиотек и инструментов
-- **Воспроизводимость сборок**: CI/CD пайплайны используют те же образы, что и локальная разработка
-- **Быстрое начало работы**: Новые разработчики могут начать работу без установки зависимостей
-- **Изоляция**: Проектные зависимости не влияют на систему хоста
+- **Unified development environment**: All developers use the same versions of compilers, libraries, and tools
+- **Build reproducibility**: CI/CD pipelines use the same images as local development
+- **Quick start**: New developers can start working without installing dependencies
+- **Isolation**: Project dependencies don't affect the host system
 
-Проект использует два разных подхода:
-- **DevContainer** - для интерактивной разработки в VSCode
-- **Docker для CI** - оптимизированный образ для автоматизированной сборки и тестирования
+The project uses two different approaches:
+- **DevContainer** - for interactive development in VSCode
+- **Docker for CI** - optimized image for automated building and testing
 
 ---
 
-## DevContainer (Разработка)
+## DevContainer (Development)
 
-### Что такое DevContainer
+### What is DevContainer
 
-DevContainer (Development Container) - это функция VSCode, которая позволяет разрабатывать код внутри Docker контейнера. Это обеспечивает:
+DevContainer (Development Container) is a VSCode feature that allows you to develop code inside a Docker container. This provides:
 
-- Полностью настроенную среду разработки "из коробки"
-- Автоматическую установку необходимых расширений VSCode
-- Изоляцию проектных зависимостей от системы хоста
-- Единые настройки для всей команды разработчиков
+- Fully configured development environment "out of the box"
+- Automatic installation of necessary VSCode extensions
+- Isolation of project dependencies from the host system
+- Unified settings for the entire development team
 
-### Как открыть проект в DevContainer (VSCode)
+### How to open project in DevContainer (VSCode)
 
-**Требования:**
-- Установленный [Docker Desktop](https://www.docker.com/products/docker-desktop) или Docker Engine
-- Установленный [Visual Studio Code](https://code.visualstudio.com/)
-- Установленное расширение [Dev Containers](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers)
+**Requirements:**
+- Installed [Docker Desktop](https://www.docker.com/products/docker-desktop) or Docker Engine
+- Installed [Visual Studio Code](https://code.visualstudio.com/)
+- Installed [Dev Containers extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers)
 
-**Шаги:**
+**Steps:**
 
-1. Откройте проект FSMConfig в VSCode
-2. Нажмите `F1` (или `Ctrl+Shift+P`) для открытия палитры команд
-3. Выберите `Dev Containers: Reopen in Container`
-4. Дождитесь сборки образа и запуска контейнера (первый запуск займет несколько минут)
+1. Open the FSMConfig project in VSCode
+2. Press `F1` (or `Ctrl+Shift+P`) to open the command palette
+3. Select `Dev Containers: Reopen in Container`
+4. Wait for the image to build and the container to start (first run will take a few minutes)
 
-При первом запуске VSCode автоматически:
-- Соберёт Docker образ на основе [`.devcontainer/Dockerfile`](.devcontainer/Dockerfile)
-- Установит указанные расширения
-- Выполнит команду из `postCreateCommand`
+On first run, VSCode will automatically:
+- Build a Docker image based on [`.devcontainer/Dockerfile`](.devcontainer/Dockerfile)
+- Install specified extensions
+- Execute the command from `postCreateCommand`
 
-### Какие расширения установлены автоматически
+### Which extensions are automatically installed
 
-В DevContainer автоматически устанавливаются следующие расширения:
+The following extensions are automatically installed in DevContainer:
 
-| Расширение | Описание |
-|------------|----------|
-| `ms-vscode.cpptools` | Официальный пакет инструментов C/C++ для VSCode (IntelliSense, отладка) |
-| `ms-vscode.cmake-tools` | Инструменты для работы с CMake (сборка, отладка, запуск тестов) |
-| `twxs.cmake` | Подсветка синтаксиса CMake файлов |
-| `xaver.clang-format` | Форматирование кода с помощью clang-format |
-| `cheshirekow.cmake-format` | Форматирование CMake файлов |
+| Extension | Description |
+|-----------|-------------|
+| `ms-vscode.cpptools` | Official C/C++ tools package for VSCode (IntelliSense, debugging) |
+| `ms-vscode.cmake-tools` | Tools for working with CMake (building, debugging, running tests) |
+| `twxs.cmake` | CMake file syntax highlighting |
+| `xaver.clang-format` | Code formatting with clang-format |
+| `cheshirekow.cmake-format` | CMake file formatting |
 
-### Какие инструменты доступны внутри контейнера
+### Which tools are available inside the container
 
-DevContainer включает следующие инструменты разработки:
+DevContainer includes the following development tools:
 
-**Компиляторы и система сборки:**
-- GCC 14 (компилятор по умолчанию)
+**Compilers and build system:**
+- GCC 14 (default compiler)
 - G++ 14
-- CMake (последняя версия из репозиториев Ubuntu)
+- CMake (latest version from Ubuntu repositories)
 
-**Библиотеки:**
-- libyaml-cpp-dev (для работы с YAML конфигурациями)
-- libgtest-dev (Google Test для написания тестов)
+**Libraries:**
+- libyaml-cpp-dev (for working with YAML configurations)
+- libgtest-dev (Google Test for writing tests)
 
-**Утилиты разработки:**
-- pkg-config (для поиска библиотек)
-- git (система контроля версий)
-- vim (текстовый редактор)
-- curl, wget (утилиты для загрузки файлов)
+**Development utilities:**
+- pkg-config (for finding libraries)
+- git (version control system)
+- vim (text editor)
+- curl, wget (file download utilities)
 
-**Инструменты отладки и анализа:**
-- gdb (отладчик)
-- valgrind (анализатор памяти)
-- clang-format (форматирование кода)
-- clang-tidy (статический анализ)
+**Debugging and analysis tools:**
+- gdb (debugger)
+- valgrind (memory analyzer)
+- clang-format (code formatting)
+- clang-tidy (static analysis)
 
-**Дополнительно:**
-- Zsh с Oh My Zsh (улучшенная оболочка)
-- Общие утилиты из devcontainers/features/common-utils
+**Additionally:**
+- Zsh with Oh My Zsh (enhanced shell)
+- Common utilities from devcontainers/features/common-utils
 
-### Как собрать проект внутри DevContainer
+### How to build project inside DevContainer
 
-После открытия проекта в DevContainer выполните следующие команды:
+After opening the project in DevContainer, run the following commands:
 
-**1. Конфигурация проекта (выполняется автоматически при первом запуске):**
+**1. Project configuration (executed automatically on first run):**
 ```bash
 cd build
 cmake .. -DCMAKE_BUILD_TYPE=Debug
 ```
 
-**2. Сборка проекта:**
+**2. Build project:**
 ```bash
 cd build
 cmake --build . -j$(nproc)
 ```
 
-Или используйте панель CMake Tools в VSCode:
-- Откройте панель CMake (Ctrl+Shift+P → CMake: Configure)
-- Нажмите "Build All"
+Or use the CMake Tools panel in VSCode:
+- Open the CMake panel (Ctrl+Shift+P → CMake: Configure)
+- Click "Build All"
 
-**3. Сборка в режиме Release:**
+**3. Build in Release mode:**
 ```bash
 cd build
 cmake .. -DCMAKE_BUILD_TYPE=Release
 cmake --build . -j$(nproc)
 ```
 
-### Как запустить тесты внутри DevContainer
+### How to run tests inside DevContainer
 
-**Запуск всех тестов:**
+**Run all tests:**
 ```bash
 cd build
 ctest --output-on-failure
 ```
 
-**Запуск конкретного теста:**
+**Run specific test:**
 ```bash
 cd build
 ctest -R test_name --output-on-failure
 ```
 
-**Запуск тестов с подробным выводом:**
+**Run tests with verbose output:**
 ```bash
 cd build
 ctest --verbose
 ```
 
-**Запуск теста напрямую:**
+**Run test directly:**
 ```bash
 cd build/tests
 ./test_state_machine
@@ -141,21 +141,21 @@ cd build/tests
 
 ---
 
-## Docker для CI (Continuous Integration)
+## Docker for CI (Continuous Integration)
 
-### Описание Dockerfile для CI
+### Description of Dockerfile for CI
 
-[`Dockerfile`](Dockerfile) в корне проекта оптимизирован для CI/CD пайплайнов:
+The [`Dockerfile`](Dockerfile) in the project root is optimized for CI/CD pipelines:
 
-**Особенности:**
-- Минимальный размер образа (только необходимые зависимости)
-- Ubuntu 24.04 в качестве базового образа
-- GCC 14 как компилятор по умолчанию
-- C++26 стандарт
-- Режим сборки Release по умолчанию
-- Отсутствие пользователя vscode (запуск от root для CI)
+**Features:**
+- Minimal image size (only necessary dependencies)
+- Ubuntu 24.04 as base image
+- GCC 14 as default compiler
+- C++26 standard
+- Release build mode by default
+- No vscode user (run as root for CI)
 
-**Установленные пакеты:**
+**Installed packages:**
 - build-essential (gcc, g++, make)
 - cmake
 - libyaml-cpp-dev
@@ -163,26 +163,26 @@ cd build/tests
 - pkg-config
 - git
 
-### Как собрать Docker образ для CI
+### How to build Docker image for CI
 
-**Сборка образа локально:**
+**Build image locally:**
 ```bash
 docker build -t fsmconfig:ci .
 ```
 
-**Сборка с использованием кэша:**
+**Build using cache:**
 ```bash
 docker build --cache-from fsmconfig:ci -t fsmconfig:ci .
 ```
 
-**Сборка без кэша (полная пересборка):**
+**Build without cache (full rebuild):**
 ```bash
 docker build --no-cache -t fsmconfig:ci .
 ```
 
-### Как запустить тесты в Docker контейнере
+### How to run tests in Docker container
 
-**Запуск тестов в режиме Debug:**
+**Run tests in Debug mode:**
 ```bash
 docker run --rm fsmconfig:ci bash -c "
   mkdir build && \
@@ -193,7 +193,7 @@ docker run --rm fsmconfig:ci bash -c "
 "
 ```
 
-**Запуск тестов в режиме Release:**
+**Run tests in Release mode:**
 ```bash
 docker run --rm fsmconfig:ci bash -c "
   mkdir build && \
@@ -204,7 +204,7 @@ docker run --rm fsmconfig:ci bash -c "
 "
 ```
 
-**Запуск с монтированием исходного кода (для быстрой итерации):**
+**Run with source code mount (for quick iteration):**
 ```bash
 docker run --rm -v $(pwd):/app -w /app fsmconfig:ci bash -c "
   mkdir -p build && \
@@ -215,24 +215,24 @@ docker run --rm -v $(pwd):/app -w /app fsmconfig:ci bash -c "
 "
 ```
 
-### Примеры команд
+### Command examples
 
-**Проверка версии компилятора:**
+**Check compiler version:**
 ```bash
 docker run --rm fsmconfig:ci bash -c "g++ --version"
 ```
 
-**Проверка версии CMake:**
+**Check CMake version:**
 ```bash
 docker run --rm fsmconfig:ci bash -c "cmake --version"
 ```
 
-**Проверка информации о системе:**
+**Check system information:**
 ```bash
 docker run --rm fsmconfig:ci bash -c "uname -a && cat /etc/os-release"
 ```
 
-**Интерактивный запуск контейнера:**
+**Interactive container run:**
 ```bash
 docker run --rm -it fsmconfig:ci bash
 ```
@@ -241,79 +241,79 @@ docker run --rm -it fsmconfig:ci bash
 
 ## GitHub Actions CI/CD
 
-### Описание workflow
+### Workflow description
 
-CI пайплайн описан в [`.github/workflows/ci.yml`](.github/workflows/ci.yml) и выполняет следующие задачи:
+The CI pipeline is described in [`.github/workflows/ci.yml`](.github/workflows/ci.yml) and performs the following tasks:
 
-1. **Checkout кода**: Получает исходный код из репозитория
-2. **Настройка Docker Buildx**: Подготавливает расширенный билдер Docker
-3. **Сборка Docker образа**: Создаёт образ `fsmconfig:ci` с кэшированием
-4. **Проверка версий**: Выводит версии компилятора, CMake и информацию о системе
-5. **Сборка и тестирование**: Компилирует проект и запускает тесты
-6. **Загрузка результатов**: Сохраняет результаты тестов как артефакты
+1. **Code checkout**: Gets source code from repository
+2. **Docker Buildx setup**: Prepares extended Docker builder
+3. **Docker image build**: Creates `fsmconfig:ci` image with caching
+4. **Version checks**: Outputs compiler, CMake versions and system information
+5. **Build and test**: Compiles project and runs tests
+6. **Result upload**: Saves test results as artifacts
 
-### Какие проверки выполняются
+### Which checks are performed
 
-**Матрица сборки:**
-- Debug конфигурация
-- Release конфигурация
+**Build matrix:**
+- Debug configuration
+- Release configuration
 
-**Проверки:**
-- Сборка проекта с CMake
-- Запуск всех тестов через CTest
-- Проверка на ошибки компиляции
-- Проверка на ошибки линковки
-- Проверка прохождения всех тестов
+**Checks:**
+- Project build with CMake
+- Running all tests via CTest
+- Compilation error check
+- Linking error check
+- Test passing check
 
-### Как просмотреть результаты CI
+### How to view CI results
 
-1. Откройте репозиторий на GitHub
-2. Перейдите во вкладку **Actions**
-3. Выберите нужный workflow run
-4. Просмотрите детали каждого шага
-5. Скачайте артефакты с результатами тестов (если есть)
+1. Open the repository on GitHub
+2. Go to the **Actions** tab
+3. Select the desired workflow run
+4. View details of each step
+5. Download artifacts with test results (if available)
 
-Артефакты доступны для скачивания в течение 90 дней.
+Artifacts are available for download for 90 days.
 
-### Триггеры для запуска CI
+### Triggers for CI execution
 
-CI автоматически запускается при следующих событиях:
+CI automatically runs on the following events:
 
-**Push события:**
-- Push в ветку `main`
-- Push в ветку `master`
-- Push в ветку `develop`
+**Push events:**
+- Push to `main` branch
+- Push to `master` branch
+- Push to `develop` branch
 
-**Pull Request события:**
-- Pull Request в ветку `main`
-- Pull Request в ветку `master`
-- Pull Request в ветку `develop`
+**Pull Request events:**
+- Pull Request to `main` branch
+- Pull Request to `master` branch
+- Pull Request to `develop` branch
 
 ---
 
-## Локальное использование Docker
+## Local Docker usage
 
-### Как собрать Docker образ локально
+### How to build Docker image locally
 
-**Сборка образа для разработки (DevContainer):**
+**Build image for development (DevContainer):**
 ```bash
 cd .devcontainer
 docker build -t fsmconfig:dev .
 ```
 
-**Сборка образа для CI:**
+**Build image for CI:**
 ```bash
 docker build -t fsmconfig:ci .
 ```
 
-**Сборка с тегом версии:**
+**Build with version tag:**
 ```bash
 docker build -t fsmconfig:1.0.0 .
 ```
 
-### Как запустить контейнер для разработки
+### How to run container for development
 
-**Запуск с монтированием исходного кода:**
+**Run with source code mount:**
 ```bash
 docker run --rm -it \
   -v $(pwd):/workspace \
@@ -322,7 +322,7 @@ docker run --rm -it \
   bash
 ```
 
-**Запуск с доступом к отладчику:**
+**Run with debugger access:**
 ```bash
 docker run --rm -it \
   -v $(pwd):/workspace \
@@ -333,7 +333,7 @@ docker run --rm -it \
   bash
 ```
 
-**Запуск с сохранением изменений в образе:**
+**Run with saving changes in image:**
 ```bash
 docker run -it \
   -v $(pwd):/workspace \
@@ -343,14 +343,14 @@ docker run -it \
   bash
 ```
 
-### Как смонтировать исходный код
+### How to mount source code
 
-**Монтирование текущей директории:**
+**Mount current directory:**
 ```bash
 docker run --rm -v $(pwd):/workspace -w /workspace fsmconfig:dev bash
 ```
 
-**Монтирование с правами доступа пользователя:**
+**Mount with user access rights:**
 ```bash
 docker run --rm \
   -v $(pwd):/workspace \
@@ -360,7 +360,7 @@ docker run --rm \
   bash
 ```
 
-**Монтирование нескольких директорий:**
+**Mount multiple directories:**
 ```bash
 docker run --rm \
   -v $(pwd):/workspace \
@@ -370,9 +370,9 @@ docker run --rm \
   bash
 ```
 
-### Примеры команд
+### Command examples
 
-**Сборка проекта в контейнере:**
+**Build project in container:**
 ```bash
 docker run --rm \
   -v $(pwd):/workspace \
@@ -381,7 +381,7 @@ docker run --rm \
   bash -c "mkdir -p build && cd build && cmake .. && cmake --build . -j\$(nproc)"
 ```
 
-**Запуск тестов в контейнере:**
+**Run tests in container:**
 ```bash
 docker run --rm \
   -v $(pwd):/workspace \
@@ -390,7 +390,7 @@ docker run --rm \
   ctest --output-on-failure
 ```
 
-**Запуск примера:**
+**Run example:**
 ```bash
 docker run --rm \
   -v $(pwd):/workspace \
@@ -401,49 +401,49 @@ docker run --rm \
 
 ---
 
-## Устранение неполадок
+## Troubleshooting
 
-### Частые проблемы и их решения
+### Common problems and their solutions
 
-**Проблема: Контейнер не собирается из-за отсутствия прав доступа**
+**Problem: Container fails to build due to lack of permissions**
 
-**Решение:**
+**Solution:**
 ```bash
 sudo usermod -aG docker $USER
 newgrp docker
 ```
 
-**Проблема: Ошибка "Permission denied" при работе с файлами в смонтированной директории**
+**Problem: "Permission denied" error when working with files in mounted directory**
 
-**Решение 1:** Запуск контейнера с UID текущего пользователя:
+**Solution 1:** Run container with current user's UID:
 ```bash
 docker run --rm -v $(pwd):/workspace -u $(id -u):$(id -g) fsmconfig:dev bash
 ```
 
-**Решение 2:** Изменение прав доступа к файлам:
+**Solution 2:** Change file access rights:
 ```bash
 sudo chown -R $(id -u):$(id -g) .
 ```
 
-**Проблема: DevContainer не запускается в VSCode**
+**Problem: DevContainer doesn't start in VSCode**
 
-**Решения:**
-1. Убедитесь, что Docker Desktop запущен
-2. Проверьте наличие расширения "Dev Containers"
-3. Откройте логи DevContainer (F1 → Dev Containers: Show Container Log)
-4. Попробуйте пересобрать контейнер (F1 → Dev Containers: Rebuild Container)
+**Solutions:**
+1. Make sure Docker Desktop is running
+2. Check for "Dev Containers" extension
+3. Open DevContainer logs (F1 → Dev Containers: Show Container Log)
+4. Try rebuilding container (F1 → Dev Containers: Rebuild Container)
 
-**Проблема: Тесты падают внутри контейнера, но работают локально**
+**Problem: Tests fail inside container but work locally**
 
-**Решение:**
-1. Проверьте, что все зависимости установлены в образе
-2. Убедитесь, что версии компиляторов совпадают
-3. Проверьте переменные окружения (CXXFLAGS, CMAKE_BUILD_TYPE)
-4. Запустите тесты с подробным выводом: `ctest --verbose`
+**Solution:**
+1. Check that all dependencies are installed in the image
+2. Make sure compiler versions match
+3. Check environment variables (CXXFLAGS, CMAKE_BUILD_TYPE)
+4. Run tests with verbose output: `ctest --verbose`
 
-**Проблема: Ошибка памяти при запуске Valgrind**
+**Problem: Memory error when running Valgrind**
 
-**Решение:**
+**Solution:**
 ```bash
 docker run --rm -v $(pwd):/workspace -w /workspace \
   --cap-add=SYS_PTRACE \
@@ -452,124 +452,124 @@ docker run --rm -v $(pwd):/workspace -w /workspace \
   valgrind --leak-check=full ./build/tests/test_state_machine
 ```
 
-### Как пересобрать Docker образ
+### How to rebuild Docker image
 
-**Полная пересборка без кэша:**
+**Full rebuild without cache:**
 ```bash
 docker build --no-cache -t fsmconfig:ci .
 ```
 
-**Пересборка с очисткой старых слоёв:**
+**Rebuild with old layer cleanup:**
 ```bash
 docker build --no-cache --pull -t fsmconfig:ci .
 ```
 
-**Пересборка DevContainer:**
+**Rebuild DevContainer:**
 ```bash
 cd .devcontainer
 docker build --no-cache -t fsmconfig:dev .
 ```
 
-### Как очистить кэш Docker
+### How to clear Docker cache
 
-**Удаление всех остановленных контейнеров:**
+**Remove all stopped containers:**
 ```bash
 docker container prune
 ```
 
-**Удаление неиспользуемых образов:**
+**Remove unused images:**
 ```bash
 docker image prune
 ```
 
-**Удаление всех неиспользуемых ресурсов:**
+**Remove all unused resources:**
 ```bash
 docker system prune -a
 ```
 
-**Удаление конкретного образа:**
+**Remove specific image:**
 ```bash
 docker rmi fsmconfig:ci
 ```
 
-**Принудительное удаление образа:**
+**Force remove image:**
 ```bash
 docker rmi -f fsmconfig:ci
 ```
 
-**Очистка BuildKit кэша:**
+**Clear BuildKit cache:**
 ```bash
 docker builder prune -a
 ```
 
 ---
 
-## Архитектура Docker интеграции
+## Docker integration architecture
 
-### Различия между devcontainer и CI Dockerfile
+### Differences between devcontainer and CI Dockerfile
 
-| Характеристика | DevContainer Dockerfile | CI Dockerfile |
+| Characteristic | DevContainer Dockerfile | CI Dockerfile |
 |----------------|------------------------|---------------|
-| **Расположение** | [`.devcontainer/Dockerfile`](.devcontainer/Dockerfile) | [`Dockerfile`](Dockerfile) (корень проекта) |
-| **Цель** | Интерактивная разработка | Автоматизированная CI/CD |
-| **Размер образа** | Больший (~500-700 MB) | Минимальный (~200-300 MB) |
-| **Пользователь** | `vscode` (UID 1000) | root |
-| **Инструменты** | Полный набор (gdb, valgrind, clang-format, vim, zsh) | Минимальный набор (только для сборки) |
-| **Расширения** | Автоматическая установка в VSCode | Не применимо |
-| **Права sudo** | Да (без пароля) | Не требуется |
-| **Режим сборки** | Debug по умолчанию | Release по умолчанию |
-| **Shell** | Zsh с Oh My Zsh | Bash |
-| **Монтирование** | Автоматическое через VSCode | Ручное через `-v` |
+| **Location** | [`.devcontainer/Dockerfile`](.devcontainer/Dockerfile) | [`Dockerfile`](Dockerfile) (project root) |
+| **Purpose** | Interactive development | Automated CI/CD |
+| **Image size** | Larger (~500-700 MB) | Minimal (~200-300 MB) |
+| **User** | `vscode` (UID 1000) | root |
+| **Tools** | Full set (gdb, valgrind, clang-format, vim, zsh) | Minimal set (only for building) |
+| **Extensions** | Automatic installation in VSCode | Not applicable |
+| **sudo rights** | Yes (passwordless) | Not required |
+| **Build mode** | Debug by default | Release by default |
+| **Shell** | Zsh with Oh My Zsh | Bash |
+| **Mounting** | Automatic via VSCode | Manual via `-v` |
 
-### Почему используются два разных Dockerfile
+### Why two different Dockerfiles are used
 
-**DevContainer Dockerfile** оптимизирован для:
-- Удобства разработки с полным набором инструментов
-- Интерактивной отладки и профилирования
-- Форматирования и статического анализа кода
-- Комфортной работы в терминале (Zsh, Oh My Zsh)
-- Интеграции с VSCode (IntelliSense, CMake Tools)
+**DevContainer Dockerfile** is optimized for:
+- Development convenience with full tool set
+- Interactive debugging and profiling
+- Code formatting and static analysis
+- Comfortable terminal work (Zsh, Oh My Zsh)
+- VSCode integration (IntelliSense, CMake Tools)
 
-**CI Dockerfile** оптимизирован для:
-- Минимального размера образа (быстрая загрузка в CI)
-- Быстрой сборки (меньше слоёв, меньше зависимостей)
-- Воспроизводимости результатов сборки
-- Минимального времени выполнения CI пайплайна
-- Экономии ресурсов GitHub Actions
+**CI Dockerfile** is optimized for:
+- Minimal image size (fast download in CI)
+- Fast build (fewer layers, fewer dependencies)
+- Build result reproducibility
+- Minimal CI pipeline execution time
+- GitHub Actions resource savings
 
-Разделение на два Dockerfile позволяет:
-- Использовать разные оптимизации для разных сценариев
-- Не устанавливать лишние инструменты в CI
-- Предоставлять разработчикам максимум удобств
-- Сокращать время выполнения CI пайплайнов
-- Упростить поддержку и обновление образов
+Splitting into two Dockerfiles allows:
+- Using different optimizations for different scenarios
+- Not installing extra tools in CI
+- Providing developers with maximum convenience
+- Reducing CI pipeline execution time
+- Simplifying image support and updates
 
 ---
 
-## Ссылки
+## Links
 
-### Официальная документация Docker
+### Official Docker documentation
 
 - [Docker Documentation](https://docs.docker.com/)
 - [Dockerfile Reference](https://docs.docker.com/engine/reference/builder/)
 - [Docker Best Practices](https://docs.docker.com/develop/dev-best-practices/)
 - [Docker BuildKit](https://docs.docker.com/build/buildkit/)
 
-### Документация VSCode DevContainers
+### VSCode DevContainers documentation
 
 - [Visual Studio Code Dev Containers](https://code.visualstudio.com/docs/devcontainers/containers)
 - [Dev Containers Reference](https://code.visualstudio.com/docs/devcontainers/reference)
 - [Creating a Dev Container](https://code.visualstudio.com/docs/devcontainers/create-dev-container)
 - [Dev Container Features](https://code.visualstudio.com/docs/devcontainers/features)
 
-### Документация GitHub Actions
+### GitHub Actions documentation
 
 - [GitHub Actions Documentation](https://docs.github.com/en/actions)
 - [Workflow Syntax](https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions)
 - [Building and testing code](https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-code)
 - [Docker Build Push Action](https://github.com/docker/build-push-action)
 
-### Дополнительные ресурсы
+### Additional resources
 
 - [CMake Documentation](https://cmake.org/documentation/)
 - [Google Test Documentation](https://google.github.io/googletest/)
@@ -578,51 +578,51 @@ docker builder prune -a
 
 ---
 
-## Краткая справка команд
+## Command quick reference
 
 ### DevContainer
 ```bash
-# Открыть проект в DevContainer
+# Open project in DevContainer
 F1 → Dev Containers: Reopen in Container
 
-# Пересобрать контейнер
+# Rebuild container
 F1 → Dev Containers: Rebuild Container
 
-# Показать логи контейнера
+# Show container logs
 F1 → Dev Containers: Show Container Log
 ```
 
 ### Docker
 ```bash
-# Сборка образа
+# Build image
 docker build -t fsmconfig:ci .
 
-# Запуск контейнера
+# Run container
 docker run --rm -v $(pwd):/workspace -w /workspace fsmconfig:ci bash
 
-# Просмотр образов
+# View images
 docker images
 
-# Удаление образа
+# Remove image
 docker rmi fsmconfig:ci
 
-# Очистка системы
+# System cleanup
 docker system prune -a
 ```
 
 ### CMake
 ```bash
-# Конфигурация проекта
+# Configure project
 cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
 
-# Сборка проекта
+# Build project
 cmake --build build -j$(nproc)
 
-# Запуск тестов
+# Run tests
 cd build && ctest --output-on-failure
 ```
 
 ---
 
-**Документация обновлена:** 2025-01-20
-**Версия:** 1.0.0
+**Documentation updated:** 2025-01-20
+**Version:** 1.0.0

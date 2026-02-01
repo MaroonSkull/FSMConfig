@@ -8,7 +8,7 @@ using namespace fsmconfig;
 
 /**
  * @file test_state_machine.cpp
- * @brief Тесты для StateMachine
+ * @brief Tests for StateMachine
  */
 
 class StateMachineTest : public ::testing::Test {

@@ -1,8 +1,8 @@
-# Глобальные переменные
+# Global variables
 variables:
   max_attempts: 3
 
-# Определения состояний
+# State definitions
 states:
   idle:
     on_enter: on_idle_enter
@@ -16,7 +16,7 @@ states:
     actions:
       - log_active_state
 
-# Определения переходов
+# Transition definitions
 transitions:
   - from: idle
     to: active
