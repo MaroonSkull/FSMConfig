@@ -13,62 +13,61 @@
 namespace fsmconfig {
 
 /// Event handler function type
-using EventHandler =
-    std::function<void(const std::string& event_name, const TransitionEvent& event)>;
+using EventHandler = std::function<void(const std::string& event_name, const TransitionEvent& event)>;
 
 /// Event dispatcher for finite state machine
 class EventDispatcher {
-   public:
-    EventDispatcher();
-    ~EventDispatcher();
+ public:
+  EventDispatcher();
+  ~EventDispatcher();
 
-    // Copy prohibition
-    EventDispatcher(const EventDispatcher&) = delete;
-    EventDispatcher& operator=(const EventDispatcher&) = delete;
+  // Copy prohibition
+  EventDispatcher(const EventDispatcher&) = delete;
+  EventDispatcher& operator=(const EventDispatcher&) = delete;
 
-    // Move permission
-    EventDispatcher(EventDispatcher&& other) noexcept;
-    EventDispatcher& operator=(EventDispatcher&& other) noexcept;
+  // Move permission
+  EventDispatcher(EventDispatcher&& other) noexcept;
+  EventDispatcher& operator=(EventDispatcher&& other) noexcept;
 
-    /// Dispatch event for processing
-    void dispatchEvent(const std::string& event_name, const TransitionEvent& event);
+  /// Dispatch event for processing
+  void dispatchEvent(const std::string& event_name, const TransitionEvent& event);
 
-    /// Process all events in queue (synchronously)
-    void processEvents();
+  /// Process all events in queue (synchronously)
+  void processEvents();
 
-    /// Process one event from queue
-    bool processOneEvent();
+  /// Process one event from queue
+  bool processOneEvent();
 
-    /// Get number of events in queue
-    size_t getEventQueueSize() const;
+  /// Get number of events in queue
+  size_t getEventQueueSize() const;
 
-    /// Clear event queue
-    void clearEventQueue();
+  /// Clear event queue
+  void clearEventQueue();
 
-    /// Check if there are events in queue
-    bool hasPendingEvents() const;
+  /// Check if there are events in queue
+  bool hasPendingEvents() const;
 
-    /// Set event handler
-    void setEventHandler(EventHandler handler);
+  /// Set event handler
+  void setEventHandler(EventHandler handler);
 
-    /// Check if event handler is set
-    bool hasEventHandler() const;
+  /// Check if event handler is set
+  bool hasEventHandler() const;
 
-    /// Start dispatcher (for future asynchronous processing)
-    void start();
+  /// Start dispatcher (for future asynchronous processing)
+  void start();
 
-    /// Stop dispatcher (for future asynchronous processing)
-    void stop();
+  /// Stop dispatcher (for future asynchronous processing)
+  void stop();
 
-    /// Check if dispatcher is running
-    bool isRunning() const;
+  /// Check if dispatcher is running
+  bool isRunning() const;
 
-    /// Wait for all events to be processed
-    void waitForEmptyQueue() const;
+  /// Wait for all events to be processed
+  void waitForEmptyQueue() const;
 
-   private:
-    class Impl;
-    std::unique_ptr<Impl> impl_;
+ private:
+  class Impl;
+  std::unique_ptr<Impl> impl_;
 };
 
 }  // namespace fsmconfig

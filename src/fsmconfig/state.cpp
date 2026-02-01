@@ -12,23 +12,23 @@ namespace fsmconfig {
  * @brief Internal implementation of State class (Pimpl idiom)
  */
 class State::Impl {
-   public:
-    /**
-     * @brief Constructor
-     * @param info State information
-     */
-    explicit Impl(const StateInfo& info)
-        : name(info.name),
-          variables(info.variables),
-          on_enter_callback(info.on_enter_callback),
-          on_exit_callback(info.on_exit_callback),
-          actions(info.actions) {}
+ public:
+  /**
+   * @brief Constructor
+   * @param info State information
+   */
+  explicit Impl(const StateInfo& info)
+      : name(info.name),
+        variables(info.variables),
+        on_enter_callback(info.on_enter_callback),
+        on_exit_callback(info.on_exit_callback),
+        actions(info.actions) {}
 
-    std::string name;                                ///< State name
-    std::map<std::string, VariableValue> variables;  ///< State variables
-    std::string on_enter_callback;                   ///< On-enter callback
-    std::string on_exit_callback;                    ///< On-exit callback
-    std::vector<std::string> actions;                ///< List of actions
+  std::string name;                                ///< State name
+  std::map<std::string, VariableValue> variables;  ///< State variables
+  std::string on_enter_callback;                   ///< On-enter callback
+  std::string on_exit_callback;                    ///< On-exit callback
+  std::vector<std::string> actions;                ///< List of actions
 };
 
 // ============================================================================
@@ -53,24 +53,18 @@ const std::string& State::getOnExitCallback() const { return impl_->on_exit_call
 
 const std::vector<std::string>& State::getActions() const { return impl_->actions; }
 
-bool State::hasVariable(const std::string& name) const {
-    return impl_->variables.find(name) != impl_->variables.end();
-}
+bool State::hasVariable(const std::string& name) const { return impl_->variables.find(name) != impl_->variables.end(); }
 
 VariableValue State::getVariable(const std::string& name) const {
-    auto it = impl_->variables.find(name);
-    if (it == impl_->variables.end()) {
-        throw StateException("Variable '" + name + "' not found in state '" + impl_->name + "'");
-    }
-    return it->second;
+  auto it = impl_->variables.find(name);
+  if (it == impl_->variables.end()) {
+    throw StateException("Variable '" + name + "' not found in state '" + impl_->name + "'");
+  }
+  return it->second;
 }
 
-void State::setVariable(const std::string& name, const VariableValue& value) {
-    impl_->variables[name] = value;
-}
+void State::setVariable(const std::string& name, const VariableValue& value) { impl_->variables[name] = value; }
 
-const std::map<std::string, VariableValue>& State::getAllVariables() const {
-    return impl_->variables;
-}
+const std::map<std::string, VariableValue>& State::getAllVariables() const { return impl_->variables; }
 
 }  // namespace fsmconfig
