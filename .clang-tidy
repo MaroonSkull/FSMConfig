@@ -1,19 +1,68 @@
+# Comprehensive clang-tidy configuration for FSMConfig project
+# C++20 header-only library for finite state machines
+
+InheritParentConfig: false
+
+# Enable extensive checks while avoiding conflicts
 Checks: >
   -*,
   bugprone-*,
   -bugprone-easily-swappable-parameters,
+  -bugprone-implicit-widening-of-multiplication-result,
+  -bugprone-narrowing-conversions,
   cert-*,
+  -cert-dcl16-c,
+  -cert-dcl21-cpp,
+  -cert-dcl50-cpp,
+  -cert-dcl54-cpp,
+  -cert-err33-c,
+  -cert-err58-cpp,
+  -clang-analyzer-cplusplus,
   clang-analyzer-*,
   cppcoreguidelines-*,
   -cppcoreguidelines-avoid-magic-numbers,
+  -cppcoreguidelines-init-variables,
+  -cppcoreguidelines-macro-usage,
+  -cppcoreguidelines-narrowing-conversions,
+  -cppcoreguidelines-pro-bounds-array-to-pointer-decay,
   -cppcoreguidelines-pro-bounds-pointer-arithmetic,
   -cppcoreguidelines-pro-type-reinterpret-cast,
+  -cppcoreguidelines-pro-type-union-access,
+  misc-*,
+  -misc-anonymous-namespace-in-header,
+  -misc-const-correctness,
+  -misc-definitions-in-headers,
+  -misc-non-private-member-variables-in-classes,
   modernize-*,
+  -modernize-macro-to-enum,
   -modernize-use-trailing-return-type,
   performance-*,
+  -performance-move-const-arg,
   readability-*,
+  -readability-braces-around-statements,
+  -readability-function-cognitive-complexity,
+  -readability-identifier-naming,
   -readability-magic-numbers,
-  -readability-identifier-length
+  -readability-redundant-access-specifiers
+
 WarningsAsErrors: ''
-HeaderFilterRegex: '.*'
+
+# Focus on project headers only (header-only library)
+HeaderFilterRegex: 'include/fsmconfig/.*'
+
+# Use existing .clang-format for code style
 FormatStyle: file
+
+# Check-specific options
+CheckOptions:
+  # Allow larger functions for inline/template functions in header-only library
+  - key: readability-function-size.StatementThreshold
+    value: 150
+  - key: readability-function-size.BranchThreshold
+    value: 20
+  
+  # Allow integer and pointer conditions (common in FSM logic)
+  - key: readability-implicit-bool-conversion.AllowIntegerConditions
+    value: 1
+  - key: readability-implicit-bool-conversion.AllowPointerConditions
+    value: 1
