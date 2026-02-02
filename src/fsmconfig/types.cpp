@@ -1,7 +1,9 @@
 #include "fsmconfig/types.hpp"
 
-#include <sstream>
+#include <chrono>
 #include <stdexcept>
+#include <string>
+#include <utility>
 
 namespace fsmconfig {
 
@@ -126,7 +128,7 @@ TransitionEvent::TransitionEvent() : timestamp(std::chrono::system_clock::now())
 
 StateInfo::StateInfo() = default;
 
-StateInfo::StateInfo(const std::string& name) : name(name) {}
+StateInfo::StateInfo(std::string name) : name(std::move(name)) {}
 
 // ============================================================================
 // TransitionInfo implementation

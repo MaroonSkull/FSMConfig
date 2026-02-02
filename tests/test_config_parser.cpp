@@ -388,7 +388,7 @@ states:
     writeTestConfig(yaml_content);
     parser->loadFromFile(test_config_path);
     
-    EXPECT_THROW(parser->getState("nonexistent_state"), ConfigException);
+    EXPECT_THROW((void)parser->getState("nonexistent_state"), ConfigException);
 }
 
 TEST_F(ConfigParserTest, GetTransitionsFromNonexistentState) {

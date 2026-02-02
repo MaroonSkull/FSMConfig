@@ -106,20 +106,20 @@ class StateMachine {
    * @brief Get current state name
    * @return Current state name
    */
-  std::string getCurrentState() const;
+  [[nodiscard]] std::string getCurrentState() const;
 
   /**
    * @brief Check if state exists
    * @param state_name State name
    * @return true if state exists
    */
-  bool hasState(const std::string& state_name) const;
+  [[nodiscard]] bool hasState(const std::string& state_name) const;
 
   /**
    * @brief Get list of all states
    * @return Vector of all state names
    */
-  std::vector<std::string> getAllStates() const;
+  [[nodiscard]] std::vector<std::string> getAllStates() const;
 
   // Event handling
 
@@ -202,14 +202,14 @@ class StateMachine {
    * @return Variable value
    * @throws StateException if variable does not exist
    */
-  VariableValue getVariable(const std::string& name) const;
+  [[nodiscard]] VariableValue getVariable(const std::string& name) const;
 
   /**
    * @brief Check if variable exists
    * @param name Variable name
    * @return true if variable exists
    */
-  bool hasVariable(const std::string& name) const;
+  [[nodiscard]] bool hasVariable(const std::string& name) const;
 
   // Observers
 

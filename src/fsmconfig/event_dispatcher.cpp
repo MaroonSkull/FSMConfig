@@ -1,5 +1,16 @@
 #include "fsmconfig/event_dispatcher.hpp"
 
+#include <atomic>
+#include <condition_variable>
+#include <cstddef>
+#include <memory>
+#include <mutex>
+#include <queue>
+#include <string>
+#include <utility>
+
+#include "fsmconfig/types.hpp"
+
 namespace fsmconfig {
 
 /**
@@ -26,7 +37,7 @@ class EventDispatcher::Impl {
    * @brief Clear event queue
    */
   void clear() {
-    std::lock_guard<std::mutex> lock(queue_mutex);
+    std::scoped_lock const lock(queue_mutex);
     while (!event_queue.empty()) {
       event_queue.pop();
     }
@@ -47,7 +58,7 @@ EventDispatcher& EventDispatcher::operator=(EventDispatcher&& other) noexcept {
 }
 
 void EventDispatcher::dispatchEvent(const std::string& event_name, const TransitionEvent& event) {
-  std::lock_guard<std::mutex> lock(impl_->queue_mutex);
+  std::scoped_lock const lock(impl_->queue_mutex);
   impl_->event_queue.emplace(event_name, event);
   impl_->queue_cv.notify_one();
 }
@@ -78,24 +89,24 @@ bool EventDispatcher::processOneEvent() {
 }
 
 size_t EventDispatcher::getEventQueueSize() const {
-  std::lock_guard<std::mutex> lock(impl_->queue_mutex);
+  std::scoped_lock const lock(impl_->queue_mutex);
   return impl_->event_queue.size();
 }
 
 void EventDispatcher::clearEventQueue() { impl_->clear(); }
 
 bool EventDispatcher::hasPendingEvents() const {
-  std::lock_guard<std::mutex> lock(impl_->queue_mutex);
+  std::scoped_lock const lock(impl_->queue_mutex);
   return !impl_->event_queue.empty();
 }
 
 void EventDispatcher::setEventHandler(EventHandler handler) {
-  std::lock_guard<std::mutex> lock(impl_->queue_mutex);
+  std::scoped_lock const lock(impl_->queue_mutex);
   impl_->event_handler = std::move(handler);
 }
 
 bool EventDispatcher::hasEventHandler() const {
-  std::lock_guard<std::mutex> lock(impl_->queue_mutex);
+  std::scoped_lock const lock(impl_->queue_mutex);
   return static_cast<bool>(impl_->event_handler);
 }
 

@@ -1,12 +1,11 @@
 #pragma once
 
 #include <chrono>
+#include <cstddef>
 #include <functional>
 #include <map>
-#include <memory>
 #include <stdexcept>
 #include <string>
-#include <typeinfo>
 #include <vector>
 
 namespace fsmconfig {
@@ -35,7 +34,7 @@ enum class VariableType {
 struct VariableValue {
   VariableType type;
   union {
-    int int_value;
+    int int_value{};
     float float_value;
     std::string string_value;
     bool bool_value;
@@ -95,34 +94,34 @@ struct VariableValue {
    * @return Integer value
    * @throw std::bad_cast If type is not INT
    */
-  int asInt() const;
+  [[nodiscard]] int asInt() const;
 
   /**
    * @brief Get value as floating point number
    * @return Floating point value
    * @throw std::bad_cast If type is not FLOAT
    */
-  float asFloat() const;
+  [[nodiscard]] float asFloat() const;
 
   /**
    * @brief Get value as string
    * @return String value
    * @throw std::bad_cast If type is not STRING
    */
-  std::string asString() const;
+  [[nodiscard]] std::string asString() const;
 
   /**
    * @brief Get value as boolean
    * @return Boolean value
    * @throw std::bad_cast If type is not BOOL
    */
-  bool asBool() const;
+  [[nodiscard]] bool asBool() const;
 
   /**
    * @brief Convert value to string representation
    * @return String representation of value
    */
-  std::string toString() const;
+  [[nodiscard]] std::string toString() const;
 };
 
 /**
@@ -168,7 +167,7 @@ struct StateInfo {
    * @brief Constructor with state name
    * @param name State name
    */
-  explicit StateInfo(const std::string& name);
+  explicit StateInfo(std::string name);
 };
 
 /**

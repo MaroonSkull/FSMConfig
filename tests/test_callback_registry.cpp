@@ -75,7 +75,7 @@ TEST_F(CallbackRegistryTest, RegisterAction) {
 TEST_F(CallbackRegistryTest, CallMissingCallbackDoesNothing) {
     registry->callStateCallback("nonexistent_state", "on_enter");
     registry->callTransitionCallback("nonexistent_state", "state2", TransitionEvent());
-    registry->callGuard("nonexistent_state", "nonexistent_state", "event1");
+    (void)registry->callGuard("nonexistent_state", "nonexistent_state", "event1");
     registry->callAction("nonexistent_action");
     
     // Should not throw

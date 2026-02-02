@@ -1,11 +1,8 @@
 #pragma once
 
-#include <atomic>
-#include <condition_variable>
+#include <cstddef>
 #include <functional>
 #include <memory>
-#include <mutex>
-#include <queue>
 #include <string>
 
 #include "types.hpp"
@@ -39,19 +36,19 @@ class EventDispatcher {
   bool processOneEvent();
 
   /// Get number of events in queue
-  size_t getEventQueueSize() const;
+  [[nodiscard]] size_t getEventQueueSize() const;
 
   /// Clear event queue
   void clearEventQueue();
 
   /// Check if there are events in queue
-  bool hasPendingEvents() const;
+  [[nodiscard]] bool hasPendingEvents() const;
 
   /// Set event handler
   void setEventHandler(EventHandler handler);
 
   /// Check if event handler is set
-  bool hasEventHandler() const;
+  [[nodiscard]] bool hasEventHandler() const;
 
   /// Start dispatcher (for future asynchronous processing)
   void start();
@@ -60,7 +57,7 @@ class EventDispatcher {
   void stop();
 
   /// Check if dispatcher is running
-  bool isRunning() const;
+  [[nodiscard]] bool isRunning() const;
 
   /// Wait for all events to be processed
   void waitForEmptyQueue() const;
