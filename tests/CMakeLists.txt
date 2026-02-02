@@ -41,3 +41,12 @@ target_link_libraries(test_integration
         GTest::gtest_main
 )
 add_test(NAME test_integration COMMAND test_integration)
+
+add_executable(test_types test_types.cpp)
+target_link_libraries(test_types
+    PRIVATE
+        fsmconfig
+        GTest::gtest
+        GTest::gtest_main
+)
+add_test(NAME test_types COMMAND test_types)

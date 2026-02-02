@@ -90,6 +90,27 @@ struct VariableValue {
   VariableValue& operator=(const VariableValue& other);
 
   /**
+   * @brief Move constructor
+   * @param other Value to move from
+   *
+   * Moves the internal value from other. After the move, other is left
+   * in a valid but unspecified state. For STRING type, performs a
+   * non-throwing move of the std::string.
+   */
+  VariableValue(VariableValue&& other) noexcept;
+
+  /**
+   * @brief Move assignment operator
+   * @param other Value to move from
+   * @return Reference to current object
+   *
+   * Moves the internal value from other. After the move, other is left
+   * in a valid but unspecified state. Properly handles self-assignment
+   * and cleans up existing resources before moving.
+   */
+  VariableValue& operator=(VariableValue&& other) noexcept;
+
+  /**
    * @brief Get value as integer
    * @return Integer value
    * @throw std::bad_cast If type is not INT

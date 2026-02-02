@@ -73,6 +73,59 @@ VariableValue& VariableValue::operator=(const VariableValue& other) {
   return *this;
 }
 
+VariableValue::VariableValue(VariableValue&& other) noexcept : type(other.type) {
+  switch (type) {
+    case VariableType::INT:
+      int_value = other.int_value;
+      break;
+    case VariableType::FLOAT:
+      float_value = other.float_value;
+      break;
+    case VariableType::STRING:
+      new (&string_value) std::string(std::move(other.string_value));
+      break;
+    case VariableType::BOOL:
+      bool_value = other.bool_value;
+      break;
+  }
+  // Leave other in valid but unspecified state
+  other.type = VariableType::INT;
+  other.int_value = 0;
+}
+
+VariableValue& VariableValue::operator=(VariableValue&& other) noexcept {
+  if (this != &other) {
+    // First destroy old value if it's STRING
+    if (type == VariableType::STRING) {
+      string_value.~basic_string();
+    }
+
+    // Move type
+    type = other.type;
+
+    // Move value
+    switch (type) {
+      case VariableType::INT:
+        int_value = other.int_value;
+        break;
+      case VariableType::FLOAT:
+        float_value = other.float_value;
+        break;
+      case VariableType::STRING:
+        new (&string_value) std::string(std::move(other.string_value));
+        break;
+      case VariableType::BOOL:
+        bool_value = other.bool_value;
+        break;
+    }
+
+    // Leave other in valid but unspecified state
+    other.type = VariableType::INT;
+    other.int_value = 0;
+  }
+  return *this;
+}
+
 int VariableValue::asInt() const {
   if (type != VariableType::INT) {
     throw std::bad_cast();
