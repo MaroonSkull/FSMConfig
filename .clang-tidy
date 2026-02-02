@@ -1,4 +1,4 @@
-# Comprehensive clang-tidy configuration for FSMConfig project
+# Optimized clang-tidy configuration for FSMConfig project
 # C++20 header-only library for finite state machines
 #
 # Updated 2025-02-02: Disabled style-preference warnings that don't affect code quality
@@ -10,7 +10,7 @@
 
 InheritParentConfig: false
 
-# Enable extensive checks while avoiding conflicts
+# Enable important checks while disabling irrelevant project-specific ones
 Checks: >
   -*,
   bugprone-*,
@@ -54,7 +54,13 @@ Checks: >
   -readability-identifier-length,
   -readability-identifier-naming,
   -readability-magic-numbers,
-  -readability-redundant-access-specifiers
+  -readability-redundant-access-specifiers,
+  # Disabled: Irrelevant project-specific checks
+  -llvmlibc-*,
+  -fuchsia-*,
+  -google-*,
+  -llvm-include-order,
+  -hicpp-*
 
 WarningsAsErrors: ''
 

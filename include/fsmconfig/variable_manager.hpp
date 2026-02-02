@@ -1,8 +1,8 @@
 #pragma once
 
+#include <cstddef>
 #include <map>
 #include <memory>
-#include <mutex>
 #include <optional>
 #include <string>
 
@@ -69,14 +69,14 @@ class VariableManager {
    *
    * Local variables have priority over global variables.
    */
-  std::optional<VariableValue> getVariable(const std::string& state_name, const std::string& name) const;
+  [[nodiscard]] std::optional<VariableValue> getVariable(const std::string& state_name, const std::string& name) const;
 
   /**
    * @brief Get global variable
    * @param name Variable name
    * @return Variable value or std::nullopt if not found
    */
-  std::optional<VariableValue> getGlobalVariable(const std::string& name) const;
+  [[nodiscard]] std::optional<VariableValue> getGlobalVariable(const std::string& name) const;
 
   /**
    * @brief Get state local variable
@@ -84,7 +84,8 @@ class VariableManager {
    * @param name Variable name
    * @return Variable value or std::nullopt if not found
    */
-  std::optional<VariableValue> getStateVariable(const std::string& state_name, const std::string& name) const;
+  [[nodiscard]] std::optional<VariableValue> getStateVariable(const std::string& state_name,
+                                                              const std::string& name) const;
 
   /**
    * @brief Check if variable exists (searches local first, then global)
@@ -94,14 +95,14 @@ class VariableManager {
    *
    * Local variables have priority over global variables.
    */
-  bool hasVariable(const std::string& state_name, const std::string& name) const;
+  [[nodiscard]] bool hasVariable(const std::string& state_name, const std::string& name) const;
 
   /**
    * @brief Check if global variable exists
    * @param name Variable name
    * @return true if global variable exists
    */
-  bool hasGlobalVariable(const std::string& name) const;
+  [[nodiscard]] bool hasGlobalVariable(const std::string& name) const;
 
   /**
    * @brief Check if state local variable exists
@@ -109,7 +110,7 @@ class VariableManager {
    * @param name Variable name
    * @return true if local variable exists
    */
-  bool hasStateVariable(const std::string& state_name, const std::string& name) const;
+  [[nodiscard]] bool hasStateVariable(const std::string& state_name, const std::string& name) const;
 
   /**
    * @brief Remove variable (searches local first, then global)
@@ -140,14 +141,14 @@ class VariableManager {
    * @brief Get all global variables
    * @return Const reference to global variables map
    */
-  const std::map<std::string, VariableValue>& getGlobalVariables() const;
+  [[nodiscard]] const std::map<std::string, VariableValue>& getGlobalVariables() const;
 
   /**
    * @brief Get all state local variables
    * @param state_name State name
    * @return Const reference to state local variables map
    */
-  const std::map<std::string, VariableValue>& getStateVariables(const std::string& state_name) const;
+  [[nodiscard]] const std::map<std::string, VariableValue>& getStateVariables(const std::string& state_name) const;
 
   /**
    * @brief Clear all variables (global and local)
@@ -179,14 +180,14 @@ class VariableManager {
    * @brief Get number of global variables
    * @return Number of global variables
    */
-  size_t getGlobalVariableCount() const;
+  [[nodiscard]] size_t getGlobalVariableCount() const;
 
   /**
    * @brief Get number of state local variables
    * @param state_name State name
    * @return Number of state local variables
    */
-  size_t getStateVariableCount(const std::string& state_name) const;
+  [[nodiscard]] size_t getStateVariableCount(const std::string& state_name) const;
 
  private:
   class Impl;

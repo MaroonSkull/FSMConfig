@@ -1,9 +1,15 @@
 #include <gtest/gtest.h>
 
+#include <cstdio>
 #include <filesystem>
+#include <fstream>
+#include <map>
+#include <memory>
+#include <string>
+#include <tuple>
+
 #include <fsmconfig/state_machine.hpp>
 #include <fsmconfig/types.hpp>
-#include <fstream>
 
 using namespace fsmconfig;
 
@@ -14,8 +20,8 @@ using namespace fsmconfig;
 
 class StateMachineTest : public ::testing::Test {
  protected:
-  std::unique_ptr<StateMachine> fsm;
-  std::string test_config_path;
+  std::unique_ptr<StateMachine> fsm;  // NOLINT(cppcoreguidelines-non-private-member-variables-in-classes) - Test fixture requires protected access
+  std::string test_config_path;  // NOLINT(cppcoreguidelines-non-private-member-variables-in-classes) - Test fixture requires protected access
 
   void SetUp() override {
     auto temp_dir = std::filesystem::temp_directory_path();
@@ -23,7 +29,7 @@ class StateMachineTest : public ::testing::Test {
   }
 
   void TearDown() override {
-    fsm.reset();
+    fsm.reset();  // NOLINT(readability-ambiguous-smartptr-reset-call) - Test fixture cleanup
     std::remove(test_config_path.c_str());
   }
 
@@ -35,7 +41,7 @@ class StateMachineTest : public ::testing::Test {
 };
 
 TEST_F(StateMachineTest, CreateFromConfigFile) {
-  std::string yaml_content = R"(
+  const std::string yaml_content = R"(
 variables:
   test_var: 100
 
@@ -58,7 +64,7 @@ transitions:
 }
 
 TEST_F(StateMachineTest, CreateFromString) {
-  std::string yaml_content = R"(
+  const std::string yaml_content = R"(
 states:
   state1:
     on_enter: enter_cb
@@ -68,7 +74,7 @@ states:
 }
 
 TEST_F(StateMachineTest, StartTransitionsToInitialState) {
-  std::string yaml_content = R"(
+  const std::string yaml_content = R"(
 states:
   initial_state:
 )";
@@ -81,7 +87,7 @@ states:
 }
 
 TEST_F(StateMachineTest, StartWithoutInitialStateThrowsException) {
-  std::string yaml_content = R"(
+  const std::string yaml_content = R"(
 states:
   state1:
     on_enter: enter_cb
@@ -97,7 +103,7 @@ states:
 }
 
 TEST_F(StateMachineTest, TriggerEventCausesTransition) {
-  std::string yaml_content = R"(
+  const std::string yaml_content = R"(
 states:
   state1:
   state2:
@@ -119,7 +125,7 @@ transitions:
 }
 
 TEST_F(StateMachineTest, TriggerEventWithNoTransitionDoesNothing) {
-  std::string yaml_content = R"(
+  const std::string yaml_content = R"(
 states:
   state1:
   state2:
@@ -141,7 +147,7 @@ transitions:
 }
 
 TEST_F(StateMachineTest, StopCallsExitCallback) {
-  std::string yaml_content = R"(
+  const std::string yaml_content = R"(
 states:
   state1:
     on_enter: on_enter_state1
@@ -153,12 +159,9 @@ states:
 
   class TestCallbacks {
    public:
-    bool enter_called;
-    bool exit_called;
-    TestCallbacks() {
-      enter_called = false;
-      exit_called = false;
-    }
+    bool enter_called{};  // NOLINT(cppcoreguidelines-use-default-member-init) - Test helper class
+    bool exit_called{};  // NOLINT(cppcoreguidelines-use-default-member-init) - Test helper class
+    TestCallbacks() = default;
     void onEnter() { enter_called = true; }
     void onExit() { exit_called = true; }
   };
@@ -176,7 +179,7 @@ states:
 }
 
 TEST_F(StateMachineTest, ResetReturnsToInitialState) {
-  std::string yaml_content = R"(
+  const std::string yaml_content = R"(
 states:
   initial_state:
   other_state:
@@ -194,14 +197,14 @@ transitions:
   fsm->triggerEvent("move");
   EXPECT_EQ(fsm->getCurrentState(), "other_state");
 
-  fsm->reset();
+  fsm->reset();  // NOLINT(readability-ambiguous-smartptr-reset-call) - Reset state machine
   // After reset, need to call start() to return to initial state
   fsm->start();
   EXPECT_EQ(fsm->getCurrentState(), "initial_state");
 }
 
 TEST_F(StateMachineTest, HasStateReturnsCorrectValue) {
-  std::string yaml_content = R"(
+  const std::string yaml_content = R"(
 states:
   state1:
   state2:
@@ -216,7 +219,7 @@ states:
 }
 
 TEST_F(StateMachineTest, GetAllStatesReturnsAllStates) {
-  std::string yaml_content = R"(
+  const std::string yaml_content = R"(
 states:
   state1:
   state2:
@@ -234,7 +237,7 @@ states:
 }
 
 TEST_F(StateMachineTest, SetAndGetVariable) {
-  std::string yaml_content = R"(
+  const std::string yaml_content = R"(
 variables:
   global_var: 100
 
@@ -255,7 +258,7 @@ states:
 }
 
 TEST_F(StateMachineTest, HasVariableReturnsCorrectValue) {
-  std::string yaml_content = R"(
+  const std::string yaml_content = R"(
 variables:
   global_var: 100
 )";
@@ -268,7 +271,7 @@ variables:
 }
 
 TEST_F(StateMachineTest, TriggerEventWithData) {
-  std::string yaml_content = R"(
+  const std::string yaml_content = R"(
 states:
   state1:
   state2:
@@ -291,7 +294,7 @@ transitions:
 }
 
 TEST_F(StateMachineTest, StateObserverReceivesCallbacks) {
-  std::string yaml_content = R"(
+  const std::string yaml_content = R"(
 states:
   state1:
   state2:
@@ -307,31 +310,27 @@ transitions:
 
   class TestObserver : public StateObserver {
    public:
-    int enter_count;
-    int exit_count;
-    int transition_count;
-    TestObserver() {
-      enter_count = 0;
-      exit_count = 0;
-      transition_count = 0;
-    }
+    int enter_count{};  // NOLINT(cppcoreguidelines-use-default-member-init) - Test helper class
+    int exit_count{};  // NOLINT(cppcoreguidelines-use-default-member-init) - Test helper class
+    int transition_count{};  // NOLINT(cppcoreguidelines-use-default-member-init) - Test helper class
+    TestObserver() = default;
 
     void onStateEnter(const std::string& state_name) override {
-      (void)state_name;
+      std::ignore = state_name;
       enter_count++;
     }
 
     void onStateExit(const std::string& state_name) override {
-      (void)state_name;
+      std::ignore = state_name;
       exit_count++;
     }
 
     void onTransition(const TransitionEvent& event) override {
-      (void)event;
+      std::ignore = event;
       transition_count++;
     }
 
-    void onError(const std::string& error_message) override { (void)error_message; }
+    void onError(const std::string& error_message) override { std::ignore = error_message; }
   };
 
   TestObserver observer;
@@ -349,7 +348,7 @@ transitions:
 }
 
 TEST_F(StateMachineTest, ErrorHandlerReceivesErrors) {
-  std::string yaml_content = R"(
+  const std::string yaml_content = R"(
 states:
   state1:
 )";
@@ -365,7 +364,7 @@ states:
 }
 
 TEST_F(StateMachineTest, GuardPreventsTransition) {
-  std::string yaml_content = R"(
+  const std::string yaml_content = R"(
 states:
   state1:
   state2:
@@ -382,9 +381,9 @@ transitions:
 
   class TestGuard {
    public:
-    bool result;
-    TestGuard() { result = false; }
-    bool onGuard() { return result; }
+    bool result{};  // NOLINT(cppcoreguidelines-use-default-member-init) - Test helper class
+    TestGuard() = default;
+    bool onGuard() { return result; }  // NOLINT(readability-make-member-function-const) - Callback signature requires non-const
   };
 
   TestGuard guard;
@@ -396,7 +395,7 @@ transitions:
 }
 
 TEST_F(StateMachineTest, GuardAllowsTransition) {
-  std::string yaml_content = R"(
+  const std::string yaml_content = R"(
 states:
   state1:
   state2:
@@ -413,9 +412,9 @@ transitions:
 
   class TestGuard {
    public:
-    bool result;
-    TestGuard() { result = true; }
-    bool onGuard() { return result; }
+    bool result{};  // NOLINT(cppcoreguidelines-use-default-member-init) - Test helper class
+    TestGuard() = default;
+    bool onGuard() { return result; }  // NOLINT(readability-make-member-function-const) - Callback signature requires non-const
   };
 
   TestGuard guard;
@@ -427,7 +426,7 @@ transitions:
 }
 
 TEST_F(StateMachineTest, MultipleTransitionsFromSameState) {
-  std::string yaml_content = R"(
+  const std::string yaml_content = R"(
 states:
   state1:
   state2:
@@ -451,7 +450,7 @@ transitions:
   fsm->triggerEvent("go_to_2");
   EXPECT_EQ(fsm->getCurrentState(), "state2");
 
-  fsm->reset();
+  fsm->reset();  // NOLINT(readability-ambiguous-smartptr-reset-call) - Reset state machine
   fsm->start();
 
   fsm->triggerEvent("go_to_3");
@@ -459,7 +458,7 @@ transitions:
 }
 
 TEST_F(StateMachineTest, StateActionsAreExecuted) {
-  std::string yaml_content = R"(
+  const std::string yaml_content = R"(
 states:
   state1:
     actions:
@@ -471,8 +470,8 @@ states:
 
   class TestAction {
    public:
-    bool called;
-    TestAction() { called = false; }
+    bool called{};  // NOLINT(cppcoreguidelines-use-default-member-init) - Test helper class
+    TestAction() = default;
     void onAction() { called = true; }
   };
 
@@ -485,7 +484,7 @@ states:
 }
 
 TEST_F(StateMachineTest, TransitionActionsAreExecuted) {
-  std::string yaml_content = R"(
+  const std::string yaml_content = R"(
 states:
   state1:
   state2:
@@ -503,8 +502,8 @@ transitions:
 
   class TestAction {
    public:
-    bool called;
-    TestAction() { called = false; }
+    bool called{};  // NOLINT(cppcoreguidelines-use-default-member-init) - Test helper class
+    TestAction() = default;
     void onAction() { called = true; }
   };
 
@@ -518,7 +517,7 @@ transitions:
 }
 
 TEST_F(StateMachineTest, TransitionCallbackIsExecuted) {
-  std::string yaml_content = R"(
+  const std::string yaml_content = R"(
 states:
   state1:
   state2:
@@ -535,10 +534,10 @@ transitions:
 
   class TestTransition {
    public:
-    bool called;
-    TestTransition() { called = false; }
+    bool called{};  // NOLINT(cppcoreguidelines-use-default-member-init) - Test helper class
+    TestTransition() = default;
     void onTransition(const TransitionEvent& event) {
-      (void)event;
+      std::ignore = event;
       called = true;
     }
   };
@@ -553,7 +552,7 @@ transitions:
 }
 
 TEST_F(StateMachineTest, CannotTriggerEventWhenNotStarted) {
-  std::string yaml_content = R"(
+  const std::string yaml_content = R"(
 states:
   state1:
   state2:
@@ -571,7 +570,7 @@ transitions:
 }
 
 TEST_F(StateMachineTest, CannotStartWhenAlreadyStarted) {
-  std::string yaml_content = R"(
+  const std::string yaml_content = R"(
 states:
   initial_state:
 )";
@@ -584,7 +583,7 @@ states:
 }
 
 TEST_F(StateMachineTest, CannotStopWhenNotStarted) {
-  std::string yaml_content = R"(
+  const std::string yaml_content = R"(
 states:
   state1:
 )";
@@ -596,7 +595,7 @@ states:
 }
 
 TEST_F(StateMachineTest, VariableValueCanBeModified) {
-  std::string yaml_content = R"(
+  const std::string yaml_content = R"(
 variables:
   counter: 0
 )";
@@ -614,7 +613,7 @@ variables:
 }
 
 TEST_F(StateMachineTest, StateLocalVariableOverridesGlobal) {
-  std::string yaml_content = R"(
+  const std::string yaml_content = R"(
 variables:
   var: 100
 
@@ -633,7 +632,7 @@ states:
 }
 
 TEST_F(StateMachineTest, MultipleObserversReceiveCallbacks) {
-  std::string yaml_content = R"(
+  const std::string yaml_content = R"(
 states:
   state1:
   state2:
@@ -649,25 +648,25 @@ transitions:
 
   class TestObserver : public StateObserver {
    public:
-    int callback_count;
-    TestObserver() { callback_count = 0; }
+    int callback_count{};  // NOLINT(cppcoreguidelines-use-default-member-init) - Test helper class
+    TestObserver() = default;
 
     void onStateEnter(const std::string& state_name) override {
-      (void)state_name;
+      std::ignore = state_name;
       callback_count++;
     }
 
     void onStateExit(const std::string& state_name) override {
-      (void)state_name;
+      std::ignore = state_name;
       callback_count++;
     }
 
     void onTransition(const TransitionEvent& event) override {
-      (void)event;
+      std::ignore = event;
       callback_count++;
     }
 
-    void onError(const std::string& error_message) override { (void)error_message; }
+    void onError(const std::string& error_message) override { std::ignore = error_message; }
   };
 
   TestObserver observer1;
@@ -688,7 +687,7 @@ transitions:
 }
 
 TEST_F(StateMachineTest, UnregisterObserverStopsCallbacks) {
-  std::string yaml_content = R"(
+  const std::string yaml_content = R"(
 states:
   state1:
   state2:
@@ -704,25 +703,25 @@ transitions:
 
   class TestObserver : public StateObserver {
    public:
-    int callback_count;
-    TestObserver() { callback_count = 0; }
+    int callback_count{};  // NOLINT(cppcoreguidelines-use-default-member-init) - Test helper class
+    TestObserver() = default;
 
     void onStateEnter(const std::string& state_name) override {
-      (void)state_name;
+      std::ignore = state_name;
       callback_count++;
     }
 
     void onStateExit(const std::string& state_name) override {
-      (void)state_name;
+      std::ignore = state_name;
       callback_count++;
     }
 
     void onTransition(const TransitionEvent& event) override {
-      (void)event;
+      std::ignore = event;
       callback_count++;
     }
 
-    void onError(const std::string& error_message) override { (void)error_message; }
+    void onError(const std::string& error_message) override { std::ignore = error_message; }
   };
 
   TestObserver observer;
@@ -739,7 +738,7 @@ transitions:
 }
 
 TEST_F(StateMachineTest, GetVariableThrowsForNonexistentVariable) {
-  std::string yaml_content = R"(
+  const std::string yaml_content = R"(
 variables:
   existing_var: 100
 )";
@@ -747,11 +746,11 @@ variables:
   writeTestConfig(yaml_content);
   fsm = std::make_unique<StateMachine>(test_config_path);
 
-  EXPECT_THROW(fsm->getVariable("nonexistent_var"), StateException);
+  EXPECT_THROW([[maybe_unused]] auto _ = fsm->getVariable("nonexistent_var"), StateException);
 }
 
 TEST_F(StateMachineTest, ComplexTransitionChain) {
-  std::string yaml_content = R"(
+  const std::string yaml_content = R"(
 states:
   state1:
   state2:
@@ -780,7 +779,7 @@ transitions:
 }
 
 TEST_F(StateMachineTest, ResetAfterTransition) {
-  std::string yaml_content = R"(
+  const std::string yaml_content = R"(
 states:
   initial_state:
   other_state:
@@ -796,15 +795,15 @@ transitions:
 
   class TestCallbacks1 {
    public:
-    bool enter_called;
-    TestCallbacks1() { enter_called = false; }
+    bool enter_called{};  // NOLINT(cppcoreguidelines-use-default-member-init) - Test helper class
+    TestCallbacks1() = default;
     void onEnter() { enter_called = true; }
   };
 
   class TestCallbacks2 {
    public:
-    bool enter_called;
-    TestCallbacks2() { enter_called = false; }
+    bool enter_called{};  // NOLINT(cppcoreguidelines-use-default-member-init) - Test helper class
+    TestCallbacks2() = default;
     void onEnter() { enter_called = true; }
   };
 
@@ -823,7 +822,7 @@ transitions:
   callbacks1.enter_called = false;
   callbacks2.enter_called = false;
 
-  fsm->reset();
+  fsm->reset();  // NOLINT(readability-ambiguous-smartptr-reset-call) - Reset state machine
   // After reset, need to call start() to trigger callbacks
   fsm->start();
 
@@ -832,7 +831,7 @@ transitions:
 }
 
 TEST_F(StateMachineTest, EventDataIsPassedToTransitionCallback) {
-  std::string yaml_content = R"(
+  const std::string yaml_content = R"(
 states:
   state1:
   state2:
@@ -849,16 +848,13 @@ transitions:
 
   class TestTransition {
    public:
-    bool callback_called;
-    int captured_data;
-    TestTransition() {
-      callback_called = false;
-      captured_data = 0;
-    }
+    bool callback_called{};  // NOLINT(cppcoreguidelines-use-default-member-init) - Test helper class
+    int captured_data{};  // NOLINT(cppcoreguidelines-use-default-member-init) - Test helper class
+    TestTransition() = default;
 
     void onTransition(const TransitionEvent& event) {
       callback_called = true;
-      if (event.data.find("test_data") != event.data.end()) {
+      if (event.data.contains("test_data")) {
         captured_data = event.data.at("test_data").asInt();
       }
     }

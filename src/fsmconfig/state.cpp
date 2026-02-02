@@ -57,7 +57,7 @@ const std::string& State::getOnExitCallback() const { return impl_->on_exit_call
 
 const std::vector<std::string>& State::getActions() const { return impl_->actions; }
 
-bool State::hasVariable(const std::string& name) const { return impl_->variables.find(name) != impl_->variables.end(); }
+bool State::hasVariable(const std::string& name) const { return impl_->variables.contains(name); }
 
 VariableValue State::getVariable(const std::string& name) const {
   auto it = impl_->variables.find(name);

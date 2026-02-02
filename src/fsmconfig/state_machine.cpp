@@ -72,7 +72,7 @@ StateMachine::StateMachine(const std::string& config_path) : impl_(std::make_uni
   }
 
   // Find initial state from configuration
-  std::string initial_state = impl_->config_parser->getInitialState();
+  const std::string initial_state = impl_->config_parser->getInitialState();
   impl_->initial_state = initial_state;  // Save even if empty
 }
 
@@ -109,7 +109,7 @@ StateMachine::StateMachine(const std::string& yaml_content, bool is_content) : i
   }
 
   // Find initial state from configuration
-  std::string initial_state = impl_->config_parser->getInitialState();
+  const std::string initial_state = impl_->config_parser->getInitialState();
   impl_->initial_state = initial_state;  // Save even if empty
 }
 
@@ -123,7 +123,7 @@ StateMachine& StateMachine::operator=(StateMachine&& other) noexcept = default;
 
 void StateMachine::start() {
   if (impl_->started) {
-    std::string error = "StateMachine is already started";
+    const std::string error = "StateMachine is already started";
     if (impl_->error_handler) {
       impl_->error_handler(error);
     }
@@ -131,7 +131,7 @@ void StateMachine::start() {
   }
 
   if (impl_->initial_state.empty()) {
-    std::string error = "No initial state found in configuration";
+    const std::string error = "No initial state found in configuration";
     if (impl_->error_handler) {
       impl_->error_handler(error);
     }
@@ -139,7 +139,7 @@ void StateMachine::start() {
   }
 
   if (!impl_->config_parser->hasState(impl_->initial_state)) {
-    std::string error = "Initial state '" + impl_->initial_state + "' not found";
+    const std::string error = "Initial state '" + impl_->initial_state + "' not found";
     if (impl_->error_handler) {
       impl_->error_handler(error);
     }
@@ -168,7 +168,7 @@ void StateMachine::start() {
 
 void StateMachine::stop() {
   if (!impl_->started) {
-    std::string error = "StateMachine is not started";
+    const std::string error = "StateMachine is not started";
     if (impl_->error_handler) {
       impl_->error_handler(error);
     }
@@ -222,7 +222,7 @@ void StateMachine::triggerEvent(const std::string& event_name) { triggerEvent(ev
 
 void StateMachine::triggerEvent(const std::string& event_name, const std::map<std::string, VariableValue>& data) {
   if (!impl_->started) {
-    std::string error = "StateMachine is not started";
+    const std::string error = "StateMachine is not started";
     if (impl_->error_handler) {
       impl_->error_handler(error);
     }
@@ -230,7 +230,7 @@ void StateMachine::triggerEvent(const std::string& event_name, const std::map<st
   }
 
   if (impl_->current_state.empty()) {
-    std::string error = "No current state";
+    const std::string error = "No current state";
     if (impl_->error_handler) {
       impl_->error_handler(error);
     }
@@ -279,7 +279,7 @@ void StateMachine::setVariable(const std::string& name, const VariableValue& val
 VariableValue StateMachine::getVariable(const std::string& name) const {
   auto value = impl_->variable_manager->getVariable(impl_->current_state, name);
   if (!value) {
-    std::string error = "Variable '" + name + "' not found";
+    const std::string error = "Variable '" + name + "' not found";
     if (impl_->error_handler) {
       impl_->error_handler(error);
     }
@@ -324,12 +324,12 @@ void StateMachine::setErrorHandler(ErrorHandler handler) { impl_->error_handler 
 // Helper methods
 
 void StateMachine::performTransition(const TransitionEvent& event) {
-  std::string old_state = impl_->current_state;
-  std::string new_state = event.to_state;
+  const std::string old_state = impl_->current_state;
+  const std::string new_state = event.to_state;
 
   // Check if target state exists
   if (!hasState(new_state)) {
-    std::string error = "Target state '" + new_state + "' does not exist";
+    const std::string error = "Target state '" + new_state + "' does not exist";
     if (impl_->error_handler) {
       impl_->error_handler(error);
     }

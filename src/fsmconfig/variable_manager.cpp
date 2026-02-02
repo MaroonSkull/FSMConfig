@@ -139,13 +139,13 @@ bool VariableManager::hasVariable(const std::string& state_name, const std::stri
   // First check local variable
   auto state_it = impl_->state_variables.find(state_name);
   if (state_it != impl_->state_variables.end()) {
-    if (state_it->second.find(name) != state_it->second.end()) {
+    if (state_it->second.contains(name)) {
       return true;
     }
   }
 
   // If local not found, check global
-  return impl_->global_variables.find(name) != impl_->global_variables.end();
+  return impl_->global_variables.contains(name);
 }
 
 bool VariableManager::hasGlobalVariable(const std::string& name) const {
@@ -158,7 +158,7 @@ bool VariableManager::hasStateVariable(const std::string& state_name, const std:
 
   auto state_it = impl_->state_variables.find(state_name);
   if (state_it != impl_->state_variables.end()) {
-    return state_it->second.find(name) != state_it->second.end();
+    return state_it->second.contains(name);
   }
 
   return false;
