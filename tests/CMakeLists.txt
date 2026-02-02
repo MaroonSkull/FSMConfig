@@ -1,7 +1,8 @@
 # ============================================================================
 # Find GoogleTest
 # ============================================================================
-find_package(GTest REQUIRED)
+# Version pinning for reproducible builds (see main CMakeLists.txt for details)
+find_package(GTest 1.14.0 REQUIRED)
 
 # ============================================================================
 # Test Executables
