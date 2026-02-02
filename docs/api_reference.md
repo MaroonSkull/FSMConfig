@@ -28,7 +28,7 @@ enum class VariableType {
 
 ### VariableValue
 
-Structure for storing values with support for multiple types.
+Structure for storing values with support for multiple types. Implements the Rule of Five with proper move semantics.
 
 ```cpp
 struct VariableValue {
@@ -50,6 +50,9 @@ struct VariableValue {
     VariableValue(const VariableValue& other);
     VariableValue& operator=(const VariableValue& other);
     
+    VariableValue(VariableValue&& other) noexcept;
+    VariableValue& operator=(VariableValue&& other) noexcept;
+    
     int asInt() const;
     float asFloat() const;
     std::string asString() const;
@@ -57,6 +60,22 @@ struct VariableValue {
     std::string toString() const;
 };
 ```
+
+#### Special Member Functions
+
+**Move Constructor**
+```cpp
+VariableValue(VariableValue&& other) noexcept;
+```
+
+Moves the internal value from `other`. After the move, `other` is left in a valid but unspecified state. For STRING type, performs a non-throwing move of the `std::string`.
+
+**Move Assignment Operator**
+```cpp
+VariableValue& operator=(VariableValue&& other) noexcept;
+```
+
+Moves the internal value from `other`. After the move, `other` is left in a valid but unspecified state. Properly handles self-assignment and cleans up existing resources before moving.
 
 ### TransitionEvent
 
@@ -637,17 +656,19 @@ Remove a state-local variable.
 #### getGlobalVariables
 
 ```cpp
-const std::map<std::string, VariableValue>& getGlobalVariables() const;
+std::map<std::string, VariableValue> getGlobalVariables() const;
 ```
 
 Get all global variables.
 
-**Returns:** Reference to the map of global variables
+**Returns:** Copy of the global variables map
+
+**Note:** Returns a copy to ensure thread safety. The returned map is a snapshot of the variables at the time of the call and will not reflect subsequent changes.
 
 #### getStateVariables
 
 ```cpp
-const std::map<std::string, VariableValue>& getStateVariables(
+std::map<std::string, VariableValue> getStateVariables(
     const std::string& state_name
 ) const;
 ```
@@ -657,7 +678,9 @@ Get all state-local variables for a state.
 **Parameters:**
 - `state_name` - Name of the state
 
-**Returns:** Reference to the map of state-local variables
+**Returns:** Copy of the state-local variables map
+
+**Note:** Returns a copy to ensure thread safety. The returned map is a snapshot of the variables at the time of the call and will not reflect subsequent changes.
 
 #### clear
 
@@ -1054,24 +1077,35 @@ Check if a variable exists (checks state-local first, then global).
 #### registerStateObserver
 
 ```cpp
-void registerStateObserver(StateObserver* observer);
+void registerStateObserver(const std::shared_ptr<StateObserver>& observer);
 ```
 
 Register a state observer.
 
 **Parameters:**
-- `observer` - Pointer to the observer
+- `observer` - Shared pointer to the observer
+
+**Note:** The observer is stored as a `std::weak_ptr` internally to prevent dangling pointers. If the observer is destroyed, it will be automatically removed from the notification list on the next notification cycle. This ensures safe lifetime management and prevents memory leaks.
+
+**Example:**
+```cpp
+auto observer = std::make_shared<MyObserver>();
+fsm.registerStateObserver(observer);
+// No manual cleanup needed - automatic when observer goes out of scope
+```
 
 #### unregisterStateObserver
 
 ```cpp
-void unregisterStateObserver(StateObserver* observer);
+void unregisterStateObserver(const std::shared_ptr<StateObserver>& observer);
 ```
 
 Unregister a state observer.
 
 **Parameters:**
-- `observer` - Pointer to the observer
+- `observer` - Shared pointer to the observer
+
+**Note:** Removes the observer from the notification list.
 
 #### setErrorHandler
 
