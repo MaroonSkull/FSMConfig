@@ -1,13 +1,10 @@
 #include "fsmconfig/variable_manager.hpp"
 
-#include <cstddef>
 #include <map>
 #include <memory>
 #include <mutex>
 #include <optional>
 #include <string>
-
-#include "fsmconfig/types.hpp"
 
 namespace fsmconfig {
 
@@ -51,13 +48,13 @@ VariableManager& VariableManager::operator=(VariableManager&& other) noexcept = 
 // ============================================================================
 
 void VariableManager::setGlobalVariable(const std::string& name, const VariableValue& value) {
-  std::scoped_lock const lock(impl_->mutex);
+  const std::lock_guard<std::mutex> lock(impl_->mutex);
   impl_->global_variables[name] = value;
 }
 
 void VariableManager::setStateVariable(const std::string& state_name, const std::string& name,
                                        const VariableValue& value) {
-  std::scoped_lock const lock(impl_->mutex);
+  const std::lock_guard<std::mutex> lock(impl_->mutex);
   impl_->state_variables[state_name][name] = value;
 }
 
@@ -67,7 +64,7 @@ void VariableManager::setStateVariable(const std::string& state_name, const std:
 
 std::optional<VariableValue> VariableManager::getVariable(const std::string& state_name,
                                                           const std::string& name) const {
-  std::scoped_lock const lock(impl_->mutex);
+  const std::lock_guard<std::mutex> lock(impl_->mutex);
 
   // First search for local variable
   auto state_it = impl_->state_variables.find(state_name);
@@ -88,7 +85,7 @@ std::optional<VariableValue> VariableManager::getVariable(const std::string& sta
 }
 
 std::optional<VariableValue> VariableManager::getGlobalVariable(const std::string& name) const {
-  std::scoped_lock const lock(impl_->mutex);
+  const std::lock_guard<std::mutex> lock(impl_->mutex);
 
   auto it = impl_->global_variables.find(name);
   if (it != impl_->global_variables.end()) {
@@ -100,7 +97,7 @@ std::optional<VariableValue> VariableManager::getGlobalVariable(const std::strin
 
 std::optional<VariableValue> VariableManager::getStateVariable(const std::string& state_name,
                                                                const std::string& name) const {
-  std::scoped_lock const lock(impl_->mutex);
+  const std::lock_guard<std::mutex> lock(impl_->mutex);
 
   auto state_it = impl_->state_variables.find(state_name);
   if (state_it != impl_->state_variables.end()) {
@@ -114,12 +111,12 @@ std::optional<VariableValue> VariableManager::getStateVariable(const std::string
 }
 
 const std::map<std::string, VariableValue>& VariableManager::getGlobalVariables() const {
-  std::scoped_lock const lock(impl_->mutex);
+  const std::lock_guard<std::mutex> lock(impl_->mutex);
   return impl_->global_variables;
 }
 
 const std::map<std::string, VariableValue>& VariableManager::getStateVariables(const std::string& state_name) const {
-  std::scoped_lock const lock(impl_->mutex);
+  const std::lock_guard<std::mutex> lock(impl_->mutex);
 
   // Return empty map for non-existent state
   static const std::map<std::string, VariableValue> empty_map;
@@ -137,7 +134,7 @@ const std::map<std::string, VariableValue>& VariableManager::getStateVariables(c
 // ============================================================================
 
 bool VariableManager::hasVariable(const std::string& state_name, const std::string& name) const {
-  std::scoped_lock const lock(impl_->mutex);
+  const std::lock_guard<std::mutex> lock(impl_->mutex);
 
   // First check local variable
   auto state_it = impl_->state_variables.find(state_name);
@@ -152,12 +149,12 @@ bool VariableManager::hasVariable(const std::string& state_name, const std::stri
 }
 
 bool VariableManager::hasGlobalVariable(const std::string& name) const {
-  std::scoped_lock const lock(impl_->mutex);
-  return impl_->global_variables.contains(name);
+  const std::lock_guard<std::mutex> lock(impl_->mutex);
+  return impl_->global_variables.find(name) != impl_->global_variables.end();
 }
 
 bool VariableManager::hasStateVariable(const std::string& state_name, const std::string& name) const {
-  std::scoped_lock const lock(impl_->mutex);
+  const std::lock_guard<std::mutex> lock(impl_->mutex);
 
   auto state_it = impl_->state_variables.find(state_name);
   if (state_it != impl_->state_variables.end()) {
@@ -172,7 +169,7 @@ bool VariableManager::hasStateVariable(const std::string& state_name, const std:
 // ============================================================================
 
 bool VariableManager::removeVariable(const std::string& state_name, const std::string& name) {
-  std::scoped_lock const lock(impl_->mutex);
+  const std::lock_guard<std::mutex> lock(impl_->mutex);
 
   // First try to remove local variable
   auto state_it = impl_->state_variables.find(state_name);
@@ -187,12 +184,12 @@ bool VariableManager::removeVariable(const std::string& state_name, const std::s
 }
 
 bool VariableManager::removeGlobalVariable(const std::string& name) {
-  std::scoped_lock const lock(impl_->mutex);
+  const std::lock_guard<std::mutex> lock(impl_->mutex);
   return impl_->global_variables.erase(name) > 0;
 }
 
 bool VariableManager::removeStateVariable(const std::string& state_name, const std::string& name) {
-  std::scoped_lock const lock(impl_->mutex);
+  const std::lock_guard<std::mutex> lock(impl_->mutex);
 
   auto state_it = impl_->state_variables.find(state_name);
   if (state_it != impl_->state_variables.end()) {
@@ -207,22 +204,22 @@ bool VariableManager::removeStateVariable(const std::string& state_name, const s
 // ============================================================================
 
 void VariableManager::clear() {
-  std::scoped_lock const lock(impl_->mutex);
+  const std::lock_guard<std::mutex> lock(impl_->mutex);
   impl_->clear();
 }
 
 void VariableManager::clearStateVariables(const std::string& state_name) {
-  std::scoped_lock const lock(impl_->mutex);
+  const std::lock_guard<std::mutex> lock(impl_->mutex);
   impl_->state_variables.erase(state_name);
 }
 
 void VariableManager::clearGlobalVariables() {
-  std::scoped_lock const lock(impl_->mutex);
+  const std::lock_guard<std::mutex> lock(impl_->mutex);
   impl_->global_variables.clear();
 }
 
 void VariableManager::copyStateVariables(const std::string& from_state, const std::string& to_state) {
-  std::scoped_lock const lock(impl_->mutex);
+  const std::lock_guard<std::mutex> lock(impl_->mutex);
 
   auto from_it = impl_->state_variables.find(from_state);
   if (from_it != impl_->state_variables.end()) {
@@ -235,12 +232,12 @@ void VariableManager::copyStateVariables(const std::string& from_state, const st
 // ============================================================================
 
 size_t VariableManager::getGlobalVariableCount() const {
-  std::scoped_lock const lock(impl_->mutex);
+  const std::lock_guard<std::mutex> lock(impl_->mutex);
   return impl_->global_variables.size();
 }
 
 size_t VariableManager::getStateVariableCount(const std::string& state_name) const {
-  std::scoped_lock const lock(impl_->mutex);
+  const std::lock_guard<std::mutex> lock(impl_->mutex);
 
   auto it = impl_->state_variables.find(state_name);
   if (it != impl_->state_variables.end()) {

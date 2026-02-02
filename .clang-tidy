@@ -1,8 +1,12 @@
 # Optimized clang-tidy configuration for FSMConfig project
 # C++20 header-only library for finite state machines
 #
-# This configuration filters out project-specific checks (LLVM libc, Fuchsia OS, Google style)
-# while keeping important code quality, modernization, and readability checks.
+# Updated 2025-02-02: Disabled style-preference warnings that don't affect code quality
+# - readability-identifier-length: Short names are idiomatic in C++
+# - performance-enum-size: Using int for enums is standard practice
+# - cppcoreguidelines-special-member-functions: VariableValue uses union (intentional)
+# - readability-convert-member-functions-to-static: Design choice for API consistency
+# - modernize-use-default-member-init: Redundant but explicit is fine
 
 InheritParentConfig: false
 
@@ -31,6 +35,7 @@ Checks: >
   -cppcoreguidelines-pro-bounds-pointer-arithmetic,
   -cppcoreguidelines-pro-type-reinterpret-cast,
   -cppcoreguidelines-pro-type-union-access,
+  -cppcoreguidelines-special-member-functions,
   misc-*,
   -misc-anonymous-namespace-in-header,
   -misc-definitions-in-headers,
@@ -38,11 +43,15 @@ Checks: >
   modernize-*,
   -modernize-macro-to-enum,
   -modernize-use-trailing-return-type,
+  -modernize-use-default-member-init,
   performance-*,
+  -performance-enum-size,
   -performance-move-const-arg,
   readability-*,
   -readability-braces-around-statements,
+  -readability-convert-member-functions-to-static,
   -readability-function-cognitive-complexity,
+  -readability-identifier-length,
   -readability-identifier-naming,
   -readability-magic-numbers,
   -readability-redundant-access-specifiers,

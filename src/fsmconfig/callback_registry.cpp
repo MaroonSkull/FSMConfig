@@ -1,11 +1,9 @@
 #include "fsmconfig/callback_registry.hpp"
 
-#include <cstddef>
+#include <functional>
 #include <map>
-#include <memory>
 #include <mutex>
 #include <string>
-#include <utility>
 
 namespace fsmconfig {
 

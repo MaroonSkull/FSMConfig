@@ -112,7 +112,7 @@ std::string VariableValue::toString() const {
     case VariableType::BOOL:
       return bool_value ? "true" : "false";
     default:
-      return "unknown";
+      return {"unknown"};
   }
 }
 
