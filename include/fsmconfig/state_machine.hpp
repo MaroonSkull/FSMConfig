@@ -215,15 +215,21 @@ class StateMachine {
 
   /**
    * @brief Register state change observer
-   * @param observer Pointer to observer
+   * @param observer Shared pointer to observer
+   * 
+   * The observer will be stored as a weak_ptr to prevent dangling pointers.
+   * If the observer is destroyed, it will be automatically removed from
+   * the notification list on the next notification cycle.
    */
-  void registerStateObserver(StateObserver* observer);
+  void registerStateObserver(const std::shared_ptr<StateObserver>& observer);
 
   /**
    * @brief Unregister observer
-   * @param observer Pointer to observer
+   * @param observer Shared pointer to observer
+   * 
+   * Removes the observer from the notification list.
    */
-  void unregisterStateObserver(StateObserver* observer);
+  void unregisterStateObserver(const std::shared_ptr<StateObserver>& observer);
 
   // Error handling
 

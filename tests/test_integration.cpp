@@ -98,29 +98,29 @@ transitions:
     void onError(const std::string& error_message) override { std::ignore = error_message; }
   };
 
-  TestObserver observer;
-  fsm->registerStateObserver(&observer);
+  auto observer = std::make_shared<TestObserver>();
+  fsm->registerStateObserver(observer);
 
   fsm->start();
 
   EXPECT_EQ(fsm->getCurrentState(), "idle");
-  EXPECT_EQ(observer.enter_count, 1);
-  EXPECT_EQ(observer.exit_count, 0);
-  EXPECT_EQ(observer.transition_count, 0);
+  EXPECT_EQ(observer->enter_count, 1);
+  EXPECT_EQ(observer->exit_count, 0);
+  EXPECT_EQ(observer->transition_count, 0);
 
   fsm->triggerEvent("start");
 
   EXPECT_EQ(fsm->getCurrentState(), "active");
-  EXPECT_EQ(observer.enter_count, 2);
-  EXPECT_EQ(observer.exit_count, 1);
-  EXPECT_EQ(observer.transition_count, 1);
+  EXPECT_EQ(observer->enter_count, 2);
+  EXPECT_EQ(observer->exit_count, 1);
+  EXPECT_EQ(observer->transition_count, 1);
 
   fsm->triggerEvent("stop");
 
   EXPECT_EQ(fsm->getCurrentState(), "idle");
-  EXPECT_EQ(observer.enter_count, 3);
-  EXPECT_EQ(observer.exit_count, 2);
-  EXPECT_EQ(observer.transition_count, 2);
+  EXPECT_EQ(observer->enter_count, 3);
+  EXPECT_EQ(observer->exit_count, 2);
+  EXPECT_EQ(observer->transition_count, 2);
 }
 
 TEST_F(IntegrationTest, GuardPreventsInvalidTransition) {
@@ -236,21 +236,21 @@ transitions:
     void onError(const std::string& error_message) override { std::ignore = error_message; }
   };
 
-  TestObserver observer1;
-  TestObserver observer2;
+  auto observer1 = std::make_shared<TestObserver>();
+  auto observer2 = std::make_shared<TestObserver>();
 
-  fsm->registerStateObserver(&observer1);
-  fsm->registerStateObserver(&observer2);
+  fsm->registerStateObserver(observer1);
+  fsm->registerStateObserver(observer2);
 
   fsm->start();
 
-  EXPECT_EQ(observer1.callback_count, 1);
-  EXPECT_EQ(observer2.callback_count, 1);
+  EXPECT_EQ(observer1->callback_count, 1);
+  EXPECT_EQ(observer2->callback_count, 1);
 
   fsm->triggerEvent("move");
 
-  EXPECT_EQ(observer1.callback_count, 4);
-  EXPECT_EQ(observer2.callback_count, 4);
+  EXPECT_EQ(observer1->callback_count, 4);
+  EXPECT_EQ(observer2->callback_count, 4);
 }
 
 TEST_F(IntegrationTest, ResetStateMachine) {
@@ -290,24 +290,24 @@ transitions:
     void onError(const std::string& error_message) override { std::ignore = error_message; }
   };
 
-  TestObserver observer;
-  fsm->registerStateObserver(&observer);
+  auto observer = std::make_shared<TestObserver>();
+  fsm->registerStateObserver(observer);
 
   fsm->start();
-  EXPECT_TRUE(observer.initial_enter_called);
-  EXPECT_FALSE(observer.other_enter_called);
+  EXPECT_TRUE(observer->initial_enter_called);
+  EXPECT_FALSE(observer->other_enter_called);
 
   fsm->triggerEvent("move");
-  EXPECT_TRUE(observer.other_enter_called);
+  EXPECT_TRUE(observer->other_enter_called);
 
-  observer.initial_enter_called = false;
-  observer.other_enter_called = false;
+  observer->initial_enter_called = false;
+  observer->other_enter_called = false;
 
   fsm->reset();  // NOLINT(readability-ambiguous-smartptr-reset-call) - Smart pointer reset is intentional
   fsm->start();
 
-  EXPECT_TRUE(observer.initial_enter_called);
-  EXPECT_FALSE(observer.other_enter_called);
+  EXPECT_TRUE(observer->initial_enter_called);
+  EXPECT_FALSE(observer->other_enter_called);
 }
 
 TEST_F(IntegrationTest, ErrorHandlerReceivesErrors) {

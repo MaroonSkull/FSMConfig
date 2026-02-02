@@ -31,7 +31,7 @@ struct StateMachine::Impl {
   std::string initial_state;
   bool started = false;
 
-  std::vector<StateObserver*> observers;
+  std::vector<std::weak_ptr<StateObserver>> observers;
   ErrorHandler error_handler;
 
   void clear() {
@@ -159,8 +159,17 @@ void StateMachine::start() {
   executeStateActions(impl_->current_state);
 
   // Notify observers about entering initial state
-  for (auto* observer : impl_->observers) {
-    observer->onStateEnter(impl_->current_state);
+  // Clean up expired observers first
+  impl_->observers.erase(
+      std::remove_if(impl_->observers.begin(), impl_->observers.end(),
+                    [](const std::weak_ptr<StateObserver>& weak_obs) { return weak_obs.expired(); }),
+      impl_->observers.end());
+
+  // Notify remaining valid observers
+  for (const auto& weak_obs : impl_->observers) {
+    if (auto observer = weak_obs.lock()) {
+      observer->onStateEnter(impl_->current_state);
+    }
   }
 
   impl_->started = true;
@@ -180,8 +189,17 @@ void StateMachine::stop() {
     impl_->callback_registry->callStateCallback(impl_->current_state, "on_exit");
 
     // Notify observers about exiting state
-    for (auto* observer : impl_->observers) {
-      observer->onStateExit(impl_->current_state);
+    // Clean up expired observers first
+    impl_->observers.erase(
+        std::remove_if(impl_->observers.begin(), impl_->observers.end(),
+                      [](const std::weak_ptr<StateObserver>& weak_obs) { return weak_obs.expired(); }),
+        impl_->observers.end());
+
+    // Notify remaining valid observers
+    for (const auto& weak_obs : impl_->observers) {
+      if (auto observer = weak_obs.lock()) {
+        observer->onStateExit(impl_->current_state);
+      }
     }
   }
 
@@ -294,27 +312,35 @@ bool StateMachine::hasVariable(const std::string& name) const {
 
 // Observer methods
 
-void StateMachine::registerStateObserver(StateObserver* observer) {
-  if (observer == nullptr) {
+void StateMachine::registerStateObserver(const std::shared_ptr<StateObserver>& observer) {
+  if (!observer) {
     return;
   }
 
   // Check if observer is already registered
-  auto it = std::find(impl_->observers.begin(), impl_->observers.end(), observer);
-  if (it == impl_->observers.end()) {
-    impl_->observers.push_back(observer);
+  std::shared_ptr<StateObserver> existing;
+  for (const auto& weak_obs : impl_->observers) {
+    if ((existing = weak_obs.lock()) && existing == observer) {
+      return;  // Already registered
+    }
   }
+
+  // Add observer as weak_ptr
+  impl_->observers.push_back(observer);
 }
 
-void StateMachine::unregisterStateObserver(StateObserver* observer) {
-  if (observer == nullptr) {
+void StateMachine::unregisterStateObserver(const std::shared_ptr<StateObserver>& observer) {
+  if (!observer) {
     return;
   }
 
-  auto it = std::find(impl_->observers.begin(), impl_->observers.end(), observer);
-  if (it != impl_->observers.end()) {
-    impl_->observers.erase(it);
-  }
+  // Remove observer from list
+  auto it = std::remove_if(impl_->observers.begin(), impl_->observers.end(),
+                          [&observer](const std::weak_ptr<StateObserver>& weak_obs) {
+                            auto existing = weak_obs.lock();
+                            return existing && existing == observer;
+                          });
+  impl_->observers.erase(it, impl_->observers.end());
 }
 
 // Error handling methods
@@ -343,8 +369,17 @@ void StateMachine::performTransition(const TransitionEvent& event) {
   }
 
   // Notify observers about exiting state
-  for (auto* observer : impl_->observers) {
-    observer->onStateExit(old_state);
+  // Clean up expired observers first
+  impl_->observers.erase(
+      std::remove_if(impl_->observers.begin(), impl_->observers.end(),
+                    [](const std::weak_ptr<StateObserver>& weak_obs) { return weak_obs.expired(); }),
+      impl_->observers.end());
+
+  // Notify remaining valid observers
+  for (const auto& weak_obs : impl_->observers) {
+    if (auto observer = weak_obs.lock()) {
+      observer->onStateExit(old_state);
+    }
   }
 
   // Execute transition actions
@@ -371,13 +406,31 @@ void StateMachine::performTransition(const TransitionEvent& event) {
   executeStateActions(new_state);
 
   // Notify observers about entering new state
-  for (auto* observer : impl_->observers) {
-    observer->onStateEnter(new_state);
+  // Clean up expired observers first
+  impl_->observers.erase(
+      std::remove_if(impl_->observers.begin(), impl_->observers.end(),
+                    [](const std::weak_ptr<StateObserver>& weak_obs) { return weak_obs.expired(); }),
+      impl_->observers.end());
+
+  // Notify remaining valid observers
+  for (const auto& weak_obs : impl_->observers) {
+    if (auto observer = weak_obs.lock()) {
+      observer->onStateEnter(new_state);
+    }
   }
 
   // Notify observers about transition
-  for (auto* observer : impl_->observers) {
-    observer->onTransition(event);
+  // Clean up expired observers first
+  impl_->observers.erase(
+      std::remove_if(impl_->observers.begin(), impl_->observers.end(),
+                    [](const std::weak_ptr<StateObserver>& weak_obs) { return weak_obs.expired(); }),
+      impl_->observers.end());
+
+  // Notify remaining valid observers
+  for (const auto& weak_obs : impl_->observers) {
+    if (auto observer = weak_obs.lock()) {
+      observer->onTransition(event);
+    }
   }
 }
 
