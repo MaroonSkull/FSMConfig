@@ -1,7 +1,13 @@
 #include "fsmconfig/state_machine.hpp"
 
 #include <algorithm>
+#include <chrono>
+#include <functional>
+#include <map>
+#include <memory>
 #include <stdexcept>
+#include <string>
+#include <vector>
 
 #include "fsmconfig/callback_registry.hpp"
 #include "fsmconfig/config_parser.hpp"

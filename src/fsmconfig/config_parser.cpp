@@ -4,7 +4,12 @@
 
 #include <algorithm>
 #include <fstream>
+#include <map>
+#include <memory>
+#include <set>
 #include <sstream>
+#include <string>
+#include <vector>
 
 #include "fsmconfig/types.hpp"
 

@@ -1,6 +1,9 @@
 #include "fsmconfig/callback_registry.hpp"
 
+#include <functional>
+#include <map>
 #include <mutex>
+#include <string>
 
 namespace fsmconfig {
 
