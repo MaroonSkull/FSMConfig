@@ -1,0 +1,29 @@
+#ifndef FSMCONFIG_VERSION_HPP
+#define FSMCONFIG_VERSION_HPP
+
+namespace fsmconfig {
+
+/// Major version number
+constexpr int VERSION_MAJOR = @FSMCONFIG_VERSION_MAJOR@;
+
+/// Minor version number
+constexpr int VERSION_MINOR = @FSMCONFIG_VERSION_MINOR@;
+
+/// Patch version number
+constexpr int VERSION_PATCH = @FSMCONFIG_VERSION_PATCH@;
+
+/// Pre-release identifier (empty for stable releases)
+constexpr const char* VERSION_PRERELEASE = "@FSMCONFIG_VERSION_PRERELEASE@";
+
+/// Full version string (e.g., "1.0.0-alpha.1")
+constexpr const char* VERSION_STRING = "@FSMCONFIG_VERSION@";
+
+/// Version as a single integer for comparisons (MAJOR * 10000 + MINOR * 100 + PATCH)
+constexpr int VERSION_NUMBER = 
+    VERSION_MAJOR * 10000 + 
+    VERSION_MINOR * 100 + 
+    VERSION_PATCH;
+
+} // namespace fsmconfig
+
+#endif // FSMCONFIG_VERSION_HPP

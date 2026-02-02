@@ -1,5 +1,16 @@
 cmake_minimum_required(VERSION 3.15)
-project(FSMConfig VERSION 0.1.0 LANGUAGES CXX)
+
+# ============================================================================
+# Version Information
+# ============================================================================
+set(FSMCONFIG_VERSION_MAJOR 1)
+set(FSMCONFIG_VERSION_MINOR 0)
+set(FSMCONFIG_VERSION_PATCH 0)
+set(FSMCONFIG_VERSION_PRERELEASE "alpha.1")
+set(FSMCONFIG_VERSION "${FSMCONFIG_VERSION_MAJOR}.${FSMCONFIG_VERSION_MINOR}.${FSMCONFIG_VERSION_PATCH}-${FSMCONFIG_VERSION_PRERELEASE}")
+set(FSMCONFIG_VERSION_FULL "${FSMCONFIG_VERSION}")
+
+project(FSMConfig VERSION ${FSMCONFIG_VERSION_MAJOR}.${FSMCONFIG_VERSION_MINOR}.${FSMCONFIG_VERSION_PATCH} LANGUAGES CXX)
 
 # ============================================================================
 # C++ Standard and Compiler Options
@@ -44,6 +55,18 @@ endif()
 # Include Directories
 # ============================================================================
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
+
+# ============================================================================
+# Version Header Configuration
+# ============================================================================
+configure_file(
+    "${CMAKE_CURRENT_SOURCE_DIR}/include/fsmconfig/version.hpp.in"
+    "${CMAKE_CURRENT_BINARY_DIR}/include/fsmconfig/version.hpp"
+    @ONLY
+)
+
+# Add the generated header to the include path
+include_directories(${CMAKE_CURRENT_BINARY_DIR}/include)
 
 # ============================================================================
 # Subdirectories

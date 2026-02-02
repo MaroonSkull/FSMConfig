@@ -11,6 +11,13 @@ add_library(fsmconfig
     fsmconfig/variable_manager.cpp
 )
 
+# Set library version properties
+set_target_properties(fsmconfig PROPERTIES
+    VERSION ${FSMCONFIG_VERSION}
+    SOVERSION ${FSMCONFIG_VERSION_MAJOR}
+    EXPORT_NAME fsmconfig
+)
+
 target_include_directories(fsmconfig
     PUBLIC
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../include>
