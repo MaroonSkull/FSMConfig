@@ -1,9 +1,13 @@
 #include <gtest/gtest.h>
 
+#include <cstdio>
 #include <filesystem>
+#include <fstream>
 #include <fsmconfig/config_parser.hpp>
 #include <fsmconfig/types.hpp>
-#include <fstream>
+#include <memory>
+#include <string>
+#include <tuple>
 
 using namespace fsmconfig;
 
@@ -14,8 +18,8 @@ using namespace fsmconfig;
 
 class ConfigParserTest : public ::testing::Test {
  protected:
-  std::unique_ptr<ConfigParser> parser;
-  std::string test_config_path;
+  std::unique_ptr<ConfigParser> parser;  // NOLINT(cppcoreguidelines-non-private-member-variables-in-classes) - Test fixture requires protected access
+  std::string test_config_path;  // NOLINT(cppcoreguidelines-non-private-member-variables-in-classes) - Test fixture requires protected access
 
   void SetUp() override {
     parser = std::make_unique<ConfigParser>();
@@ -36,7 +40,7 @@ class ConfigParserTest : public ::testing::Test {
 };
 
 TEST_F(ConfigParserTest, LoadValidConfig) {
-  std::string yaml_content = R"(
+  const std::string yaml_content = R"(
 variables:
   timeout: 5.0
   retry_count: 3
@@ -63,7 +67,7 @@ transitions:
     on_transition: transition_callback
     actions:
       - action3
-)";
+  )";
 
   writeTestConfig(yaml_content);
 
@@ -75,7 +79,7 @@ transitions:
 }
 
 TEST_F(ConfigParserTest, LoadFromValidString) {
-  std::string yaml_content = R"(
+const   std::string yaml_content = R"(
 variables:
   test_var: 100
 
@@ -91,7 +95,7 @@ states:
 }
 
 TEST_F(ConfigParserTest, ParseVariableTypes) {
-  std::string yaml_content = R"(
+const   std::string yaml_content = R"(
 variables:
   int_var: 42
   float_var: 3.14
@@ -118,7 +122,7 @@ variables:
 }
 
 TEST_F(ConfigParserTest, ParseStateVariables) {
-  std::string yaml_content = R"(
+const   std::string yaml_content = R"(
 states:
   state1:
     variables:
@@ -134,7 +138,7 @@ states:
 }
 
 TEST_F(ConfigParserTest, ParseStateCallbacks) {
-  std::string yaml_content = R"(
+const   std::string yaml_content = R"(
 states:
   state1:
     on_enter: on_enter_cb
@@ -150,7 +154,7 @@ states:
 }
 
 TEST_F(ConfigParserTest, ParseStateActions) {
-  std::string yaml_content = R"(
+const   std::string yaml_content = R"(
 states:
   state1:
     actions:
@@ -170,7 +174,7 @@ states:
 }
 
 TEST_F(ConfigParserTest, ParseTransitions) {
-  std::string yaml_content = R"(
+const   std::string yaml_content = R"(
 states:
   state1:
   state2:
@@ -201,7 +205,7 @@ transitions:
 }
 
 TEST_F(ConfigParserTest, GetTransitionsFromState) {
-  std::string yaml_content = R"(
+const   std::string yaml_content = R"(
 states:
   state1:
   state2:
@@ -229,7 +233,7 @@ transitions:
 }
 
 TEST_F(ConfigParserTest, FindTransition) {
-  std::string yaml_content = R"(
+const   std::string yaml_content = R"(
 states:
   state1:
   state2:
@@ -243,18 +247,18 @@ transitions:
   writeTestConfig(yaml_content);
   parser->loadFromFile(test_config_path);
 
-  auto transition = parser->findTransition("state1", "event1");
+  const auto* transition = parser->findTransition("state1", "event1");
   ASSERT_NE(transition, nullptr);
   EXPECT_EQ(transition->from_state, "state1");
   EXPECT_EQ(transition->to_state, "state2");
   EXPECT_EQ(transition->event_name, "event1");
 
-  auto nonexistent = parser->findTransition("state1", "nonexistent_event");
+  const auto* nonexistent = parser->findTransition("state1", "nonexistent_event");
   EXPECT_EQ(nonexistent, nullptr);
 }
 
 TEST_F(ConfigParserTest, ClearConfiguration) {
-  std::string yaml_content = R"(
+const   std::string yaml_content = R"(
 variables:
   test_var: 100
 
@@ -277,7 +281,7 @@ states:
 }
 
 TEST_F(ConfigParserTest, InvalidConfigThrowsException) {
-  std::string invalid_yaml = R"(
+const   std::string invalid_yaml = R"(
 invalid yaml content
   not valid
 )";
@@ -288,7 +292,7 @@ invalid yaml content
 }
 
 TEST_F(ConfigParserTest, MissingRequiredFieldThrowsException) {
-  std::string invalid_yaml = R"(
+const   std::string invalid_yaml = R"(
 transitions:
   - from: nonexistent_state
     to: state2
@@ -301,7 +305,7 @@ transitions:
 }
 
 TEST_F(ConfigParserTest, DuplicateTransitionThrowsException) {
-  std::string invalid_yaml = R"(
+const   std::string invalid_yaml = R"(
 states:
   state1:
   state2:
@@ -321,7 +325,7 @@ transitions:
 }
 
 TEST_F(ConfigParserTest, EmptyConfig) {
-  std::string yaml_content = R"(
+const   std::string yaml_content = R"(
 )";
 
   writeTestConfig(yaml_content);
@@ -333,7 +337,7 @@ TEST_F(ConfigParserTest, EmptyConfig) {
 }
 
 TEST_F(ConfigParserTest, ConfigWithOnlyVariables) {
-  std::string yaml_content = R"(
+const   std::string yaml_content = R"(
 variables:
   var1: 10
   var2: 20
@@ -347,7 +351,7 @@ variables:
 }
 
 TEST_F(ConfigParserTest, ConfigWithOnlyStates) {
-  std::string yaml_content = R"(
+const   std::string yaml_content = R"(
 states:
   state1:
     on_enter: enter1
@@ -363,7 +367,7 @@ states:
 }
 
 TEST_F(ConfigParserTest, ConfigWithOnlyTransitions) {
-  std::string yaml_content = R"(
+const   std::string yaml_content = R"(
 states:
   state1:
   state2:
@@ -381,7 +385,7 @@ transitions:
 }
 
 TEST_F(ConfigParserTest, GetNonexistentStateThrowsException) {
-  std::string yaml_content = R"(
+const   std::string yaml_content = R"(
 states:
   state1:
 )";
@@ -389,11 +393,11 @@ states:
   writeTestConfig(yaml_content);
   parser->loadFromFile(test_config_path);
 
-  EXPECT_THROW(parser->getState("nonexistent_state"), ConfigException);
+  EXPECT_THROW([[maybe_unused]] auto _ = parser->getState("nonexistent_state"), ConfigException);
 }
 
 TEST_F(ConfigParserTest, GetTransitionsFromNonexistentState) {
-  std::string yaml_content = R"(
+const   std::string yaml_content = R"(
 states:
   state1:
 )";
@@ -406,7 +410,7 @@ states:
 }
 
 TEST_F(ConfigParserTest, ParseNegativeIntVariable) {
-  std::string yaml_content = R"(
+const   std::string yaml_content = R"(
 variables:
   negative_var: -42
 )";
@@ -419,7 +423,7 @@ variables:
 }
 
 TEST_F(ConfigParserTest, ParseZeroIntVariable) {
-  std::string yaml_content = R"(
+const   std::string yaml_content = R"(
 variables:
   zero_var: 0
 )";
@@ -432,7 +436,7 @@ variables:
 }
 
 TEST_F(ConfigParserTest, ParseNegativeFloatVariable) {
-  std::string yaml_content = R"(
+const   std::string yaml_content = R"(
 variables:
   negative_float: -3.14
 )";
@@ -445,7 +449,7 @@ variables:
 }
 
 TEST_F(ConfigParserTest, ParseFalseBoolVariable) {
-  std::string yaml_content = R"(
+const   std::string yaml_content = R"(
 variables:
   false_var: false
 )";
@@ -458,7 +462,7 @@ variables:
 }
 
 TEST_F(ConfigParserTest, ParseEmptyStringVariable) {
-  std::string yaml_content = R"(
+const   std::string yaml_content = R"(
 variables:
   empty_string: ""
 )";
@@ -471,7 +475,7 @@ variables:
 }
 
 TEST_F(ConfigParserTest, ParseComplexStateWithAllFields) {
-  std::string yaml_content = R"(
+const   std::string yaml_content = R"(
 states:
   complex_state:
     variables:
@@ -496,7 +500,7 @@ states:
 }
 
 TEST_F(ConfigParserTest, ParseMultipleTransitionsFromSameState) {
-  std::string yaml_content = R"(
+const   std::string yaml_content = R"(
 states:
   state1:
   state2:
@@ -523,7 +527,7 @@ transitions:
 }
 
 TEST_F(ConfigParserTest, ParseTransitionWithoutOptionalFields) {
-  std::string yaml_content = R"(
+const   std::string yaml_content = R"(
 states:
   state1:
   state2:
@@ -546,14 +550,14 @@ transitions:
 }
 
 TEST_F(ConfigParserTest, LoadMultipleConfigsSequentially) {
-  std::string yaml_content1 = R"(
+const   std::string yaml_content1 = R"(
 variables:
   var1: 10
 states:
   state1:
 )";
 
-  std::string yaml_content2 = R"(
+const   std::string yaml_content2 = R"(
 variables:
   var2: 20
 states:
@@ -619,7 +623,7 @@ TEST_F(ConfigParserTest, ParseLargeNumberOfTransitions) {
 }
 
 TEST_F(ConfigParserTest, HasStateReturnsTrueForExistingState) {
-  std::string yaml_content = R"(
+const   std::string yaml_content = R"(
 states:
   state1:
   state2:
@@ -633,7 +637,7 @@ states:
 }
 
 TEST_F(ConfigParserTest, HasStateReturnsFalseForNonexistentState) {
-  std::string yaml_content = R"(
+const   std::string yaml_content = R"(
 states:
   state1:
 )";
@@ -645,7 +649,7 @@ states:
 }
 
 TEST_F(ConfigParserTest, ParseTransitionWithMultipleActions) {
-  std::string yaml_content = R"(
+const   std::string yaml_content = R"(
 states:
   state1:
   state2:
@@ -670,7 +674,7 @@ transitions:
 }
 
 TEST_F(ConfigParserTest, ParseStateWithoutOptionalFields) {
-  std::string yaml_content = R"(
+const   std::string yaml_content = R"(
 states:
   minimal_state:
 )";
@@ -686,7 +690,7 @@ states:
 }
 
 TEST_F(ConfigParserTest, ParseFloatWithHighPrecision) {
-  std::string yaml_content = R"(
+const   std::string yaml_content = R"(
 variables:
   precise_float: 3.141592653589793
 )";
@@ -699,7 +703,7 @@ variables:
 }
 
 TEST_F(ConfigParserTest, ParseStringWithSpaces) {
-  std::string yaml_content = R"(
+const   std::string yaml_content = R"(
 variables:
   spaced_string: "hello world with spaces"
 )";
@@ -712,7 +716,7 @@ variables:
 }
 
 TEST_F(ConfigParserTest, ParseStringWithSpecialCharacters) {
-  std::string yaml_content = R"(
+const   std::string yaml_content = R"(
 variables:
   special_string: "test123"
 )";
@@ -725,7 +729,7 @@ variables:
 }
 
 TEST_F(ConfigParserTest, ParseZeroFloatVariable) {
-  std::string yaml_content = R"(
+const   std::string yaml_content = R"(
 variables:
   zero_float: 0.0
 )";
@@ -738,7 +742,7 @@ variables:
 }
 
 TEST_F(ConfigParserTest, ParseVeryLargeIntVariable) {
-  std::string yaml_content = R"(
+const   std::string yaml_content = R"(
 variables:
   large_int: 2147483647
 )";
@@ -751,7 +755,7 @@ variables:
 }
 
 TEST_F(ConfigParserTest, ParseVerySmallIntVariable) {
-  std::string yaml_content = R"(
+const   std::string yaml_content = R"(
 variables:
   small_int: -2147483648
 )";
@@ -764,7 +768,7 @@ variables:
 }
 
 TEST_F(ConfigParserTest, ParseScientificNotationFloat) {
-  std::string yaml_content = R"(
+const   std::string yaml_content = R"(
 variables:
   scientific_float: 1.5e2
 )";

@@ -2,6 +2,8 @@
 
 #include <fsmconfig/callback_registry.hpp>
 #include <fsmconfig/types.hpp>
+#include <memory>
+#include <tuple>
 
 using namespace fsmconfig;
 
@@ -12,7 +14,7 @@ using namespace fsmconfig;
 
 class CallbackRegistryTest : public ::testing::Test {
  protected:
-  std::unique_ptr<CallbackRegistry> registry;
+  std::unique_ptr<CallbackRegistry> registry;  // NOLINT(cppcoreguidelines-non-private-member-variables-in-classes) - Test fixture requires protected access
 
   void SetUp() override { registry = std::make_unique<CallbackRegistry>(); }
 
@@ -51,7 +53,7 @@ TEST_F(CallbackRegistryTest, RegisterGuard) {
     return true;
   });
 
-  bool result = registry->callGuard("state1", "state2", "event1");
+  const bool result = registry->callGuard("state1", "state2", "event1");
   EXPECT_TRUE(guard_called);
   EXPECT_TRUE(result);
 }
@@ -68,7 +70,7 @@ TEST_F(CallbackRegistryTest, RegisterAction) {
 TEST_F(CallbackRegistryTest, CallMissingCallbackDoesNothing) {
   registry->callStateCallback("nonexistent_state", "on_enter");
   registry->callTransitionCallback("nonexistent_state", "state2", TransitionEvent());
-  registry->callGuard("nonexistent_state", "nonexistent_state", "event1");
+  [[maybe_unused]] auto _ = registry->callGuard("nonexistent_state", "nonexistent_state", "event1");
   registry->callAction("nonexistent_action");
 
   // Should not throw
@@ -76,7 +78,7 @@ TEST_F(CallbackRegistryTest, CallMissingCallbackDoesNothing) {
 }
 
 TEST_F(CallbackRegistryTest, GuardReturnsTrueWhenNotFound) {
-  bool result = registry->callGuard("nonexistent_state", "nonexistent_state", "event1");
+  const bool result = registry->callGuard("nonexistent_state", "nonexistent_state", "event1");
   EXPECT_FALSE(result);
 }
 
@@ -140,14 +142,14 @@ TEST_F(CallbackRegistryTest, ClearRemovesAllCallbacks) {
 TEST_F(CallbackRegistryTest, GuardReturnsFalseWhenGuardReturnsFalse) {
   registry->registerGuard("state1", "state2", "event1", []() -> bool { return false; });
 
-  bool result = registry->callGuard("state1", "state2", "event1");
+  const bool result = registry->callGuard("state1", "state2", "event1");
   EXPECT_FALSE(result);
 }
 
 TEST_F(CallbackRegistryTest, GuardReturnsTrueWhenGuardReturnsTrue) {
   registry->registerGuard("state1", "state2", "event1", []() -> bool { return true; });
 
-  bool result = registry->callGuard("state1", "state2", "event1");
+  const bool result = registry->callGuard("state1", "state2", "event1");
   EXPECT_TRUE(result);
 }
 
@@ -261,7 +263,7 @@ TEST_F(CallbackRegistryTest, OverwriteGuard) {
     return true;
   });
 
-  bool result1 = registry->callGuard("state1", "state2", "event1");
+  const bool result1 = registry->callGuard("state1", "state2", "event1");
   EXPECT_TRUE(first_called);
   EXPECT_TRUE(result1);
 
@@ -272,7 +274,7 @@ TEST_F(CallbackRegistryTest, OverwriteGuard) {
   });
 
   first_called = false;
-  bool result2 = registry->callGuard("state1", "state2", "event1");
+  const bool result2 = registry->callGuard("state1", "state2", "event1");
   EXPECT_FALSE(first_called);
   EXPECT_TRUE(second_called);
   EXPECT_FALSE(result2);
@@ -310,8 +312,8 @@ TEST_F(CallbackRegistryTest, MultipleGuards) {
     return false;
   });
 
-  bool result1 = registry->callGuard("state1", "state2", "event1");
-  bool result2 = registry->callGuard("state1", "state3", "event2");
+  const bool result1 = registry->callGuard("state1", "state2", "event1");
+  const bool result2 = registry->callGuard("state1", "state3", "event2");
 
   EXPECT_TRUE(guard1_called);
   EXPECT_TRUE(guard2_called);

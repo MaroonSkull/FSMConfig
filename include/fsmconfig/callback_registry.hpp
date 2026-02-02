@@ -130,7 +130,8 @@ class CallbackRegistry {
    * @param event_name Event name
    * @return true if guard exists and returned true, otherwise false
    */
-  [[nodiscard]] bool callGuard(const std::string& from_state, const std::string& to_state, const std::string& event_name) const;
+  [[nodiscard]] bool callGuard(const std::string& from_state, const std::string& to_state,
+                               const std::string& event_name) const;
 
   /**
    * @brief Call action callback
@@ -161,7 +162,8 @@ class CallbackRegistry {
    * @param event_name Event name
    * @return true if guard is registered
    */
-  [[nodiscard]] bool hasGuard(const std::string& from_state, const std::string& to_state, const std::string& event_name) const;
+  [[nodiscard]] bool hasGuard(const std::string& from_state, const std::string& to_state,
+                              const std::string& event_name) const;
 
   /**
    * @brief Check if action callback exists
@@ -227,7 +229,7 @@ class CallbackRegistry {
    * @return Key in format "from_state:to_state:event_name"
    */
   [[nodiscard]] std::string makeGuardKey(const std::string& from_state, const std::string& to_state,
-                           const std::string& event_name) const;
+                                         const std::string& event_name) const;
 };
 
 }  // namespace fsmconfig

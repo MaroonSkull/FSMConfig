@@ -109,7 +109,8 @@ class ConfigParser {
    * @param event_name Event name
    * @return Pointer to transition or nullptr if transition not found
    */
-  [[nodiscard]] const TransitionInfo* findTransition(const std::string& from_state, const std::string& event_name) const;
+  [[nodiscard]] const TransitionInfo* findTransition(const std::string& from_state,
+                                                     const std::string& event_name) const;
 
   /**
    * @brief Get initial state
