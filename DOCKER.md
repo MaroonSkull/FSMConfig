@@ -151,7 +151,7 @@ The [`Dockerfile`](Dockerfile) in the project root is optimized for CI/CD pipeli
 - Minimal image size (only necessary dependencies)
 - Ubuntu 24.04 as base image
 - GCC 14 as default compiler
-- C++26 standard
+- C++20 standard
 - Release build mode by default
 - No vscode user (run as root for CI)
 
