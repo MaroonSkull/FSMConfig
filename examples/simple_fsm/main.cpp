@@ -1,5 +1,6 @@
 #include <iostream>
 #include <fsmconfig/state_machine.hpp>
+#include <fsmconfig/types.hpp>
 
 using namespace fsmconfig;
 
@@ -67,6 +68,7 @@ private:
     /**
      * @brief Callback when entering idle state
      */
+    // NOLINTNEXTLINE(readability-convert-member-functions-to-static): Must be non-static for callback registration
     void onIdleEnter() {
         std::cout << "  -> Entering idle state\n";
     }
@@ -74,6 +76,7 @@ private:
     /**
      * @brief Callback when exiting idle state
      */
+    // NOLINTNEXTLINE(readability-convert-member-functions-to-static): Must be non-static for callback registration
     void onIdleExit() {
         std::cout << "  <- Exiting idle state\n";
     }
@@ -81,6 +84,7 @@ private:
     /**
      * @brief Callback when entering active state
      */
+    // NOLINTNEXTLINE(readability-convert-member-functions-to-static): Must be non-static for callback registration
     void onActiveEnter() {
         std::cout << "  -> Entering active state\n";
     }
@@ -88,6 +92,7 @@ private:
     /**
      * @brief Callback when exiting active state
      */
+    // NOLINTNEXTLINE(readability-convert-member-functions-to-static): Must be non-static for callback registration
     void onActiveExit() {
         std::cout << "  <- Exiting active state\n";
     }
@@ -96,6 +101,7 @@ private:
      * @brief Callback for idle -> active transition
      * @param event Transition event
      */
+    // NOLINTNEXTLINE(readability-convert-member-functions-to-static): Must be non-static for callback registration
     void onStartTransition(const TransitionEvent& event) {
         std::cout << "  Transition: " << event.from_state 
                   << " -> " << event.to_state << "\n";
@@ -105,6 +111,7 @@ private:
      * @brief Callback for active -> idle transition
      * @param event Transition event
      */
+    // NOLINTNEXTLINE(readability-convert-member-functions-to-static): Must be non-static for callback registration
     void onStopTransition(const TransitionEvent& event) {
         std::cout << "  Transition: " << event.from_state 
                   << " -> " << event.to_state << "\n";
@@ -113,6 +120,7 @@ private:
     /**
      * @brief Action to log idle state
      */
+    // NOLINTNEXTLINE(readability-convert-member-functions-to-static): Must be non-static for callback registration
     void logIdleState() {
         std::cout << "  [Action] Now in idle state\n";
     }
@@ -120,6 +128,7 @@ private:
     /**
      * @brief Action to log active state
      */
+    // NOLINTNEXTLINE(readability-convert-member-functions-to-static): Must be non-static for callback registration
     void logActiveState() {
         std::cout << "  [Action] Now in active state\n";
     }

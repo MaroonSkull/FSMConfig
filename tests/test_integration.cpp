@@ -493,7 +493,7 @@ variables:
     writeTestConfig(yaml_content);
     fsm = std::make_unique<StateMachine>(test_config_path);
     
-    EXPECT_THROW(fsm->getVariable("nonexistent_var"), StateException);
+    EXPECT_THROW((void)fsm->getVariable("nonexistent_var"), StateException);
 }
 
 TEST_F(IntegrationTest, HasVariableReturnsCorrectValue) {

@@ -1,11 +1,9 @@
 #pragma once
 
+#include <cstddef>
 #include <functional>
-#include <map>
 #include <memory>
-#include <mutex>
 #include <string>
-#include <vector>
 
 #include "types.hpp"
 
@@ -132,7 +130,7 @@ class CallbackRegistry {
    * @param event_name Event name
    * @return true if guard exists and returned true, otherwise false
    */
-  bool callGuard(const std::string& from_state, const std::string& to_state, const std::string& event_name) const;
+  [[nodiscard]] bool callGuard(const std::string& from_state, const std::string& to_state, const std::string& event_name) const;
 
   /**
    * @brief Call action callback
@@ -146,7 +144,7 @@ class CallbackRegistry {
    * @param callback_type Callback type
    * @return true if callback is registered
    */
-  bool hasStateCallback(const std::string& state_name, const std::string& callback_type) const;
+  [[nodiscard]] bool hasStateCallback(const std::string& state_name, const std::string& callback_type) const;
 
   /**
    * @brief Check if transition callback exists
@@ -154,7 +152,7 @@ class CallbackRegistry {
    * @param to_state Target state
    * @return true if callback is registered
    */
-  bool hasTransitionCallback(const std::string& from_state, const std::string& to_state) const;
+  [[nodiscard]] bool hasTransitionCallback(const std::string& from_state, const std::string& to_state) const;
 
   /**
    * @brief Check if guard callback exists
@@ -163,14 +161,14 @@ class CallbackRegistry {
    * @param event_name Event name
    * @return true if guard is registered
    */
-  bool hasGuard(const std::string& from_state, const std::string& to_state, const std::string& event_name) const;
+  [[nodiscard]] bool hasGuard(const std::string& from_state, const std::string& to_state, const std::string& event_name) const;
 
   /**
    * @brief Check if action callback exists
    * @param action_name Action name
    * @return true if callback is registered
    */
-  bool hasAction(const std::string& action_name) const;
+  [[nodiscard]] bool hasAction(const std::string& action_name) const;
 
   /**
    * @brief Clear all callbacks
@@ -181,25 +179,25 @@ class CallbackRegistry {
    * @brief Get number of registered state callbacks
    * @return Number of state callbacks
    */
-  size_t getStateCallbackCount() const;
+  [[nodiscard]] size_t getStateCallbackCount() const;
 
   /**
    * @brief Get number of registered transition callbacks
    * @return Number of transition callbacks
    */
-  size_t getTransitionCallbackCount() const;
+  [[nodiscard]] size_t getTransitionCallbackCount() const;
 
   /**
    * @brief Get number of registered guard callbacks
    * @return Number of guard callbacks
    */
-  size_t getGuardCount() const;
+  [[nodiscard]] size_t getGuardCount() const;
 
   /**
    * @brief Get number of registered action callbacks
    * @return Number of action callbacks
    */
-  size_t getActionCount() const;
+  [[nodiscard]] size_t getActionCount() const;
 
  private:
   class Impl;
@@ -211,7 +209,7 @@ class CallbackRegistry {
    * @param callback_type Callback type
    * @return Key in format "state_name:callback_type"
    */
-  std::string makeStateCallbackKey(const std::string& state_name, const std::string& callback_type) const;
+  [[nodiscard]] std::string makeStateCallbackKey(const std::string& state_name, const std::string& callback_type) const;
 
   /**
    * @brief Helper method to create transition callback key
@@ -219,7 +217,7 @@ class CallbackRegistry {
    * @param to_state Target state
    * @return Key in format "from_state:to_state"
    */
-  std::string makeTransitionCallbackKey(const std::string& from_state, const std::string& to_state) const;
+  [[nodiscard]] std::string makeTransitionCallbackKey(const std::string& from_state, const std::string& to_state) const;
 
   /**
    * @brief Helper method to create guard callback key
@@ -228,7 +226,7 @@ class CallbackRegistry {
    * @param event_name Event name
    * @return Key in format "from_state:to_state:event_name"
    */
-  std::string makeGuardKey(const std::string& from_state, const std::string& to_state,
+  [[nodiscard]] std::string makeGuardKey(const std::string& from_state, const std::string& to_state,
                            const std::string& event_name) const;
 };
 
