@@ -421,6 +421,7 @@ transitions:
   fsm->registerGuard("state1", "state2", "move_forward", &TestGuard::onGuard, &guard);
 
   fsm->start();
+  guard.result = true;  // Set guard to allow transition
   fsm->triggerEvent("move_forward");
   EXPECT_EQ(fsm->getCurrentState(), "state2");
 }
