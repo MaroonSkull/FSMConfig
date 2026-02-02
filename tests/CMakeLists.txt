@@ -50,3 +50,12 @@ target_link_libraries(test_types
         GTest::gtest_main
 )
 add_test(NAME test_types COMMAND test_types)
+
+add_executable(test_variable_manager test_variable_manager.cpp)
+target_link_libraries(test_variable_manager
+    PRIVATE
+        fsmconfig
+        GTest::gtest
+        GTest::gtest_main
+)
+add_test(NAME test_variable_manager COMMAND test_variable_manager)
