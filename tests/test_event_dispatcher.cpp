@@ -23,7 +23,7 @@ TEST(EventDispatcherTest, DefaultConstruction) {
 }
 
 /// Tests move construction
-TEST(EventDispatcherTest, DISABLED_MoveConstruction) {
+TEST(EventDispatcherTest, MoveConstruction) {
     EventDispatcher original;
     original.setEventHandler([](const std::string&, const TransitionEvent&) {});
 
@@ -41,7 +41,7 @@ TEST(EventDispatcherTest, DISABLED_MoveConstruction) {
 }
 
 /// Tests move assignment
-TEST(EventDispatcherTest, DISABLED_MoveAssignment) {
+TEST(EventDispatcherTest, MoveAssignment) {
     EventDispatcher original;
     original.setEventHandler([](const std::string&, const TransitionEvent&) {});
 
@@ -285,32 +285,6 @@ TEST(EventDispatcherTest, WaitForEmptyQueue_Empty) {
     dispatcher.waitForEmptyQueue();
 }
 
-/// Tests waitForEmptyQueue with events
-TEST(EventDispatcherTest, DISABLED_WaitForEmptyQueue_WithEvents) {
-    EventDispatcher dispatcher;
-    std::atomic<bool> processing{false};
-
-    dispatcher.setEventHandler([&](const std::string&, const TransitionEvent&) {
-        processing = true;
-    });
-
-    TransitionEvent event;
-    event.event_name = "test";
-    event.from_state = "state1";
-    event.to_state = "state2";
-
-    dispatcher.dispatchEvent("test", event);
-
-    // Start dispatcher to process events automatically
-    dispatcher.start();
-
-    dispatcher.waitForEmptyQueue();
-    EXPECT_EQ(dispatcher.getEventQueueSize(), 0);
-    EXPECT_TRUE(processing);
-
-    dispatcher.stop();
-}
-
 /// Tests event data is preserved
 TEST(EventDispatcherTest, EventDataPreserved) {
     EventDispatcher dispatcher;
@@ -370,14 +344,14 @@ TEST(EventDispatcherTest, ProcessEventsInOrder) {
     }
 }
 
-/// Tests thread-safe event dispatching
-TEST(EventDispatcherTest, ThreadSafeDispatch) {
+/// Tests sequential event dispatching
+TEST(EventDispatcherTest, SequentialEventDispatch) {
     EventDispatcher dispatcher;
-    const int num_threads = 10;
-    const int events_per_thread = 100;
+    const int num_iterations = 10;
+    const int events_per_iteration = 100;
 
-    for (int i = 0; i < num_threads; ++i) {
-        for (int j = 0; j < events_per_thread; ++j) {
+    for (int i = 0; i < num_iterations; ++i) {
+        for (int j = 0; j < events_per_iteration; ++j) {
             TransitionEvent event;
             event.event_name = "test";
             event.from_state = "state1";
@@ -386,7 +360,7 @@ TEST(EventDispatcherTest, ThreadSafeDispatch) {
         }
     }
 
-    EXPECT_EQ(dispatcher.getEventQueueSize(), num_threads * events_per_thread);
+    EXPECT_EQ(dispatcher.getEventQueueSize(), num_iterations * events_per_iteration);
 }
 
 /// Tests handler receives correct event name parameter
