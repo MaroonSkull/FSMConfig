@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- **BREAKING:** StateMachine observer API now uses `std::shared_ptr<StateObserver>` instead of raw pointers
+  - Observer registration method signature changed from `registerObserver(StateObserver*)` to `registerObserver(std::shared_ptr<StateObserver>)`
+  - Observer storage changed from raw pointers to `std::weak_ptr` for automatic lifetime management
+  - This change prevents dangling pointer issues when observers are destroyed before the state machine
+  - **Migration:** Users must now create observers using `std::make_shared` and pass shared pointers to `registerObserver()`
+  - See migration guide in `docs/.wip/bugfix/statemachine-observer-lifetime/MIGRATION.md`
+
 ### Added
 - Initial release preparation
 
