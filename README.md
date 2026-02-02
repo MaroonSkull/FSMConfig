@@ -1,6 +1,7 @@
 # FSMConfig
 
 ![CI](https://github.com/MaroonSkull/FSMConfig/workflows/CI/badge.svg)
+![Linters](https://github.com/MaroonSkull/FSMConfig/actions/workflows/linters.yml/badge.svg)
 ![Docker](https://img.shields.io/badge/docker-supported-blue.svg)
 [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/MaroonSkull/FSMConfig)
 
