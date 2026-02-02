@@ -60,3 +60,21 @@ target_link_libraries(test_variable_manager
         GTest::gtest_main
 )
 add_test(NAME test_variable_manager COMMAND test_variable_manager)
+
+add_executable(test_event_dispatcher test_event_dispatcher.cpp)
+target_link_libraries(test_event_dispatcher
+    PRIVATE
+        fsmconfig
+        GTest::gtest
+        GTest::gtest_main
+)
+add_test(NAME test_event_dispatcher COMMAND test_event_dispatcher)
+
+add_executable(test_state test_state.cpp)
+target_link_libraries(test_state
+    PRIVATE
+        fsmconfig
+        GTest::gtest
+        GTest::gtest_main
+)
+add_test(NAME test_state COMMAND test_state)
