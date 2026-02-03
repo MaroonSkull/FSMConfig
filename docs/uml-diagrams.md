@@ -68,6 +68,21 @@ classDiagram
 ```
 ```
 
+## Important Notes About the Diagrams
+
+**All diagrams show comprehensive relationships:**
+
+- **Individual class diagrams** (e.g., `fsmconfig_state_machine.mmd`) include not just the main class but **all related classes and their relationships**. This provides a complete view of how each component interacts with the rest of the system.
+- **Main class diagram** (`fsmconfig_main_class.mmd`) shows all classes together and is the best starting point for understanding the overall architecture.
+- **STL types are included** in the diagrams (std::string, std::map, std::vector, std::unique_ptr, etc.) to provide complete type information.
+- **Relationship types shown:**
+  - **Composition** (filled diamond): "owns" relationship, lifecycle dependency
+  - **Aggregation** (empty diamond): "has" relationship, no lifecycle dependency
+  - **Association** (solid line): "uses" relationship
+  - **Dependency** (dashed line): "depends on" relationship
+
+**Recommendation:** Start with the main class diagram to understand the overall architecture, then explore individual class diagrams for deeper details about specific components.
+
 ## Diagram Descriptions
 
 ### Main Class Diagram
