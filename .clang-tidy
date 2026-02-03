@@ -1,5 +1,5 @@
 # Optimized clang-tidy configuration for FSMConfig project
-# C++20 header-only library for finite state machines
+# C++23 header-only library for finite state machines
 #
 # Updated 2025-02-02: Disabled style-preference warnings that don't affect code quality
 # - readability-identifier-length: Short names are idiomatic in C++

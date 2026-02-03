@@ -2,8 +2,8 @@
 
 ## C++ Standard and Features
 
-- **Standard:** C++20
-- **Compiler:** GCC/Clang with C++20 support
+- **Standard:** C++23
+- **Compiler:** GCC/Clang with C++23 support
 - **Features:**
   - RAII for resource management
   - Smart pointers (`std::unique_ptr`, `std::shared_ptr`)
@@ -94,7 +94,7 @@ transitions:
 **Recommended clang-tidy checks:**
 
 ```bash
-clang-tidy src/**/*.cpp -- -Iinclude/ -std=c++20
+clang-tidy src/**/*.cpp -- -Iinclude/ -std=c++23
 ```
 
 ## Linter Configuration Files
@@ -135,7 +135,7 @@ ColumnLimit: 100
 ```ini
 --enable=all
 --inconclusive
---std=c++20
+--std=c++23
 -Iinclude/
 ```
 

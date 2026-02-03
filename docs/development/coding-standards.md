@@ -4,7 +4,7 @@
 
 - **Documentation language:** English
 
-**Note:** Technical terms, command names, libraries, and standards should remain in English (e.g., RAII, smart pointers, `std::unique_ptr`, C++20). Code and commands are always in English.
+**Note:** Technical terms, command names, libraries, and standards should remain in English (e.g., RAII, smart pointers, `std::unique_ptr`, C++23). Code and commands are always in English.
 
 - **Code mentions:** Wrap in backticks (\`)
 - **Doxygen format:** Java style (`/** @... */`)

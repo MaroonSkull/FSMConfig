@@ -15,11 +15,11 @@ The clang-tidy configuration serves several critical roles in FSMConfig:
 - **Security**: Identifies potential security vulnerabilities (CERT C++ checks)
 - **Performance**: Highlights performance optimization opportunities
 - **Maintainability**: Ensures consistent, readable code across the codebase
-- **Standards Compliance**: Validates adherence to C++20 standards
+- **Standards Compliance**: Validates adherence to C++23 standards
 
 ### Project Context
 
-FSMConfig is a **header-only C++20 library** for finite state machines. This architectural choice influences the clang-tidy configuration in several ways:
+FSMConfig is a **header-only C++23 library** for finite state machines. This architectural choice influences the clang-tidy configuration in several ways:
 
 - Template-heavy code requires relaxed function size thresholds
 - Header-only implementation necessitates specific exclusions for anonymous namespaces
@@ -514,7 +514,7 @@ Settings → Languages & Frameworks → C/C++ → Clang-Tidy:
 - `modernize-use-using`: Recommends using over typedef
 
 **Why Important for FSMConfig**:
-- FSMConfig targets C++20 and should use modern idioms
+- FSMConfig targets C++23 and should use modern idioms
 - Header-only library benefits from move semantics and perfect forwarding
 - Modern features improve template code readability
 

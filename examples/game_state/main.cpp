@@ -1,8 +1,52 @@
 #include <fsmconfig/state_machine.hpp>
+#include <fsmconfig/types.hpp>
 #include <iostream>
 #include <memory>
 
 using namespace fsmconfig;
+
+/**
+ * @class GameStateObserver
+ * @brief Observer for game state machine events
+ *
+ * Demonstrates the new observer API using std::shared_ptr.
+ * Observers are notified when states change or transitions occur.
+ */
+class GameStateObserver : public StateObserver {
+ public:
+  /**
+   * @brief Called when entering a state
+   * @param state_name Name of the state being entered
+   */
+  void onStateEnter(const std::string& state_name) override {
+    std::cout << "  [Observer] Entering state: " << state_name << "\n";
+  }
+
+  /**
+   * @brief Called when exiting a state
+   * @param state_name Name of the state being exited
+   */
+  void onStateExit(const std::string& state_name) override {
+    std::cout << "  [Observer] Exiting state: " << state_name << "\n";
+  }
+
+  /**
+   * @brief Called when a transition occurs
+   * @param event Transition event containing from_state, to_state, and event_name
+   */
+  void onTransition(const TransitionEvent& event) override {
+    std::cout << "  [Observer] Transition: " << event.from_state << " -> "
+              << event.to_state << " (event: " << event.event_name << ")\n";
+  }
+
+  /**
+   * @brief Called when an error occurs
+   * @param error_message Error message
+   */
+  void onError(const std::string& error_message) override {
+    std::cout << "  [Observer] Error: " << error_message << "\n";
+  }
+};
 
 /**
  * @file main.cpp
@@ -34,6 +78,10 @@ class GameStateExample {
     // Create a finite state machine from YAML configuration
     fsm_ptr = std::make_unique<StateMachine>("config.yaml");
     StateMachine& fsm = *fsm_ptr;
+
+    // Create and register a state observer using std::make_shared
+    auto observer = std::make_shared<GameStateObserver>();
+    fsm.registerStateObserver(observer);
 
     // Register menu state callbacks
     fsm.registerStateCallback("menu", "on_enter", &GameStateExample::onMenuEnter, this);
