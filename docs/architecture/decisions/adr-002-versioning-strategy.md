@@ -5,7 +5,7 @@ Proposed
 
 ## Context
 
-FSMConfig is a C++20 library for working with finite state machines through YAML configuration. The project is currently in development phase (version 0.1.0) and preparing for its first release. A comprehensive versioning strategy is needed to:
+FSMConfig is a C++23 library for working with finite state machines through YAML configuration. The project is currently in development phase (version 0.1.0) and preparing for its first release. A comprehensive versioning strategy is needed to:
 
 1. **Provide clear release expectations** to users about API stability and compatibility
 2. **Support both pre-release and stable releases** as the library matures

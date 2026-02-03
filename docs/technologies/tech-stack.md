@@ -94,7 +94,7 @@ transitions:
 **Recommended clang-tidy checks:**
 
 ```bash
-clang-tidy src/**/*.cpp -- -Iinclude/ -std=c++20
+clang-tidy src/**/*.cpp -- -Iinclude/ -std=c++23
 ```
 
 ## Linter Configuration Files
@@ -135,7 +135,7 @@ ColumnLimit: 100
 ```ini
 --enable=all
 --inconclusive
---std=c++20
+--std=c++23
 -Iinclude/
 ```
 

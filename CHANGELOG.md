@@ -41,7 +41,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - CI/CD workflows for GitHub Actions
 
 ### Dependencies
-- C++20 compiler (GCC/Clang)
+- C++23 compiler (GCC/Clang)
 - CMake 3.15+
 - yaml-cpp 0.7.0+
 - Google Test

@@ -8,8 +8,8 @@ LABEL usage="Optimized for CI/CD pipelines"
 # Set working directory
 WORKDIR /app
 
-# Set environment variables for C++20 and Release build
-ENV CXXFLAGS="-std=c++20"
+# Set environment variables for C++23 and Release build
+ENV CXXFLAGS="-std=c++23"
 ENV CMAKE_BUILD_TYPE=Release
 
 # Install minimal set of packages in a single layer to reduce image size
