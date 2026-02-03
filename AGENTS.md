@@ -63,8 +63,8 @@
 
 ### C++ Standard and Features
 
-- **Standard:** C++20
-- **Compiler:** GCC/Clang with C++20 support
+- **Standard:** C++23
+- **Compiler:** GCC 11+ or Clang 12+ with C++23 support
 - **Features:**
   - RAII for resource management
   - Smart pointers (`std::unique_ptr`, `std::shared_ptr`)
@@ -155,7 +155,7 @@ transitions:
 **Recommended clang-tidy checks:**
 
 ```bash
-clang-tidy src/**/*.cpp -- -Iinclude/ -std=c++20
+clang-tidy src/**/*.cpp -- -Iinclude/ -std=c++23
 ```
 
 ### Linter Configuration Files
@@ -196,7 +196,7 @@ ColumnLimit: 100
 ```ini
 --enable=all
 --inconclusive
---std=c++20
+--std=c++23
 -Iinclude/
 ```
 
@@ -245,7 +245,7 @@ cmake --build .
 ctest --output-on-failure
 
 # Run linters
-clang-tidy src/**/*.cpp -- -Iinclude/ -std=c++20
+clang-tidy src/**/*.cpp -- -Iinclude/ -std=c++23
 clang-format -i src/**/*.cpp include/**/*.hpp
 ```
 
@@ -259,7 +259,7 @@ git checkout -b feature/my-feature
 # ... code ...
 
 # 3. Check with linters
-clang-tidy src/**/*.cpp -- -Iinclude/ -std=c++20
+clang-tidy src/**/*.cpp -- -Iinclude/ -std=c++23
 
 # 4. Run tests
 cd build && ctest --output-on-failure

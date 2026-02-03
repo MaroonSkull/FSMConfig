@@ -2,8 +2,8 @@
 
 ## C++ Standard and Features
 
-- **Standard:** C++20
-- **Compiler:** GCC/Clang with C++20 support
+- **Standard:** C++23
+- **Compiler:** GCC/Clang with C++23 support
 - **Features:**
   - RAII for resource management
   - Smart pointers (`std::unique_ptr`, `std::shared_ptr`)
