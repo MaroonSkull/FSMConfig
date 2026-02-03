@@ -162,7 +162,7 @@ void StateMachine::start() {
   // Clean up expired observers first
   impl_->observers.erase(
       std::remove_if(impl_->observers.begin(), impl_->observers.end(),
-                    [](const std::weak_ptr<StateObserver>& weak_obs) { return weak_obs.expired(); }),
+                     [](const std::weak_ptr<StateObserver>& weak_obs) { return weak_obs.expired(); }),
       impl_->observers.end());
 
   // Notify remaining valid observers
@@ -192,7 +192,7 @@ void StateMachine::stop() {
     // Clean up expired observers first
     impl_->observers.erase(
         std::remove_if(impl_->observers.begin(), impl_->observers.end(),
-                      [](const std::weak_ptr<StateObserver>& weak_obs) { return weak_obs.expired(); }),
+                       [](const std::weak_ptr<StateObserver>& weak_obs) { return weak_obs.expired(); }),
         impl_->observers.end());
 
     // Notify remaining valid observers
@@ -336,10 +336,10 @@ void StateMachine::unregisterStateObserver(const std::shared_ptr<StateObserver>&
 
   // Remove observer from list
   auto it = std::remove_if(impl_->observers.begin(), impl_->observers.end(),
-                          [&observer](const std::weak_ptr<StateObserver>& weak_obs) {
-                            auto existing = weak_obs.lock();
-                            return existing && existing == observer;
-                          });
+                           [&observer](const std::weak_ptr<StateObserver>& weak_obs) {
+                             auto existing = weak_obs.lock();
+                             return existing && existing == observer;
+                           });
   impl_->observers.erase(it, impl_->observers.end());
 }
 
@@ -372,7 +372,7 @@ void StateMachine::performTransition(const TransitionEvent& event) {
   // Clean up expired observers first
   impl_->observers.erase(
       std::remove_if(impl_->observers.begin(), impl_->observers.end(),
-                    [](const std::weak_ptr<StateObserver>& weak_obs) { return weak_obs.expired(); }),
+                     [](const std::weak_ptr<StateObserver>& weak_obs) { return weak_obs.expired(); }),
       impl_->observers.end());
 
   // Notify remaining valid observers
@@ -409,7 +409,7 @@ void StateMachine::performTransition(const TransitionEvent& event) {
   // Clean up expired observers first
   impl_->observers.erase(
       std::remove_if(impl_->observers.begin(), impl_->observers.end(),
-                    [](const std::weak_ptr<StateObserver>& weak_obs) { return weak_obs.expired(); }),
+                     [](const std::weak_ptr<StateObserver>& weak_obs) { return weak_obs.expired(); }),
       impl_->observers.end());
 
   // Notify remaining valid observers
@@ -423,7 +423,7 @@ void StateMachine::performTransition(const TransitionEvent& event) {
   // Clean up expired observers first
   impl_->observers.erase(
       std::remove_if(impl_->observers.begin(), impl_->observers.end(),
-                    [](const std::weak_ptr<StateObserver>& weak_obs) { return weak_obs.expired(); }),
+                     [](const std::weak_ptr<StateObserver>& weak_obs) { return weak_obs.expired(); }),
       impl_->observers.end());
 
   // Notify remaining valid observers

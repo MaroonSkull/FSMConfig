@@ -47,9 +47,9 @@ class EventDispatcher::Impl {
 EventDispatcher::EventDispatcher() : impl_(std::make_unique<Impl>()) { impl_->running = false; }
 
 EventDispatcher::~EventDispatcher() {
-    if (impl_) {
-        stop();
-    }
+  if (impl_) {
+    stop();
+  }
 }
 
 EventDispatcher::EventDispatcher(EventDispatcher&& other) noexcept : impl_(std::move(other.impl_)) {}

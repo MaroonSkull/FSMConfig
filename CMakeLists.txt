@@ -12,6 +12,9 @@ set(FSMCONFIG_VERSION_FULL "${FSMCONFIG_VERSION}")
 
 project(FSMConfig VERSION ${FSMCONFIG_VERSION_MAJOR}.${FSMCONFIG_VERSION_MINOR}.${FSMCONFIG_VERSION_PATCH} LANGUAGES CXX)
 
+# Automatically generate compile_commands.json for IDE support and tooling
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
 # ============================================================================
 # C++ Standard and Compiler Options
 # ============================================================================
