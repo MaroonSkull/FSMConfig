@@ -333,18 +333,18 @@ transitions:
     void onError(const std::string& error_message) override { std::ignore = error_message; }
   };
 
-  TestObserver observer;
-  fsm->registerStateObserver(&observer);
+  auto observer = std::make_shared<TestObserver>();
+  fsm->registerStateObserver(observer);
 
   fsm->start();
-  EXPECT_EQ(observer.enter_count, 1);
+  EXPECT_EQ(observer->enter_count, 1);
 
   fsm->triggerEvent("move_forward");
-  EXPECT_EQ(observer.exit_count, 1);
-  EXPECT_EQ(observer.enter_count, 2);
-  EXPECT_EQ(observer.transition_count, 1);
+  EXPECT_EQ(observer->exit_count, 1);
+  EXPECT_EQ(observer->enter_count, 2);
+  EXPECT_EQ(observer->transition_count, 1);
 
-  fsm->unregisterStateObserver(&observer);
+  fsm->unregisterStateObserver(observer);
 }
 
 TEST_F(StateMachineTest, ErrorHandlerReceivesErrors) {
@@ -670,21 +670,21 @@ transitions:
     void onError(const std::string& error_message) override { std::ignore = error_message; }
   };
 
-  TestObserver observer1;
-  TestObserver observer2;
+  auto observer1 = std::make_shared<TestObserver>();
+  auto observer2 = std::make_shared<TestObserver>();
 
-  fsm->registerStateObserver(&observer1);
-  fsm->registerStateObserver(&observer2);
+  fsm->registerStateObserver(observer1);
+  fsm->registerStateObserver(observer2);
 
   fsm->start();
 
-  EXPECT_EQ(observer1.callback_count, 1);
-  EXPECT_EQ(observer2.callback_count, 1);
+  EXPECT_EQ(observer1->callback_count, 1);
+  EXPECT_EQ(observer2->callback_count, 1);
 
   fsm->triggerEvent("move");
 
-  EXPECT_EQ(observer1.callback_count, 4);
-  EXPECT_EQ(observer2.callback_count, 4);
+  EXPECT_EQ(observer1->callback_count, 4);
+  EXPECT_EQ(observer2->callback_count, 4);
 }
 
 TEST_F(StateMachineTest, UnregisterObserverStopsCallbacks) {
@@ -725,17 +725,17 @@ transitions:
     void onError(const std::string& error_message) override { std::ignore = error_message; }
   };
 
-  TestObserver observer;
-  fsm->registerStateObserver(&observer);
+  auto observer = std::make_shared<TestObserver>();
+  fsm->registerStateObserver(observer);
 
   fsm->start();
-  EXPECT_EQ(observer.callback_count, 1);
+  EXPECT_EQ(observer->callback_count, 1);
 
-  fsm->unregisterStateObserver(&observer);
+  fsm->unregisterStateObserver(observer);
 
   fsm->triggerEvent("move");
 
-  EXPECT_EQ(observer.callback_count, 1);
+  EXPECT_EQ(observer->callback_count, 1);
 }
 
 TEST_F(StateMachineTest, GetVariableThrowsForNonexistentVariable) {

@@ -139,16 +139,22 @@ class VariableManager {
 
   /**
    * @brief Get all global variables
-   * @return Const reference to global variables map
+   * @return Copy of global variables map
+   *
+   * Returns a copy to ensure thread safety. The returned map is a snapshot
+   * of the variables at the time of the call and will not reflect subsequent changes.
    */
-  [[nodiscard]] const std::map<std::string, VariableValue>& getGlobalVariables() const;
+  [[nodiscard]] std::map<std::string, VariableValue> getGlobalVariables() const;
 
   /**
    * @brief Get all state local variables
    * @param state_name State name
-   * @return Const reference to state local variables map
+   * @return Copy of state local variables map
+   *
+   * Returns a copy to ensure thread safety. The returned map is a snapshot
+   * of the variables at the time of the call and will not reflect subsequent changes.
    */
-  [[nodiscard]] const std::map<std::string, VariableValue>& getStateVariables(const std::string& state_name) const;
+  [[nodiscard]] std::map<std::string, VariableValue> getStateVariables(const std::string& state_name) const;
 
   /**
    * @brief Clear all variables (global and local)

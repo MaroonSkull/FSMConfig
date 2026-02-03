@@ -110,23 +110,21 @@ std::optional<VariableValue> VariableManager::getStateVariable(const std::string
   return std::nullopt;
 }
 
-const std::map<std::string, VariableValue>& VariableManager::getGlobalVariables() const {
+std::map<std::string, VariableValue> VariableManager::getGlobalVariables() const {
   const std::lock_guard<std::mutex> lock(impl_->mutex);
   return impl_->global_variables;
 }
 
-const std::map<std::string, VariableValue>& VariableManager::getStateVariables(const std::string& state_name) const {
+std::map<std::string, VariableValue> VariableManager::getStateVariables(const std::string& state_name) const {
   const std::lock_guard<std::mutex> lock(impl_->mutex);
-
-  // Return empty map for non-existent state
-  static const std::map<std::string, VariableValue> empty_map;
 
   auto it = impl_->state_variables.find(state_name);
   if (it != impl_->state_variables.end()) {
     return it->second;
   }
 
-  return empty_map;
+  // Return empty map for non-existent state
+  return {};
 }
 
 // ============================================================================

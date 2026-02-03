@@ -11,7 +11,7 @@ A C++ library for YAML-configured finite state machines. Because your spaghetti 
 
 - **YAML-based configuration**: Define state machines using human-readable YAML files
 - **Event-driven architecture**: React to events with flexible callback system
-- **Type-safe**: Modern C++26 with strong type checking
+- **Type-safe**: Modern C++20 with strong type checking
 - **Extensible**: Easy to extend with custom states and transitions
 - **Well-tested**: Comprehensive test suite using Google Test
 - **Cross-platform**: Works on Linux, macOS, and Windows
@@ -56,7 +56,7 @@ For complete Docker documentation, see [`DOCKER.md`](DOCKER.md).
 ### Prerequisites
 
 - CMake 3.15 or higher
-- C++26 compatible compiler (GCC 14+, Clang 17+, MSVC 19.35+)
+- C++20 compatible compiler (GCC 11+, Clang 12+, MSVC 19.28+)
 - yaml-cpp library
 - Google Test (for building tests)
 
@@ -263,4 +263,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-**Version**: 0.1.0 | **C++ Standard**: C++26 | **CMake**: 3.15+
+**Version**: 0.1.0 | **C++ Standard**: C++20 | **CMake**: 3.15+

@@ -36,19 +36,27 @@ option(BUILD_SHARED_LIBS "Build shared libraries" OFF)
 # ============================================================================
 # Dependencies
 # ============================================================================
+# Version pinning for reproducible builds
+# To update dependency versions, modify the version constraints below.
+# Ensure compatibility testing after version updates.
+#
+# Current pinned versions:
+# - yaml-cpp: 0.7.0 or higher (required for YAML parsing)
+# - GTest: 1.14.0 or higher (required for unit testing)
+
 # Try to find yaml-cpp using standard CMake CONFIG first (for system packages)
-find_package(yaml-cpp QUIET CONFIG)
+find_package(yaml-cpp 0.7.0 QUIET CONFIG)
 if(NOT yaml-cpp_FOUND)
     # Fallback to PkgConfig (for Arch Linux and other systems)
     find_package(PkgConfig QUIET)
     if(PKG_CONFIG_FOUND)
-        pkg_check_modules(yaml-cpp IMPORTED_TARGET yaml-cpp)
+        pkg_check_modules(yaml-cpp 0.7.0 IMPORTED_TARGET yaml-cpp)
     endif()
 endif()
 if(NOT yaml-cpp_FOUND)
     # Last resort: use custom Findyaml-cpp.cmake module
     list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
-    find_package(yaml-cpp REQUIRED)
+    find_package(yaml-cpp 0.7.0 REQUIRED)
 endif()
 
 # ============================================================================
