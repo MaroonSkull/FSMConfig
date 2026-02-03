@@ -122,3 +122,20 @@ install(
         "${CMAKE_CURRENT_BINARY_DIR}/fsmconfig-config-version.cmake"
     DESTINATION lib/cmake/fsmconfig
 )
+
+# ============================================================================
+# UML Diagram Generation
+# ============================================================================
+find_program(CLANG_UML clang-uml)
+if(CLANG_UML)
+    add_custom_target(uml-diagrams
+        COMMAND ${CLANG_UML} --config ${CMAKE_CURRENT_SOURCE_DIR}/.clang-uml -g mermaid
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+        COMMENT "Generating UML diagrams with clang-uml (Mermaid format)..."
+        VERBATIM
+    )
+    
+    message(STATUS "clang-uml found: UML diagram generation available via 'make uml-diagrams'")
+else()
+    message(STATUS "clang-uml not found: UML diagram generation disabled")
+endif()

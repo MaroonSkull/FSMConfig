@@ -1,0 +1,477 @@
+classDiagram
+    class C_0017614144533568309161["::std::chrono::duration&lt;int64_t,std::ratio&lt;1,1000000000&gt;&gt;"]
+    class C_0017614144533568309161 {
+    }
+    class C_0006135738021633781134["::std::chrono::time_point&lt;std::chrono::system_clock,std::chrono::duration&lt;int64_t,std::ratio&lt;1,1000000000&gt;&gt;&gt;"]
+    class C_0006135738021633781134 {
+    }
+    class C_0001275076681856179721["::std::string"]
+    class C_0001275076681856179721 {
+    }
+    class C_0012024512094584847498["::std::map&lt;std::string,VariableValue&gt;"]
+    class C_0012024512094584847498 {
+    }
+    class C_0012415743977570969849["::std::ratio&lt;1,1000000000&gt;"]
+    class C_0012415743977570969849 {
+    }
+    class C_0001347152004389415025["::std::vector&lt;std::string&gt;"]
+    class C_0001347152004389415025 {
+    }
+    class C_0007450075187066284364["::std::shared_ptr&lt;StateObserver&gt;"]
+    class C_0007450075187066284364 {
+    }
+    class C_0012084549392970043582["::std::function&lt;void&lpar;std::string const& const&&rpar;&gt;"]
+    class C_0012084549392970043582 {
+    }
+    class C_0013286274850898176297["::std::function&lt;void&lpar;&rpar;&gt;"]
+    class C_0013286274850898176297 {
+    }
+    class C_0001636141635143033842["::std::function&lt;void&lpar;TransitionEvent const&&rpar;&gt;"]
+    class C_0001636141635143033842 {
+    }
+    class C_0005541826913145604472["::std::function&lt;bool&lpar;&rpar;&gt;"]
+    class C_0005541826913145604472 {
+    }
+    class C_0012235215796829152660["::std::unique_ptr&lt;StateMachine::Impl&gt;"]
+    class C_0012235215796829152660 {
+    }
+    class C_0017654623142740713982["::std::unique_ptr&lt;CallbackRegistry::Impl&gt;"]
+    class C_0017654623142740713982 {
+    }
+    class C_0001199013750565879236["::std::map&lt;std::string,StateInfo&gt;"]
+    class C_0001199013750565879236 {
+    }
+    class C_0012288898058206732335["::std::vector&lt;TransitionInfo&gt;"]
+    class C_0012288898058206732335 {
+    }
+    class C_0010255524935885673625["::std::unique_ptr&lt;ConfigParser::Impl&gt;"]
+    class C_0010255524935885673625 {
+    }
+    class C_0005932863177574937530["::std::function&lt;void&lpar;std::string const& const&,TransitionEvent const&&rpar;&gt;"]
+    class C_0005932863177574937530 {
+    }
+    class C_0004969642116000285333["::std::unique_ptr&lt;EventDispatcher::Impl&gt;"]
+    class C_0004969642116000285333 {
+    }
+    class C_0007163076881307230401["::std::unique_ptr&lt;State::Impl&gt;"]
+    class C_0007163076881307230401 {
+    }
+    class C_0003659254883599964189["::std::optional&lt;VariableValue&gt;"]
+    class C_0003659254883599964189 {
+    }
+    class C_0013008878867158869871["::std::unique_ptr&lt;VariableManager::Impl&gt;"]
+    class C_0013008878867158869871 {
+    }
+    class C_0005352096989394213043["::std::unique_ptr&lt;ConfigParser&gt;"]
+    class C_0005352096989394213043 {
+    }
+    class C_0004034136965902323112["::std::unique_ptr&lt;CallbackRegistry&gt;"]
+    class C_0004034136965902323112 {
+    }
+    class C_0012853017857603343529["::std::unique_ptr&lt;VariableManager&gt;"]
+    class C_0012853017857603343529 {
+    }
+    class C_0007529665287438544223["::std::unique_ptr&lt;EventDispatcher&gt;"]
+    class C_0007529665287438544223 {
+    }
+    class C_0016648073618255913842["::std::unique_ptr&lt;State&gt;"]
+    class C_0016648073618255913842 {
+    }
+    class C_0012343345191339404089["::std::map&lt;std::string,std::unique_ptr&lt;State&gt;&gt;"]
+    class C_0012343345191339404089 {
+    }
+    class C_0000883426022448363678["::std::weak_ptr&lt;StateObserver&gt;"]
+    class C_0000883426022448363678 {
+    }
+    class C_0005353975840393516666["::std::vector&lt;std::weak_ptr&lt;StateObserver&gt;&gt;"]
+    class C_0005353975840393516666 {
+    }
+    class C_0013768368618794584896["VariableType"]
+    class C_0013768368618794584896 {
+        <<enumeration>>
+        INT
+        FLOAT
+        STRING
+        BOOL
+    }
+    class C_0004644539050167908132["VariableValue"]
+    class C_0004644539050167908132 {
+        +VariableValue() void
+        +VariableValue(int v) void
+        +VariableValue(float v) void
+        +VariableValue(const std::string & v) void
+        +VariableValue(bool v) void
+        +VariableValue(const VariableValue & other) void
+        +VariableValue(VariableValue && other) void
+        +~VariableValue() void
+        +operator=(const VariableValue & other) VariableValue &
+        +operator=(VariableValue && other) VariableValue &
+        +asBool() [const] bool
+        +asFloat() [const] float
+        +asInt() [const] int
+        +asString() [const] std::string
+        +toString() [const] std::string
+        + : VariableValue::&lpar;&rpar;
+        +type : VariableType
+    }
+    class C_0011343728311523060581["VariableValue::&lpar;&rpar;"]
+    class C_0011343728311523060581 {
+        +bool_value : bool
+        +float_value : float
+        +int_value : int
+        +string_value : std::string
+    }
+    class C_0007977660812724227042["TransitionEvent"]
+    class C_0007977660812724227042 {
+        +TransitionEvent() void
+        +data : std::map&lt;std::string,VariableValue&gt;
+        +event_name : std::string
+        +from_state : std::string
+        +timestamp : std::chrono::system_clock::time_point
+        +to_state : std::string
+    }
+    class C_0015255257577182055485["StateInfo"]
+    class C_0015255257577182055485 {
+        +StateInfo() void
+        +StateInfo(std::string name) void
+        +actions : std::vector&lt;std::string&gt;
+        +name : std::string
+        +on_enter_callback : std::string
+        +on_exit_callback : std::string
+        +variables : std::map&lt;std::string,VariableValue&gt;
+    }
+    class C_0011444669835913369954["TransitionInfo"]
+    class C_0011444669835913369954 {
+        +TransitionInfo() void
+        +actions : std::vector&lt;std::string&gt;
+        +event_name : std::string
+        +from_state : std::string
+        +guard_callback : std::string
+        +to_state : std::string
+        +transition_callback : std::string
+    }
+    class C_0010002050032679328176["StateObserver"]
+    class C_0010002050032679328176 {
+        <<abstract>>
+        +~StateObserver() [default,constexpr] void
+        +onError(const std::string & error_message) void*
+        +onStateEnter(const std::string & state_name) void*
+        +onStateExit(const std::string & state_name) void*
+        +onTransition(const TransitionEvent & event) void*
+    }
+    class C_0010977936290636544335["ConfigException"]
+    class C_0010977936290636544335 {
+        +ConfigException(const std::string & message) void
+    }
+    class C_0004687615746579280257["StateException"]
+    class C_0004687615746579280257 {
+        +StateException(const std::string & message) void
+    }
+    class C_0000832265379070515278["StateMachine"]
+    class C_0000832265379070515278 {
+        +StateMachine(const std::string & config_path) void
+        +StateMachine(const std::string & yaml_content, bool is_content) void
+        +StateMachine(const StateMachine &) void
+        +StateMachine(StateMachine && other) void
+        +~StateMachine() void
+        +operator=(const StateMachine &) StateMachine &
+        +operator=(StateMachine && other) StateMachine &
+        -evaluateGuard(const std::string & from_state, const std::string & to_state, const std::string & event_name) bool
+        -executeStateActions(const std::string & state_name) void
+        -executeTransitionActions(const std::vector&lt;std::string&gt; & actions) void
+        +getAllStates() [const] std::vector&lt;std::string&gt;
+        +getCurrentState() [const] std::string
+        +getVariable(const std::string & name) [const] VariableValue
+        +hasState(const std::string & state_name) [const] bool
+        +hasVariable(const std::string & name) [const] bool
+        -performTransition(const TransitionEvent & event) void
+        +registerAction<T>(const std::string & action_name, void &lpar;T::*&rpar;&lpar;&rpar; callback, T * instance) void
+        -registerActionImpl(const std::string & action_name, std::function&lt;void &lpar;&rpar;&gt; callback) void
+        +registerGuard<T>(const std::string & from_state, const std::string & to_state, const std::string & event_name, bool &lpar;T::*&rpar;&lpar;&rpar; callback, T * instance) void
+        -registerGuardImpl(const std::string & from_state, const std::string & to_state, const std::string & event_name, std::function&lt;bool &lpar;&rpar;&gt; callback) void
+        +registerStateCallback<T>(const std::string & state_name, const std::string & callback_type, void &lpar;T::*&rpar;&lpar;&rpar; callback, T * instance) void
+        -registerStateCallbackImpl(const std::string & state_name, const std::string & callback_type, std::function&lt;void &lpar;&rpar;&gt; callback) void
+        +registerStateObserver(const std::shared_ptr&lt;StateObserver&gt; & observer) void
+        +registerTransitionCallback<T>(const std::string & from_state, const std::string & to_state, void &lpar;T::*&rpar;&lpar;const TransitionEvent &&rpar; callback, T * instance) void
+        -registerTransitionCallbackImpl(const std::string & from_state, const std::string & to_state, std::function&lt;void &lpar;const TransitionEvent &&rpar;&gt; callback) void
+        +reset() void
+        +setErrorHandler(ErrorHandler handler) void
+        +setVariable(const std::string & name, const VariableValue & value) void
+        +start() void
+        +stop() void
+        +triggerEvent(const std::string & event_name, const std::map&lt;std::string,VariableValue&gt; & data) void
+        +triggerEvent(const std::string & event_name) void
+        +unregisterStateObserver(const std::shared_ptr&lt;StateObserver&gt; & observer) void
+        -impl_ : std::unique_ptr&lt;Impl&gt;
+    }
+    class C_0004575424360357245188["CallbackRegistry"]
+    class C_0004575424360357245188 {
+        +CallbackRegistry() void
+        +CallbackRegistry(const CallbackRegistry &) void
+        +CallbackRegistry(CallbackRegistry && other) void
+        +~CallbackRegistry() void
+        +operator=(const CallbackRegistry &) CallbackRegistry &
+        +operator=(CallbackRegistry && other) CallbackRegistry &
+        +callAction(const std::string & action_name) [const] void
+        +callGuard(const std::string & from_state, const std::string & to_state, const std::string & event_name) [const] bool
+        +callStateCallback(const std::string & state_name, const std::string & callback_type) [const] void
+        +callTransitionCallback(const std::string & from_state, const std::string & to_state, const TransitionEvent & event) [const] void
+        +clear() void
+        +getActionCount() [const] size_t
+        +getGuardCount() [const] size_t
+        +getStateCallbackCount() [const] size_t
+        +getTransitionCallbackCount() [const] size_t
+        +hasAction(const std::string & action_name) [const] bool
+        +hasGuard(const std::string & from_state, const std::string & to_state, const std::string & event_name) [const] bool
+        +hasStateCallback(const std::string & state_name, const std::string & callback_type) [const] bool
+        +hasTransitionCallback(const std::string & from_state, const std::string & to_state) [const] bool
+        -makeGuardKey(const std::string & from_state, const std::string & to_state, const std::string & event_name) [const] std::string
+        -makeStateCallbackKey(const std::string & state_name, const std::string & callback_type) [const] std::string
+        -makeTransitionCallbackKey(const std::string & from_state, const std::string & to_state) [const] std::string
+        +registerAction(const std::string & action_name, ActionCallback callback) void
+        +registerGuard(const std::string & from_state, const std::string & to_state, const std::string & event_name, GuardCallback callback) void
+        +registerStateCallback(const std::string & state_name, const std::string & callback_type, StateCallback callback) void
+        +registerTransitionCallback(const std::string & from_state, const std::string & to_state, TransitionCallback callback) void
+        -impl_ : std::unique_ptr&lt;Impl&gt;
+    }
+    class C_0003751391626675190155["::YAML::Node"]
+    class C_0003751391626675190155 {
+    }
+    class C_0010895041520132125061["ConfigParser"]
+    class C_0010895041520132125061 {
+        +ConfigParser() void
+        +ConfigParser(const ConfigParser &) void
+        +ConfigParser(ConfigParser && other) void
+        +~ConfigParser() void
+        +operator=(const ConfigParser &) ConfigParser &
+        +operator=(ConfigParser && other) ConfigParser &
+        +clear() void
+        +findTransition(const std::string & from_state, const std::string & event_name) [const] const TransitionInfo *
+        +getGlobalVariables() [const] const std::map&lt;std::string,VariableValue&gt; &
+        +getInitialState() [const] std::string
+        +getState(const std::string & state_name) [const] const StateInfo &
+        +getStates() [const] const std::map&lt;std::string,StateInfo&gt; &
+        +getTransitions() [const] const std::vector&lt;TransitionInfo&gt; &
+        +getTransitionsFrom(const std::string & state_name) [const] std::vector&lt;TransitionInfo&gt;
+        +hasState(const std::string & state_name) [const] bool
+        +loadFromFile(const std::string & file_path) void
+        +loadFromString(const std::string & yaml_content) void
+        -parseGlobalVariables(const YAML::Node & node) void
+        -parseState(const std::string & name, const YAML::Node & node) [const] StateInfo
+        -parseStates(const YAML::Node & node) void
+        -parseTransition(const YAML::Node & node) [const] TransitionInfo
+        -parseTransitions(const YAML::Node & node) void
+        -parseVariable(const YAML::Node & node) [const] VariableValue
+        -validateConfig() [const] void
+        -impl_ : std::unique_ptr&lt;Impl&gt;
+    }
+    class C_0001530699900405953344["EventDispatcher"]
+    class C_0001530699900405953344 {
+        +EventDispatcher() void
+        +EventDispatcher(const EventDispatcher &) void
+        +EventDispatcher(EventDispatcher && other) void
+        +~EventDispatcher() void
+        +operator=(const EventDispatcher &) EventDispatcher &
+        +operator=(EventDispatcher && other) EventDispatcher &
+        +clearEventQueue() void
+        +dispatchEvent(const std::string & event_name, const TransitionEvent & event) void
+        +getEventQueueSize() [const] size_t
+        +hasEventHandler() [const] bool
+        +hasPendingEvents() [const] bool
+        +isRunning() [const] bool
+        +processEvents() void
+        +processOneEvent() bool
+        +setEventHandler(EventHandler handler) void
+        +start() void
+        +stop() void
+        +waitForEmptyQueue() [const] void
+        -impl_ : std::unique_ptr&lt;Impl&gt;
+    }
+    class C_0005575316367269294129["State"]
+    class C_0005575316367269294129 {
+        +State(const StateInfo & info) void
+        +State(const State &) void
+        +State(State && other) void
+        +~State() void
+        +operator=(const State &) State &
+        +operator=(State && other) State &
+        +getActions() [const] const std::vector&lt;std::string&gt; &
+        +getAllVariables() [const] const std::map&lt;std::string,VariableValue&gt; &
+        +getName() [const] const std::string &
+        +getOnEnterCallback() [const] const std::string &
+        +getOnExitCallback() [const] const std::string &
+        +getVariable(const std::string & name) [const] VariableValue
+        +getVariables() [const] const std::map&lt;std::string,VariableValue&gt; &
+        +hasVariable(const std::string & name) [const] bool
+        +setVariable(const std::string & name, const VariableValue & value) void
+        -impl_ : std::unique_ptr&lt;Impl&gt;
+    }
+    class C_0008043661820894949462["VariableScope"]
+    class C_0008043661820894949462 {
+        <<enumeration>>
+        GLOBAL
+        STATE_LOCAL
+    }
+    class C_0014053745569881518093["VariableManager"]
+    class C_0014053745569881518093 {
+        +VariableManager() void
+        +VariableManager(const VariableManager &) void
+        +VariableManager(VariableManager && other) void
+        +~VariableManager() void
+        +operator=(const VariableManager &) VariableManager &
+        +operator=(VariableManager && other) VariableManager &
+        +clear() void
+        +clearGlobalVariables() void
+        +clearStateVariables(const std::string & state_name) void
+        +copyStateVariables(const std::string & from_state, const std::string & to_state) void
+        +getGlobalVariable(const std::string & name) [const] std::optional&lt;VariableValue&gt;
+        +getGlobalVariableCount() [const] size_t
+        +getGlobalVariables() [const] std::map&lt;std::string,VariableValue&gt;
+        +getStateVariable(const std::string & state_name, const std::string & name) [const] std::optional&lt;VariableValue&gt;
+        +getStateVariableCount(const std::string & state_name) [const] size_t
+        +getStateVariables(const std::string & state_name) [const] std::map&lt;std::string,VariableValue&gt;
+        +getVariable(const std::string & state_name, const std::string & name) [const] std::optional&lt;VariableValue&gt;
+        +hasGlobalVariable(const std::string & name) [const] bool
+        +hasStateVariable(const std::string & state_name, const std::string & name) [const] bool
+        +hasVariable(const std::string & state_name, const std::string & name) [const] bool
+        +removeGlobalVariable(const std::string & name) bool
+        +removeStateVariable(const std::string & state_name, const std::string & name) bool
+        +removeVariable(const std::string & state_name, const std::string & name) bool
+        +setGlobalVariable(const std::string & name, const VariableValue & value) void
+        +setStateVariable(const std::string & state_name, const std::string & name, const VariableValue & value) void
+        -impl_ : std::unique_ptr&lt;Impl&gt;
+    }
+    class C_0011063579325435022048["StateMachine::Impl"]
+    class C_0011063579325435022048 {
+        +clear() void
+        +callback_registry : std::unique_ptr&lt;CallbackRegistry&gt;
+        +config_parser : std::unique_ptr&lt;ConfigParser&gt;
+        +current_state : std::string
+        +error_handler : ErrorHandler
+        +event_dispatcher : std::unique_ptr&lt;EventDispatcher&gt;
+        +initial_state : std::string
+        +observers : std::vector&lt;std::weak_ptr&lt;StateObserver&gt;&gt;
+        +started : bool
+        +states : std::map&lt;std::string,std::unique_ptr&lt;State&gt;&gt;
+        +variable_manager : std::unique_ptr&lt;VariableManager&gt;
+    }
+    class C_0004347433256436227892["ConfigParser::Impl"]
+    class C_0004347433256436227892 {
+    }
+    class C_0005145857244508289736["EventDispatcher::Impl"]
+    class C_0005145857244508289736 {
+    }
+    class C_0010176202791802560573["VariableManager::Impl"]
+    class C_0010176202791802560573 {
+    }
+    class C_0014444718896689567707["State::Impl"]
+    class C_0014444718896689567707 {
+    }
+    class C_0016795514535755599082["CallbackRegistry::Impl"]
+    class C_0016795514535755599082 {
+    }
+    C_0017614144533568309161 ..> C_0012415743977570969849 : 
+    C_0006135738021633781134 ..> C_0017614144533568309161 : 
+    C_0012024512094584847498 ..> C_0001275076681856179721 : 
+    C_0012024512094584847498 ..> C_0004644539050167908132 : 
+    C_0001347152004389415025 ..> C_0001275076681856179721 : 
+    C_0007450075187066284364 ..> C_0010002050032679328176 : 
+    C_0012084549392970043582 ..> C_0001275076681856179721 : 
+    C_0001199013750565879236 ..> C_0001275076681856179721 : 
+    C_0001199013750565879236 ..> C_0015255257577182055485 : 
+    C_0012288898058206732335 ..> C_0011444669835913369954 : 
+    C_0005932863177574937530 ..> C_0001275076681856179721 : 
+    C_0003659254883599964189 ..> C_0004644539050167908132 : 
+    C_0005352096989394213043 ..> C_0010895041520132125061 : 
+    C_0004034136965902323112 ..> C_0004575424360357245188 : 
+    C_0012853017857603343529 ..> C_0014053745569881518093 : 
+    C_0007529665287438544223 ..> C_0001530699900405953344 : 
+    C_0016648073618255913842 ..> C_0005575316367269294129 : 
+    C_0012343345191339404089 ..> C_0001275076681856179721 : 
+    C_0012343345191339404089 ..> C_0016648073618255913842 : 
+    C_0000883426022448363678 ..> C_0010002050032679328176 : 
+    C_0005353975840393516666 ..> C_0000883426022448363678 : 
+    C_0004644539050167908132 ..> C_0001275076681856179721 : 
+    C_0004644539050167908132 o-- C_0013768368618794584896 : +type
+    C_0004644539050167908132 o-- C_0011343728311523060581 : 
+    C_0011343728311523060581 o-- C_0001275076681856179721 : +string_value
+    C_0007977660812724227042 o-- C_0001275076681856179721 : +event_name
+    C_0007977660812724227042 o-- C_0001275076681856179721 : +from_state
+    C_0007977660812724227042 o-- C_0001275076681856179721 : +to_state
+    C_0007977660812724227042 o-- C_0012024512094584847498 : +data
+    C_0007977660812724227042 o-- C_0006135738021633781134 : +timestamp
+    C_0015255257577182055485 o-- C_0001275076681856179721 : +name
+    C_0015255257577182055485 o-- C_0012024512094584847498 : +variables
+    C_0015255257577182055485 o-- C_0001275076681856179721 : +on_enter_callback
+    C_0015255257577182055485 o-- C_0001275076681856179721 : +on_exit_callback
+    C_0015255257577182055485 o-- C_0001347152004389415025 : +actions
+    C_0011444669835913369954 o-- C_0001275076681856179721 : +from_state
+    C_0011444669835913369954 o-- C_0001275076681856179721 : +to_state
+    C_0011444669835913369954 o-- C_0001275076681856179721 : +event_name
+    C_0011444669835913369954 o-- C_0001275076681856179721 : +guard_callback
+    C_0011444669835913369954 o-- C_0001275076681856179721 : +transition_callback
+    C_0011444669835913369954 o-- C_0001347152004389415025 : +actions
+    C_0010002050032679328176 ..> C_0001275076681856179721 : 
+    C_0010002050032679328176 ..> C_0007977660812724227042 : 
+    C_0010977936290636544335 ..> C_0001275076681856179721 : 
+    C_0004687615746579280257 ..> C_0001275076681856179721 : 
+    C_0000832265379070515278 ..> C_0001275076681856179721 : 
+    C_0000832265379070515278 ..> C_0001347152004389415025 : 
+    C_0000832265379070515278 ..> C_0012024512094584847498 : 
+    C_0000832265379070515278 ..> C_0004644539050167908132 : 
+    C_0000832265379070515278 ..> C_0007450075187066284364 : 
+    C_0000832265379070515278 ..> C_0010002050032679328176 : 
+    C_0000832265379070515278 ..> C_0012084549392970043582 : 
+    C_0000832265379070515278 ..> C_0007977660812724227042 : 
+    C_0000832265379070515278 ..> C_0013286274850898176297 : 
+    C_0000832265379070515278 ..> C_0001636141635143033842 : 
+    C_0000832265379070515278 ..> C_0005541826913145604472 : 
+    C_0000832265379070515278 o-- C_0012235215796829152660 : -impl_
+    C_0004575424360357245188 ..> C_0001275076681856179721 : 
+    C_0004575424360357245188 ..> C_0013286274850898176297 : 
+    C_0004575424360357245188 ..> C_0001636141635143033842 : 
+    C_0004575424360357245188 ..> C_0007977660812724227042 : 
+    C_0004575424360357245188 ..> C_0005541826913145604472 : 
+    C_0004575424360357245188 o-- C_0017654623142740713982 : -impl_
+    C_0010895041520132125061 ..> C_0001275076681856179721 : 
+    C_0010895041520132125061 ..> C_0012024512094584847498 : 
+    C_0010895041520132125061 ..> C_0004644539050167908132 : 
+    C_0010895041520132125061 ..> C_0001199013750565879236 : 
+    C_0010895041520132125061 ..> C_0015255257577182055485 : 
+    C_0010895041520132125061 ..> C_0012288898058206732335 : 
+    C_0010895041520132125061 ..> C_0011444669835913369954 : 
+    C_0010895041520132125061 ..> C_0003751391626675190155 : 
+    C_0010895041520132125061 o-- C_0010255524935885673625 : -impl_
+    C_0001530699900405953344 ..> C_0001275076681856179721 : 
+    C_0001530699900405953344 ..> C_0007977660812724227042 : 
+    C_0001530699900405953344 ..> C_0005932863177574937530 : 
+    C_0001530699900405953344 o-- C_0004969642116000285333 : -impl_
+    C_0005575316367269294129 ..> C_0015255257577182055485 : 
+    C_0005575316367269294129 ..> C_0001275076681856179721 : 
+    C_0005575316367269294129 ..> C_0012024512094584847498 : 
+    C_0005575316367269294129 ..> C_0004644539050167908132 : 
+    C_0005575316367269294129 ..> C_0001347152004389415025 : 
+    C_0005575316367269294129 o-- C_0007163076881307230401 : -impl_
+    C_0014053745569881518093 ..> C_0001275076681856179721 : 
+    C_0014053745569881518093 ..> C_0004644539050167908132 : 
+    C_0014053745569881518093 ..> C_0003659254883599964189 : 
+    C_0014053745569881518093 ..> C_0012024512094584847498 : 
+    C_0014053745569881518093 o-- C_0013008878867158869871 : -impl_
+    C_0000832265379070515278 ()-- C_0011063579325435022048 : 
+    C_0011063579325435022048 o-- C_0005352096989394213043 : +config_parser
+    C_0011063579325435022048 o-- C_0004034136965902323112 : +callback_registry
+    C_0011063579325435022048 o-- C_0012853017857603343529 : +variable_manager
+    C_0011063579325435022048 o-- C_0007529665287438544223 : +event_dispatcher
+    C_0011063579325435022048 o-- C_0012343345191339404089 : +states
+    C_0011063579325435022048 o-- C_0001275076681856179721 : +current_state
+    C_0011063579325435022048 o-- C_0001275076681856179721 : +initial_state
+    C_0011063579325435022048 o-- C_0005353975840393516666 : +observers
+    C_0011063579325435022048 o-- C_0012084549392970043582 : +error_handler
+    C_0010895041520132125061 ()-- C_0004347433256436227892 : 
+    C_0001530699900405953344 ()-- C_0005145857244508289736 : 
+    C_0014053745569881518093 ()-- C_0010176202791802560573 : 
+    C_0005575316367269294129 ()-- C_0014444718896689567707 : 
+    C_0004575424360357245188 ()-- C_0016795514535755599082 : 
+
+%% Generated with clang-uml, version 0.6.2
+%% LLVM version clang version 21.1.6

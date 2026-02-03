@@ -1,0 +1,194 @@
+classDiagram
+    class C_0017614144533568309161["::std::chrono::duration&lt;int64_t,std::ratio&lt;1,1000000000&gt;&gt;"]
+    class C_0017614144533568309161 {
+    }
+    class C_0006135738021633781134["::std::chrono::time_point&lt;std::chrono::system_clock,std::chrono::duration&lt;int64_t,std::ratio&lt;1,1000000000&gt;&gt;&gt;"]
+    class C_0006135738021633781134 {
+    }
+    class C_0001275076681856179721["::std::string"]
+    class C_0001275076681856179721 {
+    }
+    class C_0012024512094584847498["::std::map&lt;std::string,VariableValue&gt;"]
+    class C_0012024512094584847498 {
+    }
+    class C_0012415743977570969849["::std::ratio&lt;1,1000000000&gt;"]
+    class C_0012415743977570969849 {
+    }
+    class C_0001347152004389415025["::std::vector&lt;std::string&gt;"]
+    class C_0001347152004389415025 {
+    }
+    class C_0003659254883599964189["::std::optional&lt;VariableValue&gt;"]
+    class C_0003659254883599964189 {
+    }
+    class C_0013008878867158869871["::std::unique_ptr&lt;VariableManager::Impl&gt;"]
+    class C_0013008878867158869871 {
+    }
+    class C_0014775452228401571017["::std::map&lt;std::string,std::map&lt;std::string,VariableValue&gt;&gt;"]
+    class C_0014775452228401571017 {
+    }
+    class C_0013768368618794584896["VariableType"]
+    class C_0013768368618794584896 {
+        <<enumeration>>
+        INT
+        FLOAT
+        STRING
+        BOOL
+    }
+    class C_0004644539050167908132["VariableValue"]
+    class C_0004644539050167908132 {
+        +VariableValue() void
+        +VariableValue(int v) void
+        +VariableValue(float v) void
+        +VariableValue(const std::string & v) void
+        +VariableValue(bool v) void
+        +VariableValue(const VariableValue & other) void
+        +VariableValue(VariableValue && other) void
+        +~VariableValue() void
+        +operator=(const VariableValue & other) VariableValue &
+        +operator=(VariableValue && other) VariableValue &
+        +asBool() [const] bool
+        +asFloat() [const] float
+        +asInt() [const] int
+        +asString() [const] std::string
+        +toString() [const] std::string
+        + : VariableValue::&lpar;&rpar;
+        +type : VariableType
+    }
+    class C_0011343728311523060581["VariableValue::&lpar;&rpar;"]
+    class C_0011343728311523060581 {
+        +bool_value : bool
+        +float_value : float
+        +int_value : int
+        +string_value : std::string
+    }
+    class C_0007977660812724227042["TransitionEvent"]
+    class C_0007977660812724227042 {
+        +TransitionEvent() void
+        +data : std::map&lt;std::string,VariableValue&gt;
+        +event_name : std::string
+        +from_state : std::string
+        +timestamp : std::chrono::system_clock::time_point
+        +to_state : std::string
+    }
+    class C_0015255257577182055485["StateInfo"]
+    class C_0015255257577182055485 {
+        +StateInfo() void
+        +StateInfo(std::string name) void
+        +actions : std::vector&lt;std::string&gt;
+        +name : std::string
+        +on_enter_callback : std::string
+        +on_exit_callback : std::string
+        +variables : std::map&lt;std::string,VariableValue&gt;
+    }
+    class C_0011444669835913369954["TransitionInfo"]
+    class C_0011444669835913369954 {
+        +TransitionInfo() void
+        +actions : std::vector&lt;std::string&gt;
+        +event_name : std::string
+        +from_state : std::string
+        +guard_callback : std::string
+        +to_state : std::string
+        +transition_callback : std::string
+    }
+    class C_0010002050032679328176["StateObserver"]
+    class C_0010002050032679328176 {
+        <<abstract>>
+        +~StateObserver() [default,constexpr] void
+        +onError(const std::string & error_message) void*
+        +onStateEnter(const std::string & state_name) void*
+        +onStateExit(const std::string & state_name) void*
+        +onTransition(const TransitionEvent & event) void*
+    }
+    class C_0010977936290636544335["ConfigException"]
+    class C_0010977936290636544335 {
+        +ConfigException(const std::string & message) void
+    }
+    class C_0004687615746579280257["StateException"]
+    class C_0004687615746579280257 {
+        +StateException(const std::string & message) void
+    }
+    class C_0008043661820894949462["VariableScope"]
+    class C_0008043661820894949462 {
+        <<enumeration>>
+        GLOBAL
+        STATE_LOCAL
+    }
+    class C_0014053745569881518093["VariableManager"]
+    class C_0014053745569881518093 {
+        +VariableManager() void
+        +VariableManager(const VariableManager &) void
+        +VariableManager(VariableManager && other) void
+        +~VariableManager() void
+        +operator=(const VariableManager &) VariableManager &
+        +operator=(VariableManager && other) VariableManager &
+        +clear() void
+        +clearGlobalVariables() void
+        +clearStateVariables(const std::string & state_name) void
+        +copyStateVariables(const std::string & from_state, const std::string & to_state) void
+        +getGlobalVariable(const std::string & name) [const] std::optional&lt;VariableValue&gt;
+        +getGlobalVariableCount() [const] size_t
+        +getGlobalVariables() [const] std::map&lt;std::string,VariableValue&gt;
+        +getStateVariable(const std::string & state_name, const std::string & name) [const] std::optional&lt;VariableValue&gt;
+        +getStateVariableCount(const std::string & state_name) [const] size_t
+        +getStateVariables(const std::string & state_name) [const] std::map&lt;std::string,VariableValue&gt;
+        +getVariable(const std::string & state_name, const std::string & name) [const] std::optional&lt;VariableValue&gt;
+        +hasGlobalVariable(const std::string & name) [const] bool
+        +hasStateVariable(const std::string & state_name, const std::string & name) [const] bool
+        +hasVariable(const std::string & state_name, const std::string & name) [const] bool
+        +removeGlobalVariable(const std::string & name) bool
+        +removeStateVariable(const std::string & state_name, const std::string & name) bool
+        +removeVariable(const std::string & state_name, const std::string & name) bool
+        +setGlobalVariable(const std::string & name, const VariableValue & value) void
+        +setStateVariable(const std::string & state_name, const std::string & name, const VariableValue & value) void
+        -impl_ : std::unique_ptr&lt;Impl&gt;
+    }
+    class C_0010176202791802560573["VariableManager::Impl"]
+    class C_0010176202791802560573 {
+        +clear() void
+        +global_variables : std::map&lt;std::string,VariableValue&gt;
+        +mutex : std::mutex
+        +state_variables : std::map&lt;std::string,std::map&lt;std::string,VariableValue&gt;&gt;
+    }
+    C_0017614144533568309161 ..> C_0012415743977570969849 : 
+    C_0006135738021633781134 ..> C_0017614144533568309161 : 
+    C_0012024512094584847498 ..> C_0001275076681856179721 : 
+    C_0012024512094584847498 ..> C_0004644539050167908132 : 
+    C_0001347152004389415025 ..> C_0001275076681856179721 : 
+    C_0003659254883599964189 ..> C_0004644539050167908132 : 
+    C_0014775452228401571017 ..> C_0001275076681856179721 : 
+    C_0014775452228401571017 ..> C_0012024512094584847498 : 
+    C_0004644539050167908132 ..> C_0001275076681856179721 : 
+    C_0004644539050167908132 o-- C_0013768368618794584896 : +type
+    C_0004644539050167908132 o-- C_0011343728311523060581 : 
+    C_0011343728311523060581 o-- C_0001275076681856179721 : +string_value
+    C_0007977660812724227042 o-- C_0001275076681856179721 : +event_name
+    C_0007977660812724227042 o-- C_0001275076681856179721 : +from_state
+    C_0007977660812724227042 o-- C_0001275076681856179721 : +to_state
+    C_0007977660812724227042 o-- C_0012024512094584847498 : +data
+    C_0007977660812724227042 o-- C_0006135738021633781134 : +timestamp
+    C_0015255257577182055485 o-- C_0001275076681856179721 : +name
+    C_0015255257577182055485 o-- C_0012024512094584847498 : +variables
+    C_0015255257577182055485 o-- C_0001275076681856179721 : +on_enter_callback
+    C_0015255257577182055485 o-- C_0001275076681856179721 : +on_exit_callback
+    C_0015255257577182055485 o-- C_0001347152004389415025 : +actions
+    C_0011444669835913369954 o-- C_0001275076681856179721 : +from_state
+    C_0011444669835913369954 o-- C_0001275076681856179721 : +to_state
+    C_0011444669835913369954 o-- C_0001275076681856179721 : +event_name
+    C_0011444669835913369954 o-- C_0001275076681856179721 : +guard_callback
+    C_0011444669835913369954 o-- C_0001275076681856179721 : +transition_callback
+    C_0011444669835913369954 o-- C_0001347152004389415025 : +actions
+    C_0010002050032679328176 ..> C_0001275076681856179721 : 
+    C_0010002050032679328176 ..> C_0007977660812724227042 : 
+    C_0010977936290636544335 ..> C_0001275076681856179721 : 
+    C_0004687615746579280257 ..> C_0001275076681856179721 : 
+    C_0014053745569881518093 ..> C_0001275076681856179721 : 
+    C_0014053745569881518093 ..> C_0004644539050167908132 : 
+    C_0014053745569881518093 ..> C_0003659254883599964189 : 
+    C_0014053745569881518093 ..> C_0012024512094584847498 : 
+    C_0014053745569881518093 o-- C_0013008878867158869871 : -impl_
+    C_0014053745569881518093 ()-- C_0010176202791802560573 : 
+    C_0010176202791802560573 o-- C_0012024512094584847498 : +global_variables
+    C_0010176202791802560573 o-- C_0014775452228401571017 : +state_variables
+
+%% Generated with clang-uml, version 0.6.2
+%% LLVM version clang version 21.1.6

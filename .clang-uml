@@ -1,0 +1,67 @@
+# clang-uml configuration for FSMConfig library
+# See https://github.com/bkryza/clang-uml for more details
+
+compilation_database_dir: build
+output_directory: docs/diagrams
+diagrams:
+  # Main class diagram showing all FSMConfig classes
+  fsmconfig_main_class:
+    type: class
+    glob:
+      - src/fsmconfig/*.cpp
+    using_namespace:
+      - fsmconfig
+    include:
+      namespaces:
+        - fsmconfig
+
+  # StateMachine class detailed diagram
+  fsmconfig_state_machine:
+    type: class
+    glob:
+      - src/fsmconfig/state_machine.cpp
+    using_namespace:
+      - fsmconfig
+
+  # ConfigParser class detailed diagram
+  fsmconfig_config_parser:
+    type: class
+    glob:
+      - src/fsmconfig/config_parser.cpp
+    using_namespace:
+      - fsmconfig
+
+  # EventDispatcher class detailed diagram
+  fsmconfig_event_dispatcher:
+    type: class
+    glob:
+      - src/fsmconfig/event_dispatcher.cpp
+    using_namespace:
+      - fsmconfig
+
+  # CallbackRegistry class detailed diagram
+  fsmconfig_callback_registry:
+    type: class
+    glob:
+      - src/fsmconfig/callback_registry.cpp
+    using_namespace:
+      - fsmconfig
+
+  # VariableManager class detailed diagram
+  fsmconfig_variable_manager:
+    type: class
+    glob:
+      - src/fsmconfig/variable_manager.cpp
+    using_namespace:
+      - fsmconfig
+
+  # Include diagram showing header dependencies
+  fsmconfig_include_diagram:
+    type: include
+    glob:
+      - src/fsmconfig/*.cpp
+    using_namespace:
+      - fsmconfig
+    include:
+      namespaces:
+        - fsmconfig
