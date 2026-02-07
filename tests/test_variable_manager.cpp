@@ -149,7 +149,7 @@ TEST(VariableManagerTest, ThreadSafety_HighContention) {
     std::atomic<int> total_operations{0};
 
     for (int i = 0; i < num_threads; ++i) {
-        threads.emplace_back([i, &vm, &total_operations, operations_per_thread]() {
+        threads.emplace_back([i, &vm, &total_operations]() {
             for (int j = 0; j < operations_per_thread; ++j) {
                 std::string key = "key_" + std::to_string(i);
                 vm.setGlobalVariable(key, VariableValue(j));
