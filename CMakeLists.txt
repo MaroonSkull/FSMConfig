@@ -62,6 +62,14 @@ if(NOT yaml-cpp_FOUND)
     find_package(yaml-cpp 0.7.0 REQUIRED)
 endif()
 
+# Ensure yaml-cpp::yaml-cpp target exists
+# Debian packages may create 'yaml-cpp' or 'PkgConfig::yaml-cpp' instead
+if(TARGET yaml-cpp AND NOT TARGET yaml-cpp::yaml-cpp)
+    add_library(yaml-cpp::yaml-cpp ALIAS yaml-cpp)
+elseif(TARGET PkgConfig::yaml-cpp AND NOT TARGET yaml-cpp::yaml-cpp)
+    add_library(yaml-cpp::yaml-cpp ALIAS PkgConfig::yaml-cpp)
+endif()
+
 # ============================================================================
 # Include Directories
 # ============================================================================

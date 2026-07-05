@@ -78,8 +78,9 @@ TEST_F(CallbackRegistryTest, CallMissingCallbackDoesNothing) {
 }
 
 TEST_F(CallbackRegistryTest, GuardReturnsTrueWhenNotFound) {
+  // Fail-open: unregistered guards allow the transition
   const bool result = registry->callGuard("nonexistent_state", "nonexistent_state", "event1");
-  EXPECT_FALSE(result);
+  EXPECT_TRUE(result);
 }
 
 TEST_F(CallbackRegistryTest, HasStateCallbackReturnsCorrectValue) {

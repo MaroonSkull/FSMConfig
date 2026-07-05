@@ -362,9 +362,8 @@ void StateMachine::performTransition(const TransitionEvent& event) {
     throw StateException(error);
   }
 
-  // Call on_exit callback of current state
-  const auto& old_state_info = impl_->config_parser->getState(old_state);
-  if (!old_state_info.on_exit_callback.empty()) {
+  // Call on_exit callback of current state (check registry, consistent with start/stop)
+  if (impl_->callback_registry->hasStateCallback(old_state, "on_exit")) {
     impl_->callback_registry->callStateCallback(old_state, "on_exit");
   }
 

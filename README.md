@@ -167,10 +167,17 @@ Create a YAML configuration file (`config.yaml`):
 
 ```yaml
 states:
-  - name: idle
-    initial: true
-  - name: active
-  - name: paused
+  idle:
+    on_enter: on_idle_enter
+    on_exit: on_idle_exit
+
+  active:
+    on_enter: on_active_enter
+    on_exit: on_active_exit
+
+  paused:
+    on_enter: on_paused_enter
+    on_exit: on_paused_exit
 
 transitions:
   - from: idle
@@ -190,22 +197,43 @@ transitions:
 Use the library in your C++ code:
 
 ```cpp
-#include <fsmconfig/config_parser.hpp>
 #include <fsmconfig/state_machine.hpp>
+#include <iostream>
+
+class App {
+public:
+    void run() {
+        // Create state machine from YAML config file
+        fsmconfig::StateMachine fsm("config.yaml");
+
+        // Register callbacks (names must match YAML on_enter/on_exit)
+        fsm.registerStateCallback("idle", "on_enter", &App::onIdleEnter, this);
+        fsm.registerStateCallback("idle", "on_exit", &App::onIdleExit, this);
+        fsm.registerStateCallback("active", "on_enter", &App::onActiveEnter, this);
+        fsm.registerStateCallback("active", "on_exit", &App::onActiveExit, this);
+
+        // Start the state machine (enters initial state)
+        fsm.start();
+
+        // Trigger events
+        fsm.triggerEvent("start");  // idle -> active
+        fsm.triggerEvent("pause");  // active -> paused
+        fsm.triggerEvent("resume"); // paused -> active
+        fsm.triggerEvent("stop");   // paused -> idle
+
+        fsm.stop();
+    }
+
+private:
+    void onIdleEnter()   { std::cout << "-> idle\n"; }
+    void onIdleExit()    { std::cout << "<- idle\n"; }
+    void onActiveEnter() { std::cout << "-> active\n"; }
+    void onActiveExit()  { std::cout << "<- active\n"; }
+};
 
 int main() {
-    // Load configuration
-    auto config = fsmconfig::ConfigParser::parse("config.yaml");
-    
-    // Create state machine
-    auto fsm = fsmconfig::StateMachine::create(config);
-    
-    // Trigger events
-    fsm->dispatch("start");  // idle -> active
-    fsm->dispatch("pause");  // active -> paused
-    fsm->dispatch("resume"); // paused -> active
-    fsm->dispatch("stop");   // active -> idle
-    
+    App app;
+    app.run();
     return 0;
 }
 ```

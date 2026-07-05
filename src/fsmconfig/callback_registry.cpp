@@ -135,8 +135,8 @@ bool CallbackRegistry::callGuard(const std::string& from_state, const std::strin
   if (iter != impl_->guards.end() && iter->second) {
     return iter->second();
   }
-  // If guard is not registered, deny transition
-  return false;
+  // If guard is not registered, allow transition (fail-open)
+  return true;
 }
 
 void CallbackRegistry::callAction(const std::string& action_name) const {

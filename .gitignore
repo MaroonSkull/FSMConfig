@@ -47,3 +47,7 @@ Testing
 
 # Temporary AI-generated documentation (work in progress)
 docs/.wip/
+
+# Kilo local config (do not track per-user tool settings)
+kilo.json
+kilo.jsonc
